@@ -1,0 +1,7 @@
+{
+  "name": "agromarket",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
