@@ -1,0 +1,95 @@
+<ion-content class="producto-content">
+  @if (product) {
+    <div class="producto-wrapper">
+      <a class="producto-back" routerLink="/home">
+        <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+        Volver a productos
+      </a>
+
+      <div class="producto-card">
+        <div class="producto-gallery">
+          <div class="producto-photo producto-photo--main" [style.background]="product.accent">
+            <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+          </div>
+
+          @if (product.photos && product.photos.length) {
+            <div class="producto-thumbs">
+              @for (photo of product.photos; track photo) {
+                <div class="producto-photo" [style.background]="product.accent">
+                  <ion-icon [name]="photo" aria-hidden="true"></ion-icon>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="producto-info">
+          <div class="producto-heading">
+            <div>
+              <h1 class="producto-title">{{ product.title }}</h1>
+              <p class="producto-location">
+                <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                {{ product.location }}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="producto-fav"
+              [class.producto-fav--active]="isFavorite()"
+              (click)="toggleFavorite()"
+            >
+              <ion-icon [name]="isFavorite() ? 'heart' : 'heart-outline'" aria-hidden="true"></ion-icon>
+              {{ isFavorite() ? 'En favoritos' : 'Agregar a favoritos' }}
+            </button>
+          </div>
+
+          <p class="producto-price">{{ product.price }}</p>
+
+          @if (product.quantity) {
+            <p class="producto-quantity">{{ product.quantity }}</p>
+          }
+
+          <button
+            type="button"
+            class="producto-buy"
+            [class.producto-buy--done]="isPurchased()"
+            (click)="buyProduct()"
+            [disabled]="isPurchased()"
+          >
+            <ion-icon [name]="isPurchased() ? 'checkmark-circle' : 'cart-outline'" aria-hidden="true"></ion-icon>
+            {{ isPurchased() ? 'Compra realizada' : 'Comprar' }}
+          </button>
+
+          <h2 class="producto-subtitle">Descripción</h2>
+          <p class="producto-description">{{ product.description }}</p>
+
+          <h2 class="producto-subtitle">Información del vendedor</h2>
+          <div class="producto-seller">
+            <p class="producto-seller-name">{{ product.sellerName }}</p>
+
+            <div class="producto-seller-actions">
+              @if (product.sellerPhone) {
+                <a class="producto-contact-btn" [href]="'tel:' + product.sellerPhone">
+                  <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+                  {{ product.sellerPhone }}
+                </a>
+              }
+              @if (product.sellerEmail) {
+                <a class="producto-contact-btn" [href]="'mailto:' + product.sellerEmail">
+                  <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+                  {{ product.sellerEmail }}
+                </a>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="producto-empty">
+      <p>No encontramos este producto.</p>
+      <a routerLink="/home">Volver a productos</a>
+    </div>
+  }
+</ion-content>

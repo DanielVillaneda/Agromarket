@@ -1,0 +1,244 @@
+.producto-content {
+  --background: #ffffff;
+}
+
+.producto-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.producto-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5646;
+  text-decoration: none;
+}
+
+.producto-back:hover {
+  color: #2e7d32;
+}
+
+.producto-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.producto-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.producto-photo {
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.producto-photo--main {
+  aspect-ratio: 4 / 3;
+}
+
+.producto-photo--main ion-icon {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.producto-thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.producto-thumbs .producto-photo {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+}
+
+.producto-thumbs .producto-photo ion-icon {
+  font-size: 1.6rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.producto-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.producto-title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #24331f;
+}
+
+.producto-location {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #6b7568;
+}
+
+.producto-fav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #e0e4d6;
+  background: #fbfcf8;
+  color: #4b5646;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.producto-fav ion-icon {
+  font-size: 1.1rem;
+}
+
+.producto-fav:hover {
+  border-color: #ef9a9a;
+}
+
+.producto-fav--active {
+  background: #ffebee;
+  border-color: #ef9a9a;
+  color: #c62828;
+}
+
+.producto-price {
+  margin: 14px 0 4px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #2e7d32;
+}
+
+.producto-quantity {
+  margin: 0 0 18px;
+  font-size: 0.85rem;
+  color: #6b7568;
+}
+
+.producto-buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 13px;
+  border: none;
+  border-radius: 999px;
+  background: #22281f;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.producto-buy:hover:not(:disabled) {
+  background: #33402f;
+}
+
+.producto-buy ion-icon {
+  font-size: 1.15rem;
+}
+
+.producto-buy--done {
+  background: #e8f5e9;
+  color: #2e7d32;
+  cursor: default;
+}
+
+.producto-buy:disabled {
+  opacity: 1;
+}
+
+.producto-subtitle {
+  margin: 18px 0 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #24331f;
+}
+
+.producto-description {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #4b5646;
+}
+
+.producto-seller {
+  background: #f4f6ec;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.producto-seller-name {
+  margin: 0 0 10px;
+  font-weight: 700;
+  color: #24331f;
+}
+
+.producto-seller-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.producto-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e0e4d6;
+  color: #33402f;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.producto-contact-btn:hover {
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.producto-empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: #6b7568;
+}
+
+.producto-empty a {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .producto-card {
+    grid-template-columns: 1fr;
+  }
+}

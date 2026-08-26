@@ -1,0 +1,11 @@
+<article class="product-card">
+  <div class="product-thumb" [style.background]="product.accent">
+    <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+  </div>
+
+  <div class="product-info">
+    <h3 class="product-title">{{ product.title }}</h3>
+    <p class="product-price">{{ product.price }}</p>
+    <p class="product-location">{{ product.location }}</p>
+  </div>
+</article>

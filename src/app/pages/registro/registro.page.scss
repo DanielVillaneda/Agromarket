@@ -1,0 +1,156 @@
+.auth-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/assets/images/fondo_agromarket.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-content {
+  --background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-wrapper {
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  /* If the card is taller than the space below the navbar, align it to the
+     top instead of overflowing past the wrapper's top edge (which would get
+     hidden behind the navbar). "safe center" falls back to "start" only
+     when centering would overflow. */
+  align-items: safe center;
+  justify-content: center;
+  padding: 20px 16px 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  padding: 32px 28px 28px;
+  box-shadow: 0 12px 34px rgba(31, 45, 31, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.auth-logo {
+  width: 96px;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.auth-title {
+  margin: 4px 0 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #24331f;
+}
+
+.auth-subtitle {
+  margin: 0 0 20px;
+  font-size: 0.88rem;
+  color: #4b5646;
+  line-height: 1.4;
+}
+
+.auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #33402f;
+}
+
+.auth-input {
+  border: 1px solid #e0e4d6;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.92rem;
+  color: #24331f;
+  background: #fbfcf8;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.auth-error {
+  font-size: 0.76rem;
+  color: #d32f2f;
+}
+
+.auth-success {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2e7d32;
+  background: rgba(76, 175, 80, 0.16);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.auth-submit {
+  margin-top: 4px;
+  border: none;
+  border-radius: 999px;
+  padding: 12px;
+  background: #22281f;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.auth-submit:hover {
+  background: #33402f;
+}
+
+.auth-switch {
+  margin: 20px 0 0;
+  font-size: 0.85rem;
+  color: #4b5646;
+}
+
+.auth-switch a {
+  color: #2e7d32;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 26px 20px 22px;
+    border-radius: 16px;
+  }
+}

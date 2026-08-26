@@ -1,0 +1,20 @@
+<ion-content class="venta-content">
+  <section class="venta-section">
+    <div class="venta-header">
+      <h2 class="venta-title">Productos en venta</h2>
+
+      <a class="venta-add-btn" routerLink="/vender">
+        <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+        Vender un producto
+      </a>
+    </div>
+
+    <div class="product-grid">
+      @for (product of products(); track product.id) {
+        <a class="product-link" [routerLink]="['/producto-vender', product.id]">
+          <app-product-card [product]="product"></app-product-card>
+        </a>
+      }
+    </div>
+  </section>
+</ion-content>

@@ -1,0 +1,53 @@
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eef1ea;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.product-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 11;
+}
+
+.product-thumb ion-icon {
+  font-size: 2.6rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.product-info {
+  padding: 10px 12px 14px;
+}
+
+.product-title {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1f2d1f;
+  line-height: 1.3;
+}
+
+.product-price {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1f2d1f;
+}
+
+.product-location {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #8a938a;
+}

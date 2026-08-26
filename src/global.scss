@@ -35,3 +35,19 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/**
+ * Navbar global (app-navbar) fijo
+ * -----------------------------------------------------
+ * app-navbar vive fuera de <ion-router-outlet>, así que el outlet
+ * (que por defecto se posiciona en toda la pantalla) debe empezar
+ * justo debajo del navbar para que las páginas no queden ocultas
+ * detrás de él ni el contenido se centre mal.
+ */
+:root {
+  --app-navbar-height: 73px;
+}
+
+ion-router-outlet {
+  top: var(--app-navbar-height) !important;
+}

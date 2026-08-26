@@ -1,0 +1,23 @@
+<ion-content class="favoritos-content">
+  <section class="favoritos-section">
+    <div class="favoritos-header">
+      <h2 class="favoritos-title">Mis Favoritos</h2>
+    </div>
+
+    @if (products().length) {
+      <div class="product-grid">
+        @for (product of products(); track product.id) {
+          <a class="product-link" [routerLink]="['/producto', product.id]">
+            <app-product-card [product]="product"></app-product-card>
+          </a>
+        }
+      </div>
+    } @else {
+      <div class="favoritos-empty">
+        <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
+        <p>Aún no tienes productos en favoritos.</p>
+        <a routerLink="/home">Explorar productos</a>
+      </div>
+    }
+  </section>
+</ion-content>

@@ -1,0 +1,132 @@
+<div class="vender-bg" aria-hidden="true"></div>
+
+<ion-content class="vender-content">
+  <div class="vender-wrapper">
+    <a class="vender-back" routerLink="/venta">
+      <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+      Volver a mis productos
+    </a>
+
+    <div class="vender-card">
+      <h1 class="vender-title">Vender un producto</h1>
+      <p class="vender-subtitle">
+        Completa la información y agrega fotos para publicar tu producto en AgroMarket.
+      </p>
+
+      <form class="vender-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <label class="vender-field">
+          <span class="vender-label">Nombre del producto</span>
+          <input
+            class="vender-input"
+            type="text"
+            formControlName="nombre"
+            placeholder="Ej. Café orgánico de altura"
+          />
+          @if (nombre.invalid && nombre.touched) {
+            <span class="vender-error">
+              @if (nombre.hasError('required')) {
+                Ingresa el nombre del producto.
+              } @else if (nombre.hasError('minlength')) {
+                Debe tener al menos 3 caracteres.
+              }
+            </span>
+          }
+        </label>
+
+        <div class="vender-row">
+          <label class="vender-field">
+            <span class="vender-label">Precio</span>
+            <input class="vender-input" type="number" formControlName="precio" placeholder="0" min="0" />
+            @if (precio.invalid && precio.touched) {
+              <span class="vender-error">
+                @if (precio.hasError('required')) {
+                  Ingresa un precio.
+                } @else if (precio.hasError('min')) {
+                  El precio debe ser mayor a 0.
+                }
+              </span>
+            }
+          </label>
+
+          <label class="vender-field">
+            <span class="vender-label">Cantidad disponible</span>
+            <input class="vender-input" type="number" formControlName="cantidad" placeholder="0" min="1" />
+            @if (cantidad.invalid && cantidad.touched) {
+              <span class="vender-error">
+                @if (cantidad.hasError('required')) {
+                  Ingresa la cantidad disponible.
+                } @else if (cantidad.hasError('min')) {
+                  Debe ser al menos 1.
+                }
+              </span>
+            }
+          </label>
+        </div>
+
+        <label class="vender-field">
+          <span class="vender-label">Ubicación</span>
+          <input
+            class="vender-input"
+            type="text"
+            formControlName="ubicacion"
+            placeholder="Ej. Rivera · Huila"
+          />
+          @if (ubicacion.invalid && ubicacion.touched) {
+            <span class="vender-error">Ingresa tu ubicación.</span>
+          }
+        </label>
+
+        <label class="vender-field">
+          <span class="vender-label">Descripción</span>
+          <textarea
+            class="vender-textarea"
+            formControlName="descripcion"
+            rows="4"
+            placeholder="Cuéntale a los compradores sobre tu producto..."
+          ></textarea>
+          @if (descripcion.invalid && descripcion.touched) {
+            <span class="vender-error">
+              @if (descripcion.hasError('required')) {
+                Agrega una descripción.
+              } @else if (descripcion.hasError('minlength')) {
+                Escribe al menos 10 caracteres.
+              }
+            </span>
+          }
+        </label>
+
+        <div class="vender-field">
+          <span class="vender-label">Fotos del producto</span>
+
+          <div class="vender-images">
+            @for (image of images; track image.id) {
+              <div class="vender-image">
+                <img [src]="image.dataUrl" alt="Foto del producto" />
+                <button
+                  type="button"
+                  class="vender-image-remove"
+                  (click)="removeImage(image.id)"
+                  aria-label="Quitar foto"
+                >
+                  <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </div>
+            }
+
+            <label class="vender-image-add">
+              <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
+              <span>Agregar foto</span>
+              <input type="file" accept="image/*" multiple hidden (change)="onImagesSelected($event)" />
+            </label>
+          </div>
+        </div>
+
+        @if (submitted && form.valid) {
+          <p class="vender-success">¡Producto publicado! (demo, aún sin conexión al backend)</p>
+        }
+
+        <button class="vender-submit" type="submit">Publicar producto</button>
+      </form>
+    </div>
+  </div>
+</ion-content>

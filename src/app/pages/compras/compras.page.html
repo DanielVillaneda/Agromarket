@@ -1,0 +1,23 @@
+<ion-content class="compras-content">
+  <section class="compras-section">
+    <div class="compras-header">
+      <h2 class="compras-title">Mis Compras</h2>
+    </div>
+
+    @if (products().length) {
+      <div class="product-grid">
+        @for (product of products(); track product.id) {
+          <a class="product-link" [routerLink]="['/producto', product.id]">
+            <app-product-card [product]="product"></app-product-card>
+          </a>
+        }
+      </div>
+    } @else {
+      <div class="compras-empty">
+        <ion-icon name="bag-check-outline" aria-hidden="true"></ion-icon>
+        <p>Aún no has comprado productos.</p>
+        <a routerLink="/home">Explorar productos</a>
+      </div>
+    }
+  </section>
+</ion-content>

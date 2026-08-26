@@ -1,0 +1,65 @@
+<div class="auth-bg" aria-hidden="true"></div>
+
+<ion-content class="auth-content" [fullscreen]="true">
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <img class="auth-logo" src="assets/images/logo_agromarket.png" alt="AgroMarket" />
+
+      <h1 class="auth-title">Inicia sesión</h1>
+      <p class="auth-subtitle">Ingresa a tu cuenta para comprar y vender productos del campo.</p>
+
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <label class="auth-field">
+          <span class="auth-label">Correo electrónico</span>
+          <input
+            class="auth-input"
+            type="email"
+            formControlName="email"
+            placeholder="correo@ejemplo.com"
+            autocomplete="email"
+          />
+          @if (email.invalid && email.touched) {
+            <span class="auth-error">
+              @if (email.hasError('required')) {
+                Ingresa tu correo electrónico.
+              } @else if (email.hasError('email')) {
+                Ingresa un correo electrónico válido.
+              }
+            </span>
+          }
+        </label>
+
+        <label class="auth-field">
+          <span class="auth-label">Contraseña</span>
+          <input
+            class="auth-input"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          @if (password.invalid && password.touched) {
+            <span class="auth-error">
+              @if (password.hasError('required')) {
+                Ingresa tu contraseña.
+              } @else if (password.hasError('minlength')) {
+                Debe tener al menos 6 caracteres.
+              }
+            </span>
+          }
+        </label>
+
+        @if (submitted && form.valid) {
+          <p class="auth-success">¡Bienvenido de nuevo! (demo, aún sin conexión al backend)</p>
+        }
+
+        <button class="auth-submit" type="submit">Iniciar sesión</button>
+      </form>
+
+      <p class="auth-switch">
+        ¿No tienes cuenta?
+        <a routerLink="/registro">Regístrate</a>
+      </p>
+    </div>
+  </div>
+</ion-content>

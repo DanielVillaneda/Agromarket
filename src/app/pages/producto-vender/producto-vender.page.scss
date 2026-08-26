@@ -1,0 +1,260 @@
+.producto-vender-content {
+  --background: #f4f6ec;
+}
+
+.pv-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+}
+
+.pv-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5646;
+  text-decoration: none;
+}
+
+.pv-back:hover {
+  color: #2e7d32;
+}
+
+.pv-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px 26px 26px;
+  box-shadow: 0 8px 26px rgba(31, 45, 31, 0.08);
+}
+
+.pv-title {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #24331f;
+}
+
+.pv-subtitle {
+  margin: 0 0 20px;
+  font-size: 0.88rem;
+  color: #6b7568;
+  line-height: 1.4;
+}
+
+.pv-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.pv-image {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e0e4d6;
+}
+
+.pv-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pv-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pv-image-placeholder ion-icon {
+  font-size: 1.7rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.pv-image-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.pv-image-add {
+  width: 92px;
+  height: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px dashed #b7c2ac;
+  border-radius: 12px;
+  color: #6b7568;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fbfcf8;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.pv-image-add ion-icon {
+  font-size: 1.3rem;
+}
+
+.pv-image-add:hover {
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.pv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pv-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #33402f;
+}
+
+.pv-input,
+.pv-textarea {
+  border: 1px solid #e0e4d6;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.92rem;
+  color: #24331f;
+  background: #fbfcf8;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pv-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.pv-input:focus,
+.pv-textarea:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.pv-error {
+  font-size: 0.76rem;
+  color: #d32f2f;
+}
+
+.pv-success {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2e7d32;
+  background: rgba(76, 175, 80, 0.16);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.pv-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.pv-delete {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #ef9a9a;
+  border-radius: 999px;
+  padding: 12px;
+  background: #ffffff;
+  color: #c62828;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pv-delete:hover {
+  background: #ffebee;
+}
+
+.pv-save {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 12px;
+  background: #22281f;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pv-save:hover {
+  background: #33402f;
+}
+
+.pv-empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: #6b7568;
+}
+
+.pv-empty a {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .pv-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pv-actions {
+    flex-direction: column;
+  }
+
+  .pv-card {
+    padding: 22px 18px 20px;
+    border-radius: 16px;
+  }
+}

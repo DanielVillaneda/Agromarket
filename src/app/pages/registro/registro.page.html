@@ -1,0 +1,125 @@
+<div class="auth-bg" aria-hidden="true"></div>
+
+<ion-content class="auth-content" [fullscreen]="true">
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <img class="auth-logo" src="assets/images/logo_agromarket.png" alt="AgroMarket" />
+
+      <h1 class="auth-title">Crea tu cuenta</h1>
+      <p class="auth-subtitle">Únete a AgroMarket para comprar o vender productos del campo directamente.</p>
+
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <label class="auth-field">
+          <span class="auth-label">Nombre completo</span>
+          <input
+            class="auth-input"
+            type="text"
+            formControlName="nombre"
+            placeholder="Tu nombre"
+            autocomplete="name"
+          />
+          @if (nombre.invalid && nombre.touched) {
+            <span class="auth-error">
+              @if (nombre.hasError('required')) {
+                Ingresa tu nombre.
+              } @else if (nombre.hasError('minlength')) {
+                Debe tener al menos 3 caracteres.
+              }
+            </span>
+          }
+        </label>
+
+        <label class="auth-field">
+          <span class="auth-label">Correo electrónico</span>
+          <input
+            class="auth-input"
+            type="email"
+            formControlName="email"
+            placeholder="correo@ejemplo.com"
+            autocomplete="email"
+          />
+          @if (email.invalid && email.touched) {
+            <span class="auth-error">
+              @if (email.hasError('required')) {
+                Ingresa tu correo electrónico.
+              } @else if (email.hasError('email')) {
+                Ingresa un correo electrónico válido.
+              }
+            </span>
+          }
+        </label>
+
+        <label class="auth-field">
+          <span class="auth-label">Teléfono</span>
+          <input
+            class="auth-input"
+            type="tel"
+            formControlName="telefono"
+            placeholder="Ej. 3001234567"
+            autocomplete="tel"
+          />
+          @if (telefono.invalid && telefono.touched) {
+            <span class="auth-error">
+              @if (telefono.hasError('required')) {
+                Ingresa tu número de teléfono.
+              } @else if (telefono.hasError('pattern')) {
+                Ingresa un número válido (7 a 10 dígitos).
+              }
+            </span>
+          }
+        </label>
+
+        <label class="auth-field">
+          <span class="auth-label">Contraseña</span>
+          <input
+            class="auth-input"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            autocomplete="new-password"
+          />
+          @if (password.invalid && password.touched) {
+            <span class="auth-error">
+              @if (password.hasError('required')) {
+                Ingresa una contraseña.
+              } @else if (password.hasError('minlength')) {
+                Debe tener al menos 6 caracteres.
+              }
+            </span>
+          }
+        </label>
+
+        <label class="auth-field">
+          <span class="auth-label">Confirmar contraseña</span>
+          <input
+            class="auth-input"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="••••••••"
+            autocomplete="new-password"
+          />
+          @if (confirmPassword.touched && (confirmPassword.hasError('required') || form.hasError('passwordsMismatch'))) {
+            <span class="auth-error">
+              @if (confirmPassword.hasError('required')) {
+                Confirma tu contraseña.
+              } @else if (form.hasError('passwordsMismatch')) {
+                Las contraseñas no coinciden.
+              }
+            </span>
+          }
+        </label>
+
+        @if (submitted && form.valid) {
+          <p class="auth-success">¡Cuenta creada! (demo, aún sin conexión al backend)</p>
+        }
+
+        <button class="auth-submit" type="submit">Crear cuenta</button>
+      </form>
+
+      <p class="auth-switch">
+        ¿Ya tienes cuenta?
+        <a routerLink="/login">Inicia sesión</a>
+      </p>
+    </div>
+  </div>
+</ion-content>

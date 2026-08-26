@@ -1,0 +1,27 @@
+<ion-header class="app-navbar">
+  <ion-toolbar>
+    <div class="navbar-inner">
+      <a class="navbar-brand" routerLink="/home" aria-label="AgroMarket, ir al inicio">
+        <img class="navbar-logo" src="assets/icon/icono_agromarket.png" alt="Logo de AgroMarket" />
+      </a>
+
+      <nav class="navbar-links" aria-label="Navegación principal">
+        @for (link of navLinks; track link.path) {
+          <a
+            class="navbar-link"
+            [routerLink]="link.path"
+            routerLinkActive="navbar-link--active"
+            [routerLinkActiveOptions]="{ exact: !!link.exact }"
+          >
+            {{ link.label }}
+          </a>
+        }
+      </nav>
+
+      <div class="navbar-auth">
+        <a class="navbar-auth-btn navbar-auth-btn--ghost" routerLink="/login">Sign in</a>
+        <a class="navbar-auth-btn navbar-auth-btn--solid" routerLink="/registro">Register</a>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>

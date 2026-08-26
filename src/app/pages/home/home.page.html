@@ -1,0 +1,27 @@
+<ion-content class="home-content">
+  <section class="hero">
+    <div class="hero-overlay">
+      <img class="hero-logo" src="assets/images/logo_agromarket.png" alt="AgroMarket" />
+
+      <div class="hero-search">
+        <ion-icon name="menu-outline" class="hero-search-icon" aria-hidden="true"></ion-icon>
+        <input class="hero-search-input" type="search" placeholder="Hinted search text" />
+        <button class="hero-search-btn" type="button" aria-label="Buscar">
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="recent">
+    <h2 class="recent-title">Lo más reciente</h2>
+
+    <div class="product-grid">
+      @for (product of products(); track product.id) {
+        <a class="product-link" [routerLink]="['/producto', product.id]">
+          <app-product-card [product]="product"></app-product-card>
+        </a>
+      }
+    </div>
+  </section>
+</ion-content>

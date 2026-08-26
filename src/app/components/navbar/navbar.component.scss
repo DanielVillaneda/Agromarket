@@ -1,0 +1,121 @@
+.app-navbar {
+  ion-toolbar {
+    --background: #f4f6ec;
+    --color: #33402f;
+    --border-width: 0 0 1px 0;
+    --border-color: #e4e8da;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --min-height: 72px;
+  }
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.navbar-links::-webkit-scrollbar {
+  display: none;
+}
+
+.navbar-link {
+  padding: 7px 16px;
+  border-radius: 999px;
+  color: #4b5646;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-link:hover {
+  background: rgba(76, 175, 80, 0.12);
+}
+
+.navbar-link--active {
+  background: #4caf50;
+  color: #ffffff;
+}
+
+.navbar-link--active:hover {
+  background: #4caf50;
+}
+
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.navbar-auth-btn {
+  padding: 7px 18px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.navbar-auth-btn--ghost {
+  background: #e9ece0;
+  color: #33402f;
+}
+
+.navbar-auth-btn--ghost:hover {
+  background: #dfe3d3;
+}
+
+.navbar-auth-btn--solid {
+  background: #22281f;
+  color: #ffffff;
+}
+
+.navbar-auth-btn--solid:hover {
+  background: #33402f;
+}
+
+@media (max-width: 760px) {
+  .navbar-inner {
+    gap: 10px;
+  }
+
+  .navbar-link {
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .navbar-auth-btn {
+    padding: 6px 12px;
+  }
+}
