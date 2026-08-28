@@ -1,0 +1,45 @@
+<ion-content class="search-content">
+  <section class="search-section">
+    @if (query()) {
+      <h2 class="search-title">
+        Resultados para "{{ query() }}"
+        @if (results().length) {
+          <span class="search-count">({{ results().length }})</span>
+        }
+      </h2>
+
+      @if (results().length) {
+        <div class="product-grid">
+          @for (product of results(); track product.id) {
+            <a class="product-link" [routerLink]="['/producto', product.id]">
+              <app-product-card [product]="product"></app-product-card>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="search-empty">
+          <ion-icon [icon]="searchOutline" aria-hidden="true"></ion-icon>
+          <p>No encontramos productos para "{{ query() }}".</p>
+        </div>
+      }
+    } @else {
+      <div class="search-empty">
+        <ion-icon [icon]="searchOutline" aria-hidden="true"></ion-icon>
+        <p>Escribe algo en la barra de búsqueda para ver resultados.</p>
+      </div>
+    }
+
+    @if (topSearches.length) {
+      <div class="search-suggestions">
+        <h3 class="search-suggestions-title">Lo más buscado</h3>
+        <div class="search-suggestions-chips">
+          @for (term of topSearches; track term) {
+            <button type="button" class="search-suggestion-chip" (click)="searchTerm(term)">
+              {{ term }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </section>
+</ion-content>

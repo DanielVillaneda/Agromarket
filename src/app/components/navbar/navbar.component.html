@@ -18,6 +18,30 @@
         }
       </nav>
 
+      <div class="navbar-search">
+        <div class="navbar-search-box">
+          <input
+            type="search"
+            class="navbar-search-input"
+            placeholder="¿Qué buscas hoy?"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            (keydown.enter)="goSearch()"
+          />
+          <button type="button" class="navbar-search-submit" (click)="goSearch()" aria-label="Buscar">
+            <ion-icon [icon]="searchOutline" class="navbar-search-icon" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <a class="navbar-cart" routerLink="/carritocompras" aria-label="Carrito de compras">
+        <ion-icon slot="icon-only"
+          [icon]="cartOutline"></ion-icon>
+        @if (cartCount() > 0) {
+          <span class="navbar-cart-badge">{{ cartCount() }}</span>
+        }
+      </a>
+
       <div class="navbar-auth">
         <a class="navbar-auth-btn navbar-auth-btn--ghost" routerLink="/login">Sign in</a>
         <a class="navbar-auth-btn navbar-auth-btn--solid" routerLink="/registro">Register</a>

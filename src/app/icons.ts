@@ -1,0 +1,81 @@
+import { addIcons } from 'ionicons';
+import {
+  addOutline,
+  arrowBackOutline,
+  bagCheckOutline,
+  basketOutline,
+  cafeOutline,
+  callOutline,
+  cameraOutline,
+  cartOutline,
+  chatbubblesOutline,
+  checkmarkCircle,
+  checkmarkCircleOutline,
+  checkmarkOutline,
+  closeOutline,
+  eggOutline,
+  eyeOutline,
+  flagOutline,
+  flashOutline,
+  flowerOutline,
+  heart,
+  heartOutline,
+  leafOutline,
+  locationOutline,
+  mailOutline,
+  menuOutline,
+  nutritionOutline,
+  pawOutline,
+  removeOutline,
+  restaurantOutline,
+  schoolOutline,
+  searchOutline,
+  shirtOutline,
+  storefrontOutline,
+  trashOutline,
+} from 'ionicons/icons';
+
+/**
+ * Ionicons 8 ya no resuelve automáticamente los íconos vía CDN cuando no
+ * están registrados: si el nombre no está en el mapa local, intenta buscar
+ * el SVG en una ruta de assets que esta app (Angular CLI puro, sin el asset
+ * path que configura el CLI de Ionic) nunca copia al build, y el ícono
+ * simplemente no se muestra. Registramos aquí, una sola vez al arrancar la
+ * app, cada ícono usado en el proyecto para que siempre se rendericen sin
+ * depender de red ni de esa ruta de assets.
+ */
+addIcons({
+  addOutline,
+  arrowBackOutline,
+  bagCheckOutline,
+  basketOutline,
+  cafeOutline,
+  callOutline,
+  cameraOutline,
+  cartOutline,
+  chatbubblesOutline,
+  checkmarkCircle,
+  checkmarkCircleOutline,
+  checkmarkOutline,
+  closeOutline,
+  eggOutline,
+  eyeOutline,
+  flagOutline,
+  flashOutline,
+  flowerOutline,
+  heart,
+  heartOutline,
+  leafOutline,
+  locationOutline,
+  mailOutline,
+  menuOutline,
+  nutritionOutline,
+  pawOutline,
+  removeOutline,
+  restaurantOutline,
+  schoolOutline,
+  searchOutline,
+  shirtOutline,
+  storefrontOutline,
+  trashOutline,
+});

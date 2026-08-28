@@ -148,6 +148,14 @@ export class ProductsService {
 
   private readonly _favoriteIds = signal<Set<number>>(new Set());
   private readonly _purchasedIds = signal<Set<number>>(new Set());
+  private readonly _cartItems = signal<Map<number, number>>(new Map());
+  private readonly _recentlyViewedIds = signal<number[]>([]);
+
+  /**
+   * Términos más buscados: dato de referencia mientras no exista analítica
+   * real de búsquedas en el backend.
+   */
+  readonly topSearches: string[] = ['Café', 'Aguacate', 'Miel', 'Queso', 'Semillas'];
 
   readonly marketProducts = this._marketProducts.asReadonly();
   readonly myProducts = this._myProducts.asReadonly();
@@ -159,6 +167,31 @@ export class ProductsService {
   readonly purchasedProducts = computed(() =>
     this._marketProducts().filter((product) => this._purchasedIds().has(product.id)),
   );
+
+  readonly cartItems = computed(() => {
+    const items = this._cartItems();
+    return this._marketProducts()
+      .filter((product) => items.has(product.id))
+      .map((product) => ({ product, quantity: items.get(product.id) as number }));
+  });
+
+  readonly cartCount = computed(() =>
+    Array.from(this._cartItems().values()).reduce((sum, quantity) => sum + quantity, 0),
+  );
+
+  readonly cartTotal = computed(() =>
+    this.cartItems().reduce(
+      (sum, item) => sum + this.parsePriceValue(item.product.price) * item.quantity,
+      0,
+    ),
+  );
+
+  readonly recentlyViewedProducts = computed(() => {
+    const ids = this._recentlyViewedIds();
+    return ids
+      .map((id) => this.getMarketProduct(id))
+      .filter((product): product is Product => !!product);
+  });
 
   getMarketProduct(id: number): Product | undefined {
     return this._marketProducts().find((product) => product.id === id);
@@ -204,6 +237,78 @@ export class ProductsService {
       next.add(id);
       return next;
     });
+  }
+
+  isInCart(id: number): boolean {
+    return this._cartItems().has(id);
+  }
+
+  getCartQuantity(id: number): number {
+    return this._cartItems().get(id) ?? 0;
+  }
+
+  addToCart(id: number, quantity = 1): void {
+    this._cartItems.update((current) => {
+      const next = new Map(current);
+      next.set(id, (next.get(id) ?? 0) + quantity);
+      return next;
+    });
+  }
+
+  updateCartQuantity(id: number, quantity: number): void {
+    this._cartItems.update((current) => {
+      const next = new Map(current);
+      if (quantity <= 0) {
+        next.delete(id);
+      } else {
+        next.set(id, quantity);
+      }
+      return next;
+    });
+  }
+
+  removeFromCart(id: number): void {
+    this._cartItems.update((current) => {
+      const next = new Map(current);
+      next.delete(id);
+      return next;
+    });
+  }
+
+  clearCart(): void {
+    this._cartItems.set(new Map());
+  }
+
+  private parsePriceValue(price: string): number {
+    const digits = price.replace(/[^0-9]/g, '');
+    return digits ? Number(digits) : 0;
+  }
+
+  markViewed(id: number): void {
+    this._recentlyViewedIds.update((current) => {
+      const withoutId = current.filter((existingId) => existingId !== id);
+      return [id, ...withoutId].slice(0, 6);
+    });
+  }
+
+  searchProducts(query: string): Product[] {
+    const normalized = this.normalize(query);
+
+    if (!normalized) {
+      return [];
+    }
+
+    return this._marketProducts().filter((product) =>
+      this.normalize(product.title).includes(normalized),
+    );
+  }
+
+  private normalize(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 
 }

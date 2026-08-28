@@ -1,0 +1,86 @@
+<ion-content class="carrito-content">
+  <section class="carrito-section">
+    <h2 class="carrito-title">Carrito de compras</h2>
+
+    @if (checkedOut) {
+      <div class="carrito-success">
+        <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+        <p>¡Compra realizada con éxito! Puedes verla en <a routerLink="/compras">Mis Compras</a>.</p>
+      </div>
+    }
+
+    @if (items().length) {
+      <div class="carrito-list">
+        @for (item of items(); track item.product.id) {
+          <div class="carrito-item">
+            <a
+              class="carrito-item-photo"
+              [routerLink]="['/producto', item.product.id]"
+              [style.background]="item.product.accent"
+            >
+              <ion-icon [name]="item.product.icon" aria-hidden="true"></ion-icon>
+            </a>
+
+            <div class="carrito-item-info">
+              <a class="carrito-item-title" [routerLink]="['/producto', item.product.id]">
+                {{ item.product.title }}
+              </a>
+              <p class="carrito-item-location">
+                <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                {{ item.product.location }}
+              </p>
+              <p class="carrito-item-price">{{ item.product.price }}</p>
+            </div>
+
+            <div class="carrito-item-qty">
+              <button
+                type="button"
+                class="carrito-qty-btn"
+                (click)="decrease(item.product.id, item.quantity)"
+                aria-label="Quitar una unidad"
+              >
+                <ion-icon slot="icon-only"
+                [icon]="removeOutline"></ion-icon>
+              </button>
+              <span class="carrito-qty-value">{{ item.quantity }}</span>
+              <button
+                type="button"
+                class="carrito-qty-btn"
+                (click)="increase(item.product.id, item.quantity)"
+                aria-label="Agregar una unidad"
+              >
+                <ion-icon slot="icon-only"
+                [icon]="addOutline">></ion-icon>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="carrito-item-remove"
+              (click)="remove(item.product.id)"
+              aria-label="Eliminar del carrito"
+            >
+              <ion-icon slot="icon-only"
+                [icon]="trashOutline">></ion-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="carrito-summary">
+        <p class="carrito-summary-total">
+          Total: <strong>{{ formatPrice(total()) }}</strong>
+        </p>
+        <button type="button" class="carrito-checkout" (click)="checkout()">
+          Finalizar compra
+        </button>
+      </div>
+    } @else if (!checkedOut) {
+      <div class="carrito-empty">
+        <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+        <p>Tu carrito está vacío.</p>
+        <a routerLink="/home">Explorar productos</a>
+      </div>
+    }
+  </section>
+</ion-content>

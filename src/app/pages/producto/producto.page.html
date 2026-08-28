@@ -50,16 +50,52 @@
             <p class="producto-quantity">{{ product.quantity }}</p>
           }
 
-          <button
-            type="button"
-            class="producto-buy"
-            [class.producto-buy--done]="isPurchased()"
-            (click)="buyProduct()"
-            [disabled]="isPurchased()"
-          >
-            <ion-icon [name]="isPurchased() ? 'checkmark-circle' : 'cart-outline'" aria-hidden="true"></ion-icon>
-            {{ isPurchased() ? 'Compra realizada' : 'Comprar' }}
-          </button>
+          <div class="producto-cart-widget">
+            @if (cartQuantity() === 0) {
+              <button type="button" class="producto-cart-add" (click)="addToCart()">
+                <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+                Agregar al carrito
+              </button>
+            } @else {
+              <div class="producto-cart-stepper">
+                <button
+                  type="button"
+                  class="producto-cart-step-btn producto-cart-step-btn--danger"
+                  (click)="cartQuantity() === 1 ? removeFromCart() : decreaseCartQuantity()"
+                  [attr.aria-label]="cartQuantity() === 1 ? 'Quitar del carrito' : 'Quitar una unidad'"
+                >
+                  <ion-icon
+                    [name]="cartQuantity() === 1 ? 'trash-outline' : 'remove-outline'"
+                    aria-hidden="true"
+                  ></ion-icon>
+                </button>
+
+                <div class="producto-cart-step-value">
+                  <span class="producto-cart-step-number">{{ cartQuantity() }}</span>
+                  <span class="producto-cart-step-unit">und.</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="producto-cart-step-btn producto-cart-step-btn--danger"
+                  (click)="increaseCartQuantity()"
+                  aria-label="Agregar una unidad"
+                >
+                  <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </div>
+            }
+          </div>
+
+          <ion-toast
+            [isOpen]="showAddedToast()"
+            message="Producto agregado al carrito"
+            duration="2000"
+            position="bottom"
+            color="success"
+            icon="checkmark-circle-outline"
+            (didDismiss)="dismissToast()"
+          ></ion-toast>
 
           <h2 class="producto-subtitle">Descripción</h2>
           <p class="producto-description">{{ product.description }}</p>

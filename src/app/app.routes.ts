@@ -47,4 +47,12 @@ export const routes: Routes = [
     path: 'nosotros',
     loadComponent: () => import('./pages/nosotros/nosotros.page').then( m => m.NosotrosPage)
   },
+  {
+    path: 'carritocompras',
+    loadComponent: () => import('./pages/carritocompras/carritocompras.page').then( m => m.CarritocomprasPage)
+  },
+  {
+    path: 'search',
+    loadComponent: () => import('./pages/search/search.page').then( m => m.SearchPage)
+  },
 ];

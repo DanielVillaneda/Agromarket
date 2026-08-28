@@ -36,9 +36,24 @@ describe('ProductoPage', () => {
     expect(component.isFavorite()).toBeTruthy();
   });
 
-  it('should mark the product as purchased', () => {
-    expect(component.isPurchased()).toBeFalsy();
-    component.buyProduct();
-    expect(component.isPurchased()).toBeTruthy();
+  it('should add the product to the cart and show the confirmation toast', () => {
+    expect(component.cartQuantity()).toBe(0);
+    component.addToCart();
+    expect(component.cartQuantity()).toBe(1);
+    expect(component.showAddedToast()).toBeTruthy();
+  });
+
+  it('should step the cart quantity up and down', () => {
+    component.addToCart();
+    component.increaseCartQuantity();
+    expect(component.cartQuantity()).toBe(2);
+    component.decreaseCartQuantity();
+    expect(component.cartQuantity()).toBe(1);
+  });
+
+  it('should remove the product from the cart', () => {
+    component.addToCart();
+    component.removeFromCart();
+    expect(component.cartQuantity()).toBe(0);
   });
 });

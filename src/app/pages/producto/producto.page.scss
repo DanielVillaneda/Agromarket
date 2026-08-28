@@ -138,40 +138,98 @@
   color: #6b7568;
 }
 
-.producto-buy {
+.producto-cart-widget {
+  margin-bottom: 6px;
+}
+
+.producto-cart-add {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  margin-bottom: 6px;
   padding: 13px;
-  border: none;
+  border: 1px solid #4caf50;
   border-radius: 999px;
-  background: #22281f;
-  color: #ffffff;
+  background: #ffffff;
+  color: #2e7d32;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.producto-buy:hover:not(:disabled) {
-  background: #33402f;
+.producto-cart-add:hover {
+  background: #f1f8f1;
 }
 
-.producto-buy ion-icon {
+.producto-cart-add ion-icon {
   font-size: 1.15rem;
 }
 
-.producto-buy--done {
-  background: #e8f5e9;
-  color: #2e7d32;
-  cursor: default;
+.producto-cart-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eef0e8;
 }
 
-.producto-buy:disabled {
-  opacity: 1;
+.producto-cart-step-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: background-color 0.2s ease;
+}
+
+.producto-cart-step-btn--danger {
+  border: none;
+  color: #24331f;
+}
+
+.producto-cart-step-btn--danger:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.producto-cart-step-btn--add {
+  border: 1.5px solid #ef7d3a;
+  color: #ef7d3a;
+}
+
+.producto-cart-step-btn--add:hover {
+  background: rgba(239, 125, 58, 0.1);
+}
+
+.producto-cart-step-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e0e4d6;
+}
+
+.producto-cart-step-number {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ef7d3a;
+}
+
+.producto-cart-step-unit {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #33402f;
 }
 
 .producto-subtitle {
