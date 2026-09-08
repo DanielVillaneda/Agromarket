@@ -1,43 +1,121 @@
-import { Component } from '@angular/core';
-import { IonContent } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { IonContent, IonIcon } from '@ionic/angular';
+import { Router, RouterLink } from '@angular/router';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 
+type AuthMode = 'login' | 'registro';
+
+function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password')?.value;
+  const confirmPassword = group.get('confirmPassword')?.value;
+  return password && confirmPassword && password !== confirmPassword
+    ? { passwordsMismatch: true }
+    : null;
+}
+
+/**
+ * Página de acceso con diseño deslizable: un mismo panel contiene los
+ * formularios de inicio de sesión y de registro, y un panel superpuesto se
+ * desliza para alternar entre ambos (en escritorio) o simplemente se anima
+ * horizontalmente entre las dos tarjetas (en móvil). Las rutas '/login' y
+ * '/registro' cargan este mismo componente; el modo inicial depende de con
+ * cuál de las dos se entró, y a partir de ahí el cambio es puramente visual
+ * (no vuelve a navegar), para que la animación de deslizamiento se vea.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  imports: [IonContent, RouterLink, ReactiveFormsModule],
+  imports: [IonContent, IonIcon, RouterLink, ReactiveFormsModule],
 })
 export class LoginPage {
 
-  submitted = false;
+  private readonly router = inject(Router);
 
-  readonly form: FormGroup = this.fb.group({
+  readonly mode = signal<AuthMode>(this.router.url.includes('registro') ? 'registro' : 'login');
+
+  loginSubmitted = false;
+  registroSubmitted = false;
+
+  readonly loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
+  readonly registroForm: FormGroup = this.fb.group(
+    {
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{7,10}$/)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    { validators: passwordsMatchValidator },
+  );
+
   constructor(private fb: FormBuilder) {}
 
-  get email() {
-    return this.form.controls['email'];
+  get loginEmail() {
+    return this.loginForm.controls['email'];
   }
 
-  get password() {
-    return this.form.controls['password'];
+  get loginPassword() {
+    return this.loginForm.controls['password'];
   }
 
-  onSubmit(): void {
-    this.submitted = true;
+  get nombre() {
+    return this.registroForm.controls['nombre'];
+  }
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  get registroEmail() {
+    return this.registroForm.controls['email'];
+  }
+
+  get telefono() {
+    return this.registroForm.controls['telefono'];
+  }
+
+  get registroPassword() {
+    return this.registroForm.controls['password'];
+  }
+
+  get confirmPassword() {
+    return this.registroForm.controls['confirmPassword'];
+  }
+
+  setMode(mode: AuthMode): void {
+    this.mode.set(mode);
+  }
+
+  onLoginSubmit(): void {
+    this.loginSubmitted = true;
+
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       return;
     }
 
     // TODO: conectar con el servicio de autenticación cuando el backend esté disponible.
-    console.log('Login form value', this.form.value);
+    console.log('Login form value', this.loginForm.value);
+  }
+
+  onRegistroSubmit(): void {
+    this.registroSubmitted = true;
+
+    if (this.registroForm.invalid) {
+      this.registroForm.markAllAsTouched();
+      return;
+    }
+
+    // TODO: conectar con el servicio de registro cuando el backend esté disponible.
+    console.log('Registro form value', this.registroForm.value);
   }
 
 }

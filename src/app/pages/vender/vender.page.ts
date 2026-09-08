@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 interface ProductImage {
   id: number;
@@ -12,7 +13,7 @@ interface ProductImage {
   selector: 'app-vender',
   templateUrl: './vender.page.html',
   styleUrls: ['./vender.page.scss'],
-  imports: [IonContent, IonIcon, RouterLink, ReactiveFormsModule],
+  imports: [IonContent, IonIcon, RouterLink, ReactiveFormsModule, NavbarComponent],
 })
 export class VenderPage {
 

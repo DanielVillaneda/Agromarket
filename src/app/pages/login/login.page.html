@@ -1,65 +1,241 @@
 <div class="auth-bg" aria-hidden="true"></div>
 
+<a class="auth-back-btn" routerLink="/home" aria-label="Volver al inicio">
+  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+  <span>Volver al inicio</span>
+</a>
+
 <ion-content class="auth-content" [fullscreen]="true">
   <div class="auth-wrapper">
-    <div class="auth-card">
-      <img class="auth-logo" src="assets/images/logo_agromarket.png" alt="AgroMarket" />
+    <div class="auth-container" [class.auth-container--active]="mode() === 'registro'">
 
-      <h1 class="auth-title">Inicia sesión</h1>
-      <p class="auth-subtitle">Ingresa a tu cuenta para comprar y vender productos del campo.</p>
+      <div class="auth-pill-toggle">
+        <button
+          type="button"
+          class="auth-pill-btn"
+          [class.auth-pill-btn--active]="mode() === 'login'"
+          (click)="setMode('login')"
+        >
+          Iniciar sesión
+        </button>
+        <button
+          type="button"
+          class="auth-pill-btn"
+          [class.auth-pill-btn--active]="mode() === 'registro'"
+          (click)="setMode('registro')"
+        >
+          Regístrate
+        </button>
+      </div>
 
-      <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-        <label class="auth-field">
-          <span class="auth-label">Correo electrónico</span>
-          <input
-            class="auth-input"
-            type="email"
-            formControlName="email"
-            placeholder="correo@ejemplo.com"
-            autocomplete="email"
-          />
-          @if (email.invalid && email.touched) {
-            <span class="auth-error">
-              @if (email.hasError('required')) {
-                Ingresa tu correo electrónico.
-              } @else if (email.hasError('email')) {
-                Ingresa un correo electrónico válido.
+      <div class="auth-track">
+        <!-- Panel de inicio de sesión -->
+        <div class="auth-form-panel auth-form-panel--login">
+          <div class="auth-form-scroll">
+            <img class="auth-logo" src="assets/images/logo_agromarket.png" alt="AgroMarket" />
+
+            <h1 class="auth-title">Inicia sesión</h1>
+            <p class="auth-subtitle">Ingresa a tu cuenta para comprar y vender productos del campo.</p>
+
+            <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" novalidate>
+              <label class="auth-field">
+                <span class="auth-label">Correo electrónico</span>
+                <input
+                  class="auth-input"
+                  type="email"
+                  formControlName="email"
+                  placeholder="correo@ejemplo.com"
+                  autocomplete="email"
+                />
+                @if (loginEmail.invalid && loginEmail.touched) {
+                  <span class="auth-error">
+                    @if (loginEmail.hasError('required')) {
+                      Ingresa tu correo electrónico.
+                    } @else if (loginEmail.hasError('email')) {
+                      Ingresa un correo electrónico válido.
+                    }
+                  </span>
+                }
+              </label>
+
+              <label class="auth-field">
+                <span class="auth-label">Contraseña</span>
+                <input
+                  class="auth-input"
+                  type="password"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  autocomplete="current-password"
+                />
+                @if (loginPassword.invalid && loginPassword.touched) {
+                  <span class="auth-error">
+                    @if (loginPassword.hasError('required')) {
+                      Ingresa tu contraseña.
+                    } @else if (loginPassword.hasError('minlength')) {
+                      Debe tener al menos 6 caracteres.
+                    }
+                  </span>
+                }
+              </label>
+
+              @if (loginSubmitted && loginForm.valid) {
+                <p class="auth-success">¡Bienvenido de nuevo! (demo, aún sin conexión al backend)</p>
               }
-            </span>
-          }
-        </label>
 
-        <label class="auth-field">
-          <span class="auth-label">Contraseña</span>
-          <input
-            class="auth-input"
-            type="password"
-            formControlName="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-          />
-          @if (password.invalid && password.touched) {
-            <span class="auth-error">
-              @if (password.hasError('required')) {
-                Ingresa tu contraseña.
-              } @else if (password.hasError('minlength')) {
-                Debe tener al menos 6 caracteres.
+              <button class="auth-submit" type="submit">Iniciar sesión</button>
+            </form>
+
+            <p class="auth-switch">
+              ¿No tienes cuenta?
+              <button type="button" class="auth-switch-link" (click)="setMode('registro')">Regístrate</button>
+            </p>
+          </div>
+        </div>
+
+        <!-- Panel de registro -->
+        <div class="auth-form-panel auth-form-panel--registro">
+          <div class="auth-form-scroll">
+            <img class="auth-logo" src="assets/images/logo_agromarket.png" alt="AgroMarket" />
+
+            <h1 class="auth-title">Crea tu cuenta</h1>
+            <p class="auth-subtitle">Únete a AgroMarket para comprar o vender productos del campo directamente.</p>
+
+            <form class="auth-form" [formGroup]="registroForm" (ngSubmit)="onRegistroSubmit()" novalidate>
+              <label class="auth-field">
+                <span class="auth-label">Nombre completo</span>
+                <input
+                  class="auth-input"
+                  type="text"
+                  formControlName="nombre"
+                  placeholder="Tu nombre"
+                  autocomplete="name"
+                />
+                @if (nombre.invalid && nombre.touched) {
+                  <span class="auth-error">
+                    @if (nombre.hasError('required')) {
+                      Ingresa tu nombre.
+                    } @else if (nombre.hasError('minlength')) {
+                      Debe tener al menos 3 caracteres.
+                    }
+                  </span>
+                }
+              </label>
+
+              <label class="auth-field">
+                <span class="auth-label">Correo electrónico</span>
+                <input
+                  class="auth-input"
+                  type="email"
+                  formControlName="email"
+                  placeholder="correo@ejemplo.com"
+                  autocomplete="email"
+                />
+                @if (registroEmail.invalid && registroEmail.touched) {
+                  <span class="auth-error">
+                    @if (registroEmail.hasError('required')) {
+                      Ingresa tu correo electrónico.
+                    } @else if (registroEmail.hasError('email')) {
+                      Ingresa un correo electrónico válido.
+                    }
+                  </span>
+                }
+              </label>
+
+              <label class="auth-field">
+                <span class="auth-label">Teléfono</span>
+                <input
+                  class="auth-input"
+                  type="tel"
+                  formControlName="telefono"
+                  placeholder="Ej. 3001234567"
+                  autocomplete="tel"
+                />
+                @if (telefono.invalid && telefono.touched) {
+                  <span class="auth-error">
+                    @if (telefono.hasError('required')) {
+                      Ingresa tu número de teléfono.
+                    } @else if (telefono.hasError('pattern')) {
+                      Ingresa un número válido (7 a 10 dígitos).
+                    }
+                  </span>
+                }
+              </label>
+
+              <label class="auth-field">
+                <span class="auth-label">Contraseña</span>
+                <input
+                  class="auth-input"
+                  type="password"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                />
+                @if (registroPassword.invalid && registroPassword.touched) {
+                  <span class="auth-error">
+                    @if (registroPassword.hasError('required')) {
+                      Ingresa una contraseña.
+                    } @else if (registroPassword.hasError('minlength')) {
+                      Debe tener al menos 6 caracteres.
+                    }
+                  </span>
+                }
+              </label>
+
+              <label class="auth-field">
+                <span class="auth-label">Confirmar contraseña</span>
+                <input
+                  class="auth-input"
+                  type="password"
+                  formControlName="confirmPassword"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                />
+                @if (confirmPassword.touched && (confirmPassword.hasError('required') || registroForm.hasError('passwordsMismatch'))) {
+                  <span class="auth-error">
+                    @if (confirmPassword.hasError('required')) {
+                      Confirma tu contraseña.
+                    } @else if (registroForm.hasError('passwordsMismatch')) {
+                      Las contraseñas no coinciden.
+                    }
+                  </span>
+                }
+              </label>
+
+              @if (registroSubmitted && registroForm.valid) {
+                <p class="auth-success">¡Cuenta creada! (demo, aún sin conexión al backend)</p>
               }
-            </span>
-          }
-        </label>
 
-        @if (submitted && form.valid) {
-          <p class="auth-success">¡Bienvenido de nuevo! (demo, aún sin conexión al backend)</p>
-        }
+              <button class="auth-submit" type="submit">Crear cuenta</button>
+            </form>
 
-        <button class="auth-submit" type="submit">Iniciar sesión</button>
-      </form>
+            <p class="auth-switch">
+              ¿Ya tienes cuenta?
+              <button type="button" class="auth-switch-link" (click)="setMode('login')">Inicia sesión</button>
+            </p>
+          </div>
+        </div>
+      </div>
 
-      <p class="auth-switch">
-        ¿No tienes cuenta?
-        <a routerLink="/registro">Regístrate</a>
-      </p>
+      <!-- Panel superpuesto deslizable (solo en escritorio) -->
+      <div class="auth-overlay-container">
+        <div class="auth-overlay">
+          <div class="auth-overlay-panel auth-overlay-panel--left">
+            <h2 class="auth-overlay-title">¡Bienvenido de nuevo!</h2>
+            <p class="auth-overlay-text">
+              ¿Ya tienes una cuenta? Inicia sesión para seguir comprando y vendiendo en AgroMarket.
+            </p>
+            <button type="button" class="auth-ghost-btn" (click)="setMode('login')">Iniciar sesión</button>
+          </div>
+          <div class="auth-overlay-panel auth-overlay-panel--right">
+            <h2 class="auth-overlay-title">¡Hola, agricultor!</h2>
+            <p class="auth-overlay-text">
+              Regístrate y empieza a comprar o vender productos del campo directamente.
+            </p>
+            <button type="button" class="auth-ghost-btn" (click)="setMode('registro')">Regístrate</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </ion-content>

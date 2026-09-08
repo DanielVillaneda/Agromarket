@@ -3,12 +3,13 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
 import { addOutline, removeOutline, trashOutline} from 'ionicons/icons';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-carritocompras',
   templateUrl: './carritocompras.page.html',
   styleUrls: ['./carritocompras.page.scss'],
-  imports: [IonContent, IonIcon, RouterLink],
+  imports: [IonContent, IonIcon, RouterLink, NavbarComponent],
 })
 export class CarritocomprasPage {
 
