@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 import { LoginPage } from './login.page';
 
@@ -9,7 +10,7 @@ describe('LoginPage', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient()],
     });
     fixture = TestBed.createComponent(LoginPage);
     component = fixture.componentInstance;

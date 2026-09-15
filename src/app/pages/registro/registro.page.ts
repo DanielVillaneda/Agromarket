@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,6 +9,8 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;
@@ -27,6 +29,8 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
 export class RegistroPage {
 
   submitted = false;
+  readonly loading = signal(false);
+  readonly errorMessage = signal<string | null>(null);
 
   readonly form: FormGroup = this.fb.group(
     {
@@ -39,7 +43,11 @@ export class RegistroPage {
     { validators: passwordsMatchValidator },
   );
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly router: Router,
+  ) {}
 
   get nombre() {
     return this.form.controls['nombre'];
@@ -63,14 +71,26 @@ export class RegistroPage {
 
   onSubmit(): void {
     this.submitted = true;
+    this.errorMessage.set(null);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // TODO: conectar con el servicio de registro cuando el backend esté disponible.
-    console.log('Registro form value', this.form.value);
+    const { nombre, email, telefono, password } = this.form.value;
+    this.loading.set(true);
+
+    this.auth.register({ nombre, email, telefono, password }).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.router.navigateByUrl('/home');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.errorMessage.set(err.error?.message ?? 'No se pudo crear la cuenta. Intenta de nuevo.');
+      },
+    });
   }
 
 }

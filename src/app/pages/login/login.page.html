@@ -49,11 +49,13 @@
           }
         </label>
 
-        @if (submitted && form.valid) {
-          <p class="auth-success">¡Bienvenido de nuevo! (demo, aún sin conexión al backend)</p>
+        @if (errorMessage()) {
+          <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
         }
 
-        <button class="auth-submit" type="submit">Iniciar sesión</button>
+        <button class="auth-submit" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Iniciando sesión…' : 'Iniciar sesión' }}
+        </button>
       </form>
 
       <p class="auth-switch">

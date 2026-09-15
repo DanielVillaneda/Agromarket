@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,13 +14,19 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class LoginPage {
 
   submitted = false;
+  readonly loading = signal(false);
+  readonly errorMessage = signal<string | null>(null);
 
   readonly form: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly router: Router,
+  ) {}
 
   get email() {
     return this.form.controls['email'];
@@ -30,14 +38,26 @@ export class LoginPage {
 
   onSubmit(): void {
     this.submitted = true;
+    this.errorMessage.set(null);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // TODO: conectar con el servicio de autenticación cuando el backend esté disponible.
-    console.log('Login form value', this.form.value);
+    const { email, password } = this.form.value;
+    this.loading.set(true);
+
+    this.auth.login(email, password).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.router.navigateByUrl('/home');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.errorMessage.set(err.error?.message ?? 'No se pudo iniciar sesión. Intenta de nuevo.');
+      },
+    });
   }
 
 }
