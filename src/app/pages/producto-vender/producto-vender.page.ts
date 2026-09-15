@@ -3,6 +3,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductsService } from '../../services/products.service';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 interface GalleryImage {
   id: number;
@@ -15,7 +16,7 @@ interface GalleryImage {
   selector: 'app-producto-vender',
   templateUrl: './producto-vender.page.html',
   styleUrls: ['./producto-vender.page.scss'],
-  imports: [IonContent, IonIcon, RouterLink, ReactiveFormsModule],
+  imports: [IonContent, IonIcon, RouterLink, ReactiveFormsModule, NavbarComponent],
 })
 export class ProductoVenderPage {
 

@@ -18,15 +18,18 @@
         }
       </nav>
 
-      <div class="navbar-search">
-        <div class="navbar-search-box">
+      <div class="navbar-search" #searchWrapper>
+        <div class="navbar-search-box" [class.navbar-search-box--active]="isOpen()">
           <input
             type="search"
             class="navbar-search-input"
             placeholder="¿Qué buscas hoy?"
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
+            (focus)="onFocus()"
             (keydown.enter)="goSearch()"
+            (keydown.escape)="close()"
+            autocomplete="off"
           />
           <button type="button" class="navbar-search-submit" (click)="goSearch()" aria-label="Buscar">
             <ion-icon [icon]="searchOutline" class="navbar-search-icon" aria-hidden="true"></ion-icon>
@@ -48,4 +51,50 @@
       </div>
     </div>
   </ion-toolbar>
+
+  @if (isOpen()) {
+    <div
+      class="navbar-search-panel"
+      #searchPanel
+      [style.top.px]="panelTop()"
+      [style.left.px]="panelLeft()"
+      [style.width.px]="panelWidth()"
+    >
+      @if (!searchQuery().trim()) {
+        <p class="navbar-search-panel-title">Términos más buscados</p>
+        <ul class="navbar-search-panel-list">
+          @for (term of topSearches; track term) {
+            <li>
+              <button type="button" class="navbar-search-panel-item" (click)="selectTerm(term)">
+                <ion-icon [icon]="searchOutline" aria-hidden="true"></ion-icon>
+                {{ term }}
+              </button>
+            </li>
+          }
+        </ul>
+      } @else if (suggestions().length) {
+        <p class="navbar-search-panel-title">Sugerencias</p>
+        <ul class="navbar-search-panel-list">
+          @for (product of suggestions(); track product.id) {
+            <li>
+              <button type="button" class="navbar-search-panel-item" (click)="selectSuggestion(product)">
+                <ion-icon [icon]="searchOutline" aria-hidden="true"></ion-icon>
+                {{ product.title }}
+              </button>
+            </li>
+          }
+        </ul>
+        <button type="button" class="navbar-search-panel-all" (click)="goSearch()">
+          Ver todos los resultados para "{{ searchQuery() }}"
+        </button>
+      } @else {
+        <p class="navbar-search-panel-empty">
+          No encontramos sugerencias para "{{ searchQuery() }}".
+        </p>
+        <button type="button" class="navbar-search-panel-all" (click)="goSearch()">
+          Buscar de todas formas
+        </button>
+      }
+    </div>
+  }
 </ion-header>

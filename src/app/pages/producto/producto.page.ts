@@ -2,12 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon, IonToast } from '@ionic/angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-producto',
   templateUrl: './producto.page.html',
   styleUrls: ['./producto.page.scss'],
-  imports: [IonContent, IonIcon, RouterLink, IonToast],
+  imports: [IonContent, IonIcon, RouterLink, IonToast, NavbarComponent],
 })
 export class ProductoPage {
 

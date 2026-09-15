@@ -21,12 +21,12 @@ describe('LoginPage', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should be invalid when empty', () => {
-    expect(component.form.valid).toBeFalsy();
+  it('should default to login mode', () => {
+    expect(component.mode()).toBe('login');
   });
 
-  it('should be valid with a correct email and password', () => {
-    component.form.setValue({ email: 'test@example.com', password: '123456' });
-    expect(component.form.valid).toBeTruthy();
+  it('should switch to registro mode', () => {
+    component.setMode('registro');
+    expect(component.mode()).toBe('registro');
   });
 });

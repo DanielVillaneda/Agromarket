@@ -1,14 +1,16 @@
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { ProductsService } from '../../services/products.service';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
-  imports: [IonIcon, IonContent, RouterLink, ProductCardComponent],
+  imports: [IonContent, RouterLink, ProductCardComponent, NavbarComponent, FooterComponent],
 })
 export class HomePage implements AfterViewInit {
   private readonly productsService = inject(ProductsService);
