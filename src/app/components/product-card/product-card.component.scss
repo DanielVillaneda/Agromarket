@@ -15,6 +15,12 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
 }
 
+@media (max-width: 400) {
+  .product-card {
+    max-width: 300px;
+  }
+}
+
 .product-thumb {
   display: flex;
   align-items: center;

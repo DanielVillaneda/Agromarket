@@ -1,0 +1,117 @@
+// Esquema de base de datos de AgroMarket.
+// Se corresponde con lo que ya usa el frontend (Ionic/Angular): la interfaz
+// Product, el ProductsService (mercado, mis productos, favoritos, carrito,
+// compras, vistos recientemente) y los formularios de login/registro.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  email        String   @unique
+  telefono     String
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  products        Product[]
+  favorites       Favorite[]
+  cartItems       CartItem[]
+  purchases       Purchase[]
+  recentlyViewed  RecentlyViewed[]
+
+  @@map("users")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String
+  price       Int // valor en pesos colombianos (COP), sin decimales
+  location    String
+  icon        String   @default("leaf-outline")
+  accent      String   @default("linear-gradient(135deg, #9ccc65, #558b2f)")
+  description String?
+  quantity    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sellerId Int
+  seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  photos         ProductPhoto[]
+  favorites      Favorite[]
+  cartItems      CartItem[]
+  purchases      Purchase[]
+  recentlyViewed RecentlyViewed[]
+
+  @@map("products")
+}
+
+model ProductPhoto {
+  id        Int    @id @default(autoincrement())
+  url       String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_photos")
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("favorites")
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int      @default(1)
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model Purchase {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  productId   Int
+  quantity    Int
+  unitPrice   Int // se guarda el precio al momento de comprar
+  purchasedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("purchases")
+}
+
+model RecentlyViewed {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  viewedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("recently_viewed")
+}
