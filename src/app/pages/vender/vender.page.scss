@@ -89,7 +89,8 @@
 }
 
 .vender-input,
-.vender-textarea {
+.vender-textarea,
+.vender-select {
   border: 1px solid #e0e4d6;
   border-radius: 10px;
   padding: 11px 14px;
@@ -101,13 +102,24 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.vender-quantity-group {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 8px;
+}
+
+.vender-select {
+  cursor: pointer;
+}
+
 .vender-textarea {
   resize: vertical;
   min-height: 90px;
 }
 
 .vender-input:focus,
-.vender-textarea:focus {
+.vender-textarea:focus,
+.vender-select:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }

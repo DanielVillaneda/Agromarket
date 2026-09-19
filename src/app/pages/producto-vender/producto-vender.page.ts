@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductsService } from '../../services/products.service';
+import { PRODUCT_UNITS, PRODUCT_UNIT_LABELS, ProductsService } from '../../services/products.service';
 import { Product } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 
@@ -33,12 +33,16 @@ export class ProductoVenderPage {
   readonly saveError = signal<string | null>(null);
 
   saved = false;
-  images: GalleryImage[] = [];
+  readonly images = signal<GalleryImage[]>([]);
+
+  readonly unitOptions = PRODUCT_UNITS;
+  readonly unitLabels = PRODUCT_UNIT_LABELS;
 
   readonly form: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
     precio: ['', [Validators.required, Validators.min(1)]],
     cantidad: ['', [Validators.required, Validators.min(1)]],
+    unidad: ['unidad', [Validators.required]],
     ubicacion: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
   });
@@ -48,14 +52,17 @@ export class ProductoVenderPage {
       next: (product) => {
         this.product.set(product);
         this.loading.set(false);
-        this.images = (product.photos ?? []).map((url) => ({
-          id: this.nextImageId++,
-          dataUrl: url,
-        }));
+        this.images.set(
+          (product.photos ?? []).map((url) => ({
+            id: this.nextImageId++,
+            dataUrl: url,
+          })),
+        );
         this.form.patchValue({
           nombre: product.title,
           precio: this.parsePrice(product.price),
-          cantidad: this.parseQuantity(product.quantity),
+          cantidad: product.rawQuantity ?? '',
+          unidad: product.unit ?? 'unidad',
           ubicacion: product.location,
           descripcion: product.description ?? '',
         });
@@ -78,6 +85,10 @@ export class ProductoVenderPage {
     return this.form.controls['cantidad'];
   }
 
+  get unidad() {
+    return this.form.controls['unidad'];
+  }
+
   get ubicacion() {
     return this.form.controls['ubicacion'];
   }
@@ -95,15 +106,6 @@ export class ProductoVenderPage {
     return digits ? Number(digits) : '';
   }
 
-  private parseQuantity(quantity?: string): number | '' {
-    if (!quantity) {
-      return '';
-    }
-
-    const digits = quantity.replace(/[^0-9]/g, '');
-    return digits ? Number(digits) : '';
-  }
-
   onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const files = input.files;
@@ -115,7 +117,7 @@ export class ProductoVenderPage {
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => {
-        this.images = [...this.images, { id: this.nextImageId++, dataUrl: reader.result as string }];
+        this.images.update((current) => [...current, { id: this.nextImageId++, dataUrl: reader.result as string }]);
       };
       reader.readAsDataURL(file);
     });
@@ -124,7 +126,7 @@ export class ProductoVenderPage {
   }
 
   removeImage(id: number): void {
-    this.images = this.images.filter((image) => image.id !== id);
+    this.images.update((current) => current.filter((image) => image.id !== id));
   }
 
   onSave(): void {
@@ -144,12 +146,13 @@ export class ProductoVenderPage {
         location: value.ubicacion,
         description: value.descripcion,
         quantity: Number(value.cantidad),
-        photos: this.images.map((image) => image.dataUrl).filter((url): url is string => !!url),
+        unit: value.unidad,
+        photos: this.images().map((image) => image.dataUrl).filter((url): url is string => !!url),
       })
       .subscribe({
-        next: (product) => {
-          this.product.set(product);
+        next: () => {
           this.saved = true;
+          this.router.navigateByUrl('/venta');
         },
         error: (err: HttpErrorResponse) => {
           this.saveError.set(err.error?.message ?? 'No se pudieron guardar los cambios. Intenta de nuevo.');

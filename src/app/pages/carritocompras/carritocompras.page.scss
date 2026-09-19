@@ -104,6 +104,12 @@
   color: #2e7d32;
 }
 
+.carrito-item-stock {
+  margin: 2px 0 0;
+  font-size: 0.76rem;
+  color: #8a938a;
+}
+
 .carrito-item-qty {
   display: flex;
   align-items: center;
@@ -127,6 +133,16 @@
 .carrito-qty-btn:hover {
   border-color: #4caf50;
   color: #2e7d32;
+}
+
+.carrito-qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.carrito-qty-btn:disabled:hover {
+  border-color: #e0e4d6;
+  color: inherit;
 }
 
 .carrito-qty-value {

@@ -55,18 +55,46 @@
             <p class="producto-quantity">{{ product.quantity }}</p>
           }
 
+          @if (isWeightBased()) {
+            <div class="producto-unit-selector">
+              <span class="producto-unit-label">Comprar por:</span>
+              <div class="producto-unit-options">
+                @for (unit of weightUnitOptions; track unit) {
+                  <button
+                    type="button"
+                    class="producto-unit-btn"
+                    [class.producto-unit-btn--active]="effectiveUnit() === unit"
+                    [disabled]="cartUpdating()"
+                    (click)="selectUnit(unit)"
+                  >
+                    {{ unitLabels[unit] }}
+                  </button>
+                }
+              </div>
+              @if (effectiveUnit() !== product.unit) {
+                <p class="producto-unit-price">{{ pricePerSelectedUnitLabel() }} por {{ unitLabel() }}</p>
+              }
+            </div>
+          }
+
           <div class="producto-cart-widget">
             @if (cartQuantity() === 0) {
-              <button type="button" class="producto-cart-add" (click)="addToCart()">
+              <button
+                type="button"
+                class="producto-cart-add"
+                (click)="addToCart()"
+                [disabled]="maxQuantity() <= 0 || cartUpdating()"
+              >
                 <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
-                Agregar al carrito
+                {{ maxQuantity() <= 0 ? 'Sin stock disponible' : 'Agregar al carrito' }}
               </button>
             } @else {
-              <div class="producto-cart-stepper">
+              <div class="producto-cart-stepper" [class.producto-cart-stepper--busy]="cartUpdating()">
                 <button
                   type="button"
                   class="producto-cart-step-btn producto-cart-step-btn--danger"
                   (click)="cartQuantity() === 1 ? removeFromCart() : decreaseCartQuantity()"
+                  [disabled]="cartUpdating()"
                   [attr.aria-label]="cartQuantity() === 1 ? 'Quitar del carrito' : 'Quitar una unidad'"
                 >
                   <ion-icon
@@ -77,18 +105,23 @@
 
                 <div class="producto-cart-step-value">
                   <span class="producto-cart-step-number">{{ cartQuantity() }}</span>
-                  <span class="producto-cart-step-unit">und.</span>
+                  <span class="producto-cart-step-unit">{{ unitLabel() }}</span>
                 </div>
 
                 <button
                   type="button"
                   class="producto-cart-step-btn producto-cart-step-btn--danger"
                   (click)="increaseCartQuantity()"
+                  [disabled]="atMaxQuantity() || cartUpdating()"
                   aria-label="Agregar una unidad"
                 >
                   <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
                 </button>
               </div>
+            }
+
+            @if (cartError()) {
+              <p class="producto-cart-error">{{ cartError() }}</p>
             }
           </div>
 

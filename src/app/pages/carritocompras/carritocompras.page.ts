@@ -2,9 +2,16 @@ import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { ProductsService } from '../../services/products.service';
+import { PRODUCT_UNIT_LABELS, ProductsService, convertPrice, convertWeight } from '../../services/products.service';
+import { Product } from '../../components/product-card/product-card.component';
 import { addOutline, removeOutline, trashOutline} from 'ionicons/icons';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
+
+interface CartItemView {
+  product: Product;
+  quantity: number;
+  unit: string;
+}
 
 @Component({
   selector: 'app-carritocompras',
@@ -25,13 +32,44 @@ export class CarritocomprasPage {
 
   checkedOut = false;
   readonly checkoutError = signal<string | null>(null);
+  readonly itemError = signal<string | null>(null);
 
-  increase(id: number, quantity: number): void {
-    this.productsService.updateCartQuantity(id, quantity + 1);
+  maxForItem(item: CartItemView): number {
+    const productUnit = item.product.unit ?? 'unidad';
+    return convertWeight(item.product.rawQuantity ?? 0, productUnit, item.unit);
+  }
+
+  unitLabelForItem(item: CartItemView): string {
+    return PRODUCT_UNIT_LABELS[item.unit as keyof typeof PRODUCT_UNIT_LABELS] ?? item.unit;
+  }
+
+  pricePerItemUnitLabel(item: CartItemView): string {
+    const productUnit = item.product.unit ?? 'unidad';
+    const price = Math.round(convertPrice(item.product.rawPrice ?? 0, productUnit, item.unit));
+    return `${this.formatPrice(price)} por ${this.unitLabelForItem(item)}`;
+  }
+
+  increase(item: CartItemView): void {
+    const max = this.maxForItem(item);
+
+    if (item.quantity >= max) {
+      this.itemError.set(
+        `Solo hay ${Math.round(max * 100) / 100} ${this.unitLabelForItem(item)} disponibles de este producto.`,
+      );
+      return;
+    }
+
+    this.itemError.set(null);
+
+    this.productsService.updateCartQuantity(item.product.id, item.quantity + 1).subscribe({
+      error: (err: HttpErrorResponse) => {
+        this.itemError.set(err.error?.message ?? 'No se pudo actualizar el carrito.');
+      },
+    });
   }
 
   decrease(id: number, quantity: number): void {
-    this.productsService.updateCartQuantity(id, quantity - 1);
+    this.productsService.updateCartQuantity(id, quantity - 1).subscribe();
   }
 
   remove(id: number): void {

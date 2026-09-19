@@ -211,6 +211,14 @@
   background: #33402f;
 }
 
+.navbar-auth-btn--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 1.1rem;
+}
+
 /**
  * Panel de sugerencias ("Términos más buscados" / "Sugerencias"), al
  * estilo del buscador de exito.com. Vive fuera de ion-toolbar (ver nota

@@ -51,7 +51,14 @@
 
           <label class="vender-field">
             <span class="vender-label">Cantidad disponible</span>
-            <input class="vender-input" type="number" formControlName="cantidad" placeholder="0" min="1" />
+            <div class="vender-quantity-group">
+              <input class="vender-input" type="number" formControlName="cantidad" placeholder="0" min="1" />
+              <select class="vender-select" formControlName="unidad">
+                @for (unit of unitOptions; track unit) {
+                  <option [value]="unit">{{ unitLabels[unit] }}</option>
+                }
+              </select>
+            </div>
             @if (cantidad.invalid && cantidad.touched) {
               <span class="vender-error">
                 @if (cantidad.hasError('required')) {
@@ -100,7 +107,7 @@
           <span class="vender-label">Fotos del producto</span>
 
           <div class="vender-images">
-            @for (image of images; track image.id) {
+            @for (image of images(); track image.id) {
               <div class="vender-image">
                 <img [src]="image.dataUrl" alt="Foto del producto" />
                 <button

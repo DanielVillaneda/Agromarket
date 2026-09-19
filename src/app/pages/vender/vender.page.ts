@@ -4,7 +4,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { ProductsService } from '../../services/products.service';
+import { PRODUCT_UNITS, PRODUCT_UNIT_LABELS, ProductUnit, ProductsService } from '../../services/products.service';
 
 interface ProductImage {
   id: number;
@@ -24,14 +24,18 @@ export class VenderPage {
 
   submitted = false;
   submitError = signal<string | null>(null);
-  images: ProductImage[] = [];
+  readonly images = signal<ProductImage[]>([]);
 
   private nextImageId = 1;
+
+  readonly unitOptions = PRODUCT_UNITS;
+  readonly unitLabels = PRODUCT_UNIT_LABELS;
 
   readonly form: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
     precio: ['', [Validators.required, Validators.min(1)]],
     cantidad: ['', [Validators.required, Validators.min(1)]],
+    unidad: ['unidad' as ProductUnit, [Validators.required]],
     ubicacion: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
   });
@@ -48,6 +52,10 @@ export class VenderPage {
 
   get cantidad() {
     return this.form.controls['cantidad'];
+  }
+
+  get unidad() {
+    return this.form.controls['unidad'];
   }
 
   get ubicacion() {
@@ -69,7 +77,7 @@ export class VenderPage {
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => {
-        this.images = [...this.images, { id: this.nextImageId++, dataUrl: reader.result as string }];
+        this.images.update((current) => [...current, { id: this.nextImageId++, dataUrl: reader.result as string }]);
       };
       reader.readAsDataURL(file);
     });
@@ -78,7 +86,7 @@ export class VenderPage {
   }
 
   removeImage(id: number): void {
-    this.images = this.images.filter((image) => image.id !== id);
+    this.images.update((current) => current.filter((image) => image.id !== id));
   }
 
   onSubmit(): void {
@@ -99,7 +107,8 @@ export class VenderPage {
         location: value.ubicacion,
         description: value.descripcion,
         quantity: Number(value.cantidad),
-        photos: this.images.map((image) => image.dataUrl),
+        unit: value.unidad,
+        photos: this.images().map((image) => image.dataUrl),
       })
       .subscribe({
         next: () => this.router.navigateByUrl('/venta'),

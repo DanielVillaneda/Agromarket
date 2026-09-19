@@ -48,8 +48,14 @@
       <div class="navbar-auth">
         @if (isAuthenticated()) {
           <span class="navbar-auth-user">{{ currentUser()?.nombre }}</span>
-          <button type="button" class="navbar-auth-btn navbar-auth-btn--ghost" (click)="logout()">
-            Cerrar sesión
+          <button
+            type="button"
+            class="navbar-auth-btn navbar-auth-btn--ghost navbar-auth-btn--icon"
+            (click)="logout()"
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
+          >
+            <ion-icon [icon]="logOutOutline" aria-hidden="true" color="danger"></ion-icon>
           </button>
         } @else {
           <a class="navbar-auth-btn navbar-auth-btn--ghost" routerLink="/login">Sign in</a>

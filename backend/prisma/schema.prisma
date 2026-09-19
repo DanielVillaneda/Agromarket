@@ -38,6 +38,7 @@ model Product {
   accent      String   @default("linear-gradient(135deg, #9ccc65, #558b2f)")
   description String?
   quantity    Int      @default(0)
+  unit        String   @default("unidad") // kilo | tonelada | libra | litro | unidad
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -80,6 +81,7 @@ model CartItem {
   userId    Int
   productId Int
   quantity  Int      @default(1)
+  unit      String   @default("unidad") // unidad en la que el comprador eligió llevarlo
   updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -94,7 +96,8 @@ model Purchase {
   userId      Int
   productId   Int
   quantity    Int
-  unitPrice   Int // se guarda el precio al momento de comprar
+  unit        String   @default("unidad") // unidad en la que se compró (puede diferir de la del producto)
+  unitPrice   Int // precio por unidad comprada, al momento de comprar
   purchasedAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

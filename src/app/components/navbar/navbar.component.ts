@@ -12,7 +12,7 @@ import { IonHeader, IonToolbar, IonIcon } from '@ionic/angular';
 import { ProductsService } from '../../services/products.service';
 import { AuthService } from '../../services/auth.service';
 import { Product } from '../product-card/product-card.component';
-import { cartOutline, searchOutline } from 'ionicons/icons';
+import { cartOutline, logOutOutline, searchOutline } from 'ionicons/icons';
 
 interface NavLink {
   label: string;
@@ -30,6 +30,7 @@ export class NavbarComponent {
 
   cartOutline = cartOutline;
   searchOutline = searchOutline;
+  logOutOutline = logOutOutline;
 
   private readonly productsService = inject(ProductsService);
   private readonly auth = inject(AuthService);

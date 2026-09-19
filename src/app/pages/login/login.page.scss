@@ -157,6 +157,42 @@
   line-height: 1.4;
 }
 
+.auth-step-indicator {
+  margin: -12px 0 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #2e7d32;
+}
+
+.auth-step-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.auth-step-actions .auth-submit {
+  flex: 1;
+  margin-top: 0;
+}
+
+.auth-back-step {
+  border: 1px solid #d7ddcd;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: transparent;
+  color: #33402f;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-back-step:hover {
+  background: #eef1ea;
+}
+
 .auth-form {
   width: 100%;
   display: flex;

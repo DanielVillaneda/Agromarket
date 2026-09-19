@@ -150,7 +150,8 @@
 }
 
 .pv-input,
-.pv-textarea {
+.pv-textarea,
+.pv-select {
   border: 1px solid #e0e4d6;
   border-radius: 10px;
   padding: 11px 14px;
@@ -162,13 +163,24 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.pv-quantity-group {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 8px;
+}
+
+.pv-select {
+  cursor: pointer;
+}
+
 .pv-textarea {
   resize: vertical;
   min-height: 90px;
 }
 
 .pv-input:focus,
-.pv-textarea:focus {
+.pv-textarea:focus,
+.pv-select:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }

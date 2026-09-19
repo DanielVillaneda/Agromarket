@@ -14,6 +14,10 @@
       <p class="carrito-error">{{ checkoutError() }}</p>
     }
 
+    @if (itemError()) {
+      <p class="carrito-error">{{ itemError() }}</p>
+    }
+
     @if (items().length) {
       <div class="carrito-list">
         @for (item of items(); track item.product.id) {
@@ -34,7 +38,12 @@
                 <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
                 {{ item.product.location }}
               </p>
-              <p class="carrito-item-price">{{ item.product.price }}</p>
+              <p class="carrito-item-price">
+                {{ item.unit === item.product.unit ? item.product.price : pricePerItemUnitLabel(item) }}
+              </p>
+              @if (item.product.quantity) {
+                <p class="carrito-item-stock">{{ item.product.quantity }}</p>
+              }
             </div>
 
             <div class="carrito-item-qty">
@@ -47,11 +56,12 @@
                 <ion-icon slot="icon-only"
                 [icon]="removeOutline"></ion-icon>
               </button>
-              <span class="carrito-qty-value">{{ item.quantity }}</span>
+              <span class="carrito-qty-value">{{ item.quantity }} {{ unitLabelForItem(item) }}</span>
               <button
                 type="button"
                 class="carrito-qty-btn"
-                (click)="increase(item.product.id, item.quantity)"
+                (click)="increase(item)"
+                [disabled]="item.quantity >= maxForItem(item)"
                 aria-label="Agregar una unidad"
               >
                 <ion-icon slot="icon-only"

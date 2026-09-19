@@ -12,7 +12,7 @@
         <p class="pv-subtitle">Actualiza la información o las fotos de tu publicación.</p>
 
         <div class="pv-images">
-          @for (image of images; track image.id) {
+          @for (image of images(); track image.id) {
             <div class="pv-image">
               <img [src]="image.dataUrl" alt="Foto del producto" />
               <button
@@ -65,7 +65,14 @@
 
             <label class="pv-field">
               <span class="pv-label">Cantidad disponible</span>
-              <input class="pv-input" type="number" formControlName="cantidad" min="1" />
+              <div class="pv-quantity-group">
+                <input class="pv-input" type="number" formControlName="cantidad" min="1" />
+                <select class="pv-select" formControlName="unidad">
+                  @for (unit of unitOptions; track unit) {
+                    <option [value]="unit">{{ unitLabels[unit] }}</option>
+                  }
+                </select>
+              </div>
               @if (cantidad.invalid && cantidad.touched) {
                 <span class="pv-error">
                   @if (cantidad.hasError('required')) {

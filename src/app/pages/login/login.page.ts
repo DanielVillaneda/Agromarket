@@ -43,6 +43,7 @@ export class LoginPage {
   readonly errorMessage = signal<string | null>(null);
 
   readonly mode = signal<AuthMode>(this.router.url.includes('registro') ? 'registro' : 'login');
+  readonly registroStep = signal<1 | 2>(1);
 
   loginSubmitted = false;
   registroSubmitted = false;
@@ -100,6 +101,14 @@ export class LoginPage {
   setMode(mode: AuthMode): void {
     this.mode.set(mode);
     this.errorMessage.set(null);
+
+    if (mode === 'registro') {
+      this.registroStep.set(1);
+    }
+  }
+
+  goToRegistroStep1(): void {
+    this.registroStep.set(1);
   }
 
   onLoginSubmit(): void {
@@ -129,8 +138,24 @@ export class LoginPage {
   }
 
   onRegistroSubmit(): void {
-    this.registroSubmitted = true;
     this.errorMessage.set(null);
+
+    if (this.registroStep() === 1) {
+      const nombreCtrl = this.registroForm.controls['nombre'];
+      const telefonoCtrl = this.registroForm.controls['telefono'];
+
+      nombreCtrl.markAsTouched();
+      telefonoCtrl.markAsTouched();
+
+      if (nombreCtrl.invalid || telefonoCtrl.invalid) {
+        return;
+      }
+
+      this.registroStep.set(2);
+      return;
+    }
+
+    this.registroSubmitted = true;
 
     if (this.registroForm.invalid) {
       this.registroForm.markAllAsTouched();

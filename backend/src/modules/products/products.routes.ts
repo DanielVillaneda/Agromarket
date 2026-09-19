@@ -9,17 +9,19 @@ import { createProductSchema, listProductsQuerySchema, updateProductSchema } fro
 export const productsRouter = Router();
 
 // GET /api/products?q=texto — equivalente a marketProducts / searchProducts
-// del ProductsService. Si hay sesión, no incluye los productos propios (así
-// el usuario no se ve a sí mismo como comprador en su propio mercado).
+// del ProductsService. Por defecto, si hay sesión, no incluye los productos
+// propios (así el usuario no se ve a sí mismo como comprador en "Lo más
+// reciente"). Con ?includeMine=true sí se incluyen, para que el vendedor
+// pueda encontrar su propia publicación desde la barra de búsqueda.
 productsRouter.get(
   '/',
   attachUserIfPresent,
   asyncHandler(async (req, res) => {
-    const { q } = listProductsQuerySchema.parse(req.query);
+    const { q, includeMine } = listProductsQuerySchema.parse(req.query);
 
     const products = await prisma.product.findMany({
       where: {
-        ...(req.userId ? { sellerId: { not: req.userId } } : {}),
+        ...(req.userId && !includeMine ? { sellerId: { not: req.userId } } : {}),
         ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
       },
       include: productInclude,
@@ -84,6 +86,7 @@ productsRouter.post(
         location: data.location,
         description: data.description,
         quantity: data.quantity,
+        unit: data.unit,
         icon: data.icon,
         accent: data.accent,
         sellerId: req.userId!,
@@ -121,6 +124,7 @@ productsRouter.put(
         location: data.location,
         description: data.description,
         quantity: data.quantity,
+        unit: data.unit,
         icon: data.icon,
         accent: data.accent,
         ...(data.photos

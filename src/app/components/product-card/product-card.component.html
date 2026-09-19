@@ -8,7 +8,12 @@
   </div>
 
   <div class="product-info">
-    <h3 class="product-title">{{ product.title }}</h3>
+    <h3 class="product-title">
+      {{ product.title }}
+      @if (isMine()) {
+        <span class="product-owner-badge">Mío</span>
+      }
+    </h3>
     <p class="product-price">{{ product.price }}</p>
     <p class="product-location">{{ product.location }}</p>
   </div>
