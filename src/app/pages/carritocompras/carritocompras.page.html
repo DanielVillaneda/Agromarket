@@ -10,6 +10,10 @@
       </div>
     }
 
+    @if (checkoutError()) {
+      <p class="carrito-error">{{ checkoutError() }}</p>
+    }
+
     @if (items().length) {
       <div class="carrito-list">
         @for (item of items(); track item.product.id) {

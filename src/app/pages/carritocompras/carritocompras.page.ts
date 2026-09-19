@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
@@ -23,6 +24,7 @@ export class CarritocomprasPage {
   readonly total = this.productsService.cartTotal;
 
   checkedOut = false;
+  readonly checkoutError = signal<string | null>(null);
 
   increase(id: number, quantity: number): void {
     this.productsService.updateCartQuantity(id, quantity + 1);
@@ -45,9 +47,16 @@ export class CarritocomprasPage {
       return;
     }
 
-    this.items().forEach((item) => this.productsService.buyProduct(item.product.id));
-    this.productsService.clearCart();
-    this.checkedOut = true;
+    this.checkoutError.set(null);
+
+    this.productsService.checkout().subscribe({
+      next: () => {
+        this.checkedOut = true;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.checkoutError.set(err.error?.message ?? 'No se pudo completar la compra. Intenta de nuevo.');
+      },
+    });
   }
 
 }

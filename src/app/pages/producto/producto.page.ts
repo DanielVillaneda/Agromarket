@@ -1,7 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon, IonToast } from '@ionic/angular';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
+import { AuthService } from '../../services/auth.service';
+import { Product } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
@@ -13,29 +15,52 @@ import { NavbarComponent } from '../../components/navbar/navbar.component';
 export class ProductoPage {
 
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly productsService = inject(ProductsService);
+  private readonly auth = inject(AuthService);
 
   private readonly id = Number(this.route.snapshot.paramMap.get('id'));
 
-  readonly product = this.productsService.getMarketProduct(this.id);
+  readonly product = signal<Product | null>(null);
+  readonly loading = signal(true);
 
-  constructor() {
-    if (this.product) {
-      this.productsService.markViewed(this.id);
-    }
-  }
+  readonly isFavorite = computed(() => {
+    const product = this.product();
+    return product ? this.productsService.isFavorite(product.id) : false;
+  });
 
-  readonly isFavorite = computed(() => this.productsService.isFavorite(this.id));
-
-  readonly cartQuantity = computed(() => this.productsService.getCartQuantity(this.id));
+  readonly cartQuantity = computed(() => {
+    const product = this.product();
+    return product ? this.productsService.getCartQuantity(product.id) : 0;
+  });
 
   readonly showAddedToast = signal(false);
 
+  constructor() {
+    this.productsService.getProduct(this.id).subscribe({
+      next: (product) => {
+        this.product.set(product);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      },
+    });
+  }
+
   toggleFavorite(): void {
-    this.productsService.toggleFavorite(this.id);
+    if (!this.requireAuth()) {
+      return;
+    }
+
+    this.productsService.toggleFavorite(this.id).subscribe();
   }
 
   addToCart(): void {
+    if (!this.requireAuth()) {
+      return;
+    }
+
     this.productsService.addToCart(this.id);
     this.showAddedToast.set(true);
   }
@@ -54,6 +79,15 @@ export class ProductoPage {
 
   dismissToast(): void {
     this.showAddedToast.set(false);
+  }
+
+  private requireAuth(): boolean {
+    if (this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    this.router.navigateByUrl('/login');
+    return false;
   }
 
 }

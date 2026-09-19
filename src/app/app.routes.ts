@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   
@@ -21,10 +22,12 @@ export const routes: Routes = [
   },
   {
     path: 'venta',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/venta/venta.page').then( m => m.VentaPage)
   },
   {
     path: 'vender',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/vender/vender.page').then( m => m.VenderPage)
   },
   {
@@ -33,14 +36,17 @@ export const routes: Routes = [
   },
   {
     path: 'producto-vender/:id',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/producto-vender/producto-vender.page').then( m => m.ProductoVenderPage)
   },
   {
     path: 'favoritos',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/favoritos/favoritos.page').then( m => m.FavoritosPage)
   },
   {
     path: 'compras',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/compras/compras.page').then( m => m.ComprasPage)
   },
   {
@@ -49,6 +55,7 @@ export const routes: Routes = [
   },
   {
     path: 'carritocompras',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/carritocompras/carritocompras.page').then( m => m.CarritocomprasPage)
   },
   {

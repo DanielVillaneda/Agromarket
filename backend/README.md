@@ -1,17 +1,5 @@
 # AgroMarket API
 
-<<<<<<< HEAD
-Backend en Node.js (Express + Prisma + PostgreSQL) para AgroMarket. Por ahora expone la autenticación (registro/login) que consume el frontend Angular.
-
-## 1. Base de datos
-
-Necesitas una base de datos PostgreSQL accesible. Opciones:
-
-- **Local**: instala PostgreSQL (https://www.postgresql.org/download/) y crea una base de datos, por ejemplo `agromarket`.
-- **En la nube (gratis, sin instalar nada)**: crea un proyecto en [Neon](https://neon.tech) o [Supabase](https://supabase.com) y copia la cadena de conexión que te den.
-
-## 2. Configuración
-=======
 Backend en Node.js (Express + TypeScript) con PostgreSQL (Prisma ORM) para el proyecto AgroMarket. El modelo de datos y los endpoints están diseñados para calzar con lo que ya usa el frontend Ionic/Angular (`ProductsService`, formularios de login/registro, carrito, favoritos, compras).
 
 ## 1. Base de datos: PostgreSQL gratis con Neon
@@ -26,27 +14,10 @@ No necesitas instalar PostgreSQL en tu PC. Recomendado para este proyecto: **Neo
 Alternativas si prefieres no usar la nube: instalar PostgreSQL localmente, o correrlo con Docker (`docker run --name agromarket-db -e POSTGRES_PASSWORD=agromarket -e POSTGRES_DB=agromarket -p 5432:5432 -d postgres`). En ambos casos, `DATABASE_URL` sería algo como `postgresql://postgres:agromarket@localhost:5432/agromarket`.
 
 ## 2. Instalar dependencias
->>>>>>> 216977547b11fe3ac9b700cbdc4f233ae6daebc0
 
 ```bash
 cd backend
 npm install
-<<<<<<< HEAD
-cp .env.example .env   # ya existe uno con un JWT_SECRET generado; solo ajusta DATABASE_URL
-```
-
-Edita `.env` y pon tu `DATABASE_URL` real.
-
-## 3. Crear las tablas
-
-```bash
-npm run prisma:migrate -- --name init
-```
-
-Esto crea la tabla `users` según `prisma/schema.prisma`.
-
-## 4. Levantar la API
-=======
 ```
 
 ## 3. Configurar variables de entorno
@@ -75,24 +46,11 @@ Esto crea las tablas en tu base de datos y las llena con los mismos productos de
 - `demo@agromarket.co` (tiene productos propios, útil para probar la página "Venta")
 
 ## 5. Levantar la API
->>>>>>> 216977547b11fe3ac9b700cbdc4f233ae6daebc0
 
 ```bash
 npm run dev
 ```
 
-<<<<<<< HEAD
-Por defecto queda en `http://localhost:3000`. El frontend (`environment.ts`) ya apunta ahí.
-
-## Endpoints
-
-| Método | Ruta               | Descripción                                  | Body                                             |
-|--------|--------------------|-----------------------------------------------|---------------------------------------------------|
-| GET    | /api/health         | Verifica que la API está viva                | -                                                   |
-| POST   | /api/auth/register  | Crea un usuario y devuelve token + usuario   | `{ nombre, email, telefono, password }`            |
-| POST   | /api/auth/login     | Autentica y devuelve token + usuario         | `{ email, password }`                              |
-| GET    | /api/auth/me         | Devuelve el usuario del token actual         | Header `Authorization: Bearer <token>`             |
-=======
 Queda escuchando en `http://localhost:3000`. Prueba que responde con:
 
 ```bash
@@ -161,4 +119,3 @@ backend/
 ## Nota sobre esta entrega
 
 Este backend se escribió y se instaló (`npm install`) en un entorno de nube de Anthropic que, por política de red de la organización, no puede descargar los binarios de motor de Prisma (`binaries.prisma.sh` está bloqueado ahí). Por eso no se pudo correr `npx prisma generate` / `npx prisma migrate dev` ni levantar la API de punta a punta en ese entorno — es una restricción de esa sandbox, no de tu proyecto ni de tu PC. El resto del código sí se verificó con `tsc --noEmit` (compila sin errores de lógica; los únicos errores que aparecían eran los esperados por no tener el cliente de Prisma generado). En tu máquina, con internet normal, los pasos 2 a 5 de arriba deberían funcionar sin problema.
->>>>>>> 216977547b11fe3ac9b700cbdc4f233ae6daebc0

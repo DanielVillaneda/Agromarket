@@ -10,6 +10,7 @@ import {
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IonHeader, IonToolbar, IonIcon } from '@ionic/angular';
 import { ProductsService } from '../../services/products.service';
+import { AuthService } from '../../services/auth.service';
 import { Product } from '../product-card/product-card.component';
 import { cartOutline, searchOutline } from 'ionicons/icons';
 
@@ -31,10 +32,14 @@ export class NavbarComponent {
   searchOutline = searchOutline;
 
   private readonly productsService = inject(ProductsService);
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly cartCount = this.productsService.cartCount;
   readonly topSearches = this.productsService.topSearches;
+
+  readonly isAuthenticated = this.auth.isAuthenticated;
+  readonly currentUser = this.auth.currentUser;
 
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);
@@ -100,6 +105,14 @@ export class NavbarComponent {
 
   close(): void {
     this.isOpen.set(false);
+  }
+
+  logout(): void {
+    this.auth.logout();
+    // Recarga completa (no navegación de Angular) para garantizar que no
+    // quede ningún estado en memoria de la sesión anterior (nombre de
+    // usuario, productos, carrito, etc.) al entrar con otra cuenta.
+    window.location.href = '/login';
   }
 
   private open(): void {

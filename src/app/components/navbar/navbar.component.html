@@ -46,8 +46,15 @@
       </a>
 
       <div class="navbar-auth">
-        <a class="navbar-auth-btn navbar-auth-btn--ghost" routerLink="/login">Sign in</a>
-        <a class="navbar-auth-btn navbar-auth-btn--solid" routerLink="/registro">Register</a>
+        @if (isAuthenticated()) {
+          <span class="navbar-auth-user">{{ currentUser()?.nombre }}</span>
+          <button type="button" class="navbar-auth-btn navbar-auth-btn--ghost" (click)="logout()">
+            Cerrar sesión
+          </button>
+        } @else {
+          <a class="navbar-auth-btn navbar-auth-btn--ghost" routerLink="/login">Sign in</a>
+          <a class="navbar-auth-btn navbar-auth-btn--solid" routerLink="/registro">Register</a>
+        }
       </div>
     </div>
   </ion-toolbar>

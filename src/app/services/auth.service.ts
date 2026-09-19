@@ -43,7 +43,7 @@ export class AuthService {
 
   register(payload: RegisterPayload): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/auth/register`, payload)
+      .post<AuthResponse>(`${environment.apiUrl}/auth/registro`, payload)
       .pipe(tap((response) => this.setSession(response)));
   }
 

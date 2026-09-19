@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-=======
 // Esquema de base de datos de AgroMarket.
 // Se corresponde con lo que ya usa el frontend (Ionic/Angular): la interfaz
 // Product, el ProductsService (mercado, mis productos, favoritos, carrito,
 // compras, vistos recientemente) y los formularios de login/registro.
 
->>>>>>> 216977547b11fe3ac9b700cbdc4f233ae6daebc0
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,17 +13,6 @@ datasource db {
 }
 
 model User {
-<<<<<<< HEAD
-  id        Int      @id @default(autoincrement())
-  nombre    String
-  email     String   @unique
-  telefono  String?
-  password  String
-  createdAt DateTime @default(now())
-
-  @@map("users")
-}
-=======
   id           Int      @id @default(autoincrement())
   nombre       String
   email        String   @unique
@@ -129,4 +115,3 @@ model RecentlyViewed {
   @@unique([userId, productId])
   @@map("recently_viewed")
 }
->>>>>>> 216977547b11fe3ac9b700cbdc4f233ae6daebc0

@@ -1,12 +1,4 @@
-<<<<<<< HEAD
 import { Component, signal } from '@angular/core';
-import { IonContent } from '@ionic/angular';
-import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
-=======
-import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -17,7 +9,8 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
->>>>>>> a6bed8d274dbf04d769eac150cb6a74b0026908a
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 type AuthMode = 'login' | 'registro';
 
@@ -46,13 +39,8 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
 })
 export class LoginPage {
 
-<<<<<<< HEAD
-  submitted = false;
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
-=======
-  private readonly router = inject(Router);
->>>>>>> a6bed8d274dbf04d769eac150cb6a74b0026908a
 
   readonly mode = signal<AuthMode>(this.router.url.includes('registro') ? 'registro' : 'login');
 
@@ -64,13 +52,6 @@ export class LoginPage {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-<<<<<<< HEAD
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly auth: AuthService,
-    private readonly router: Router,
-  ) {}
-=======
   readonly registroForm: FormGroup = this.fb.group(
     {
       nombre: ['', [Validators.required, Validators.minLength(3)]],
@@ -82,8 +63,11 @@ export class LoginPage {
     { validators: passwordsMatchValidator },
   );
 
-  constructor(private fb: FormBuilder) {}
->>>>>>> a6bed8d274dbf04d769eac150cb6a74b0026908a
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly router: Router,
+  ) {}
 
   get loginEmail() {
     return this.loginForm.controls['email'];
@@ -93,15 +77,9 @@ export class LoginPage {
     return this.loginForm.controls['password'];
   }
 
-<<<<<<< HEAD
-  onSubmit(): void {
-    this.submitted = true;
-    this.errorMessage.set(null);
-=======
   get nombre() {
     return this.registroForm.controls['nombre'];
   }
->>>>>>> a6bed8d274dbf04d769eac150cb6a74b0026908a
 
   get registroEmail() {
     return this.registroForm.controls['email'];
@@ -121,46 +99,57 @@ export class LoginPage {
 
   setMode(mode: AuthMode): void {
     this.mode.set(mode);
+    this.errorMessage.set(null);
   }
 
   onLoginSubmit(): void {
     this.loginSubmitted = true;
+    this.errorMessage.set(null);
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-<<<<<<< HEAD
-    const { email, password } = this.form.value;
+    const { email, password } = this.loginForm.value;
     this.loading.set(true);
 
     this.auth.login(email, password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigateByUrl('/home');
+        // Recarga completa para que no quede en memoria ningún estado de
+        // una sesión anterior (nombre de usuario, productos, carrito, etc.).
+        window.location.href = '/home';
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         this.errorMessage.set(err.error?.message ?? 'No se pudo iniciar sesión. Intenta de nuevo.');
       },
     });
-=======
-    // TODO: conectar con el servicio de autenticación cuando el backend esté disponible.
-    console.log('Login form value', this.loginForm.value);
   }
 
   onRegistroSubmit(): void {
     this.registroSubmitted = true;
+    this.errorMessage.set(null);
 
     if (this.registroForm.invalid) {
       this.registroForm.markAllAsTouched();
       return;
     }
 
-    // TODO: conectar con el servicio de registro cuando el backend esté disponible.
-    console.log('Registro form value', this.registroForm.value);
->>>>>>> a6bed8d274dbf04d769eac150cb6a74b0026908a
+    const { nombre, email, telefono, password } = this.registroForm.value;
+    this.loading.set(true);
+
+    this.auth.register({ nombre, email, telefono, password }).subscribe({
+      next: () => {
+        this.loading.set(false);
+        window.location.href = '/home';
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.errorMessage.set(err.error?.message ?? 'No se pudo crear la cuenta. Intenta de nuevo.');
+      },
+    });
   }
 
 }

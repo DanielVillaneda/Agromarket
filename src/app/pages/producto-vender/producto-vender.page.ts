@@ -1,14 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductsService } from '../../services/products.service';
+import { Product } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 interface GalleryImage {
   id: number;
-  icon?: string;
-  accent?: string;
   dataUrl?: string;
 }
 
@@ -28,23 +28,43 @@ export class ProductoVenderPage {
   private readonly id = Number(this.route.snapshot.paramMap.get('id'));
   private nextImageId = 1;
 
-  readonly product = this.productsService.getMyProduct(this.id);
+  readonly product = signal<Product | null>(null);
+  readonly loading = signal(true);
+  readonly saveError = signal<string | null>(null);
 
   saved = false;
-
-  images: GalleryImage[] = (this.product?.photos ?? []).map((icon) => ({
-    id: this.nextImageId++,
-    icon,
-    accent: this.product?.accent,
-  }));
+  images: GalleryImage[] = [];
 
   readonly form: FormGroup = this.fb.group({
-    nombre: [this.product?.title ?? '', [Validators.required, Validators.minLength(3)]],
-    precio: [this.parsePrice(this.product?.price), [Validators.required, Validators.min(1)]],
-    cantidad: [this.product?.quantity ?? '', [Validators.required]],
-    ubicacion: [this.product?.location ?? '', [Validators.required]],
-    descripcion: [this.product?.description ?? '', [Validators.required, Validators.minLength(10)]],
+    nombre: ['', [Validators.required, Validators.minLength(3)]],
+    precio: ['', [Validators.required, Validators.min(1)]],
+    cantidad: ['', [Validators.required, Validators.min(1)]],
+    ubicacion: ['', [Validators.required]],
+    descripcion: ['', [Validators.required, Validators.minLength(10)]],
   });
+
+  constructor() {
+    this.productsService.getProduct(this.id).subscribe({
+      next: (product) => {
+        this.product.set(product);
+        this.loading.set(false);
+        this.images = (product.photos ?? []).map((url) => ({
+          id: this.nextImageId++,
+          dataUrl: url,
+        }));
+        this.form.patchValue({
+          nombre: product.title,
+          precio: this.parsePrice(product.price),
+          cantidad: this.parseQuantity(product.quantity),
+          ubicacion: product.location,
+          descripcion: product.description ?? '',
+        });
+      },
+      error: () => {
+        this.loading.set(false);
+      },
+    });
+  }
 
   get nombre() {
     return this.form.controls['nombre'];
@@ -75,6 +95,15 @@ export class ProductoVenderPage {
     return digits ? Number(digits) : '';
   }
 
+  private parseQuantity(quantity?: string): number | '' {
+    if (!quantity) {
+      return '';
+    }
+
+    const digits = quantity.replace(/[^0-9]/g, '');
+    return digits ? Number(digits) : '';
+  }
+
   onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const files = input.files;
@@ -99,6 +128,8 @@ export class ProductoVenderPage {
   }
 
   onSave(): void {
+    this.saveError.set(null);
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -106,21 +137,33 @@ export class ProductoVenderPage {
 
     const value = this.form.value;
 
-    this.productsService.updateMyProduct(this.id, {
-      title: value.nombre,
-      price: `$${Number(value.precio).toLocaleString('es-CO')}`,
-      location: value.ubicacion,
-      description: value.descripcion,
-      quantity: value.cantidad,
-    });
-
-    // TODO: subir las fotos nuevas (this.images con dataUrl) al backend cuando esté disponible.
-    this.saved = true;
+    this.productsService
+      .updateMyProduct(this.id, {
+        title: value.nombre,
+        price: Number(value.precio),
+        location: value.ubicacion,
+        description: value.descripcion,
+        quantity: Number(value.cantidad),
+        photos: this.images.map((image) => image.dataUrl).filter((url): url is string => !!url),
+      })
+      .subscribe({
+        next: (product) => {
+          this.product.set(product);
+          this.saved = true;
+        },
+        error: (err: HttpErrorResponse) => {
+          this.saveError.set(err.error?.message ?? 'No se pudieron guardar los cambios. Intenta de nuevo.');
+        },
+      });
   }
 
   onDelete(): void {
-    this.productsService.removeMyProduct(this.id);
-    this.router.navigateByUrl('/venta');
+    this.productsService.removeMyProduct(this.id).subscribe({
+      next: () => this.router.navigateByUrl('/venta'),
+      error: (err: HttpErrorResponse) => {
+        this.saveError.set(err.error?.message ?? 'No se pudo eliminar el producto. Intenta de nuevo.');
+      },
+    });
   }
 
 }

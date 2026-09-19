@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
+import { ProductsService } from '../../services/products.service';
 
 interface ProductImage {
   id: number;
@@ -17,7 +19,11 @@ interface ProductImage {
 })
 export class VenderPage {
 
+  private readonly productsService = inject(ProductsService);
+  private readonly router = inject(Router);
+
   submitted = false;
+  submitError = signal<string | null>(null);
   images: ProductImage[] = [];
 
   private nextImageId = 1;
@@ -77,14 +83,30 @@ export class VenderPage {
 
   onSubmit(): void {
     this.submitted = true;
+    this.submitError.set(null);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // TODO: conectar con el servicio de publicación de productos cuando el backend esté disponible.
-    console.log('Nuevo producto', { ...this.form.value, images: this.images });
+    const value = this.form.value;
+
+    this.productsService
+      .createProduct({
+        title: value.nombre,
+        price: Number(value.precio),
+        location: value.ubicacion,
+        description: value.descripcion,
+        quantity: Number(value.cantidad),
+        photos: this.images.map((image) => image.dataUrl),
+      })
+      .subscribe({
+        next: () => this.router.navigateByUrl('/venta'),
+        error: (err: HttpErrorResponse) => {
+          this.submitError.set(err.error?.message ?? 'No se pudo publicar el producto. Intenta de nuevo.');
+        },
+      });
   }
 
 }

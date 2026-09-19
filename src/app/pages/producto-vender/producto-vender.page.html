@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <ion-content class="producto-vender-content">
-  @if (product) {
+  @if (product()) {
     <div class="pv-wrapper">
       <a class="pv-back" routerLink="/venta">
         <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
@@ -14,13 +14,7 @@
         <div class="pv-images">
           @for (image of images; track image.id) {
             <div class="pv-image">
-              @if (image.dataUrl) {
-                <img [src]="image.dataUrl" alt="Foto del producto" />
-              } @else {
-                <div class="pv-image-placeholder" [style.background]="image.accent">
-                  <ion-icon [name]="image.icon" aria-hidden="true"></ion-icon>
-                </div>
-              }
+              <img [src]="image.dataUrl" alt="Foto del producto" />
               <button
                 type="button"
                 class="pv-image-remove"
@@ -71,9 +65,15 @@
 
             <label class="pv-field">
               <span class="pv-label">Cantidad disponible</span>
-              <input class="pv-input" type="text" formControlName="cantidad" />
+              <input class="pv-input" type="number" formControlName="cantidad" min="1" />
               @if (cantidad.invalid && cantidad.touched) {
-                <span class="pv-error">Ingresa la cantidad disponible.</span>
+                <span class="pv-error">
+                  @if (cantidad.hasError('required')) {
+                    Ingresa la cantidad disponible.
+                  } @else if (cantidad.hasError('min')) {
+                    Debe ser al menos 1.
+                  }
+                </span>
               }
             </label>
           </div>
@@ -104,6 +104,10 @@
             <p class="pv-success">¡Cambios guardados!</p>
           }
 
+          @if (saveError()) {
+            <p class="pv-error">{{ saveError() }}</p>
+          }
+
           <div class="pv-actions">
             <button type="button" class="pv-delete" (click)="onDelete()">
               <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
@@ -116,6 +120,10 @@
           </div>
         </form>
       </div>
+    </div>
+  } @else if (loading()) {
+    <div class="pv-empty">
+      <p>Cargando producto...</p>
     </div>
   } @else {
     <div class="pv-empty">

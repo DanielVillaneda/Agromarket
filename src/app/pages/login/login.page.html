@@ -78,11 +78,13 @@
                 }
               </label>
 
-              @if (loginSubmitted && loginForm.valid) {
-                <p class="auth-success">¡Bienvenido de nuevo! (demo, aún sin conexión al backend)</p>
+              @if (mode() === 'login' && errorMessage()) {
+                <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
               }
 
-              <button class="auth-submit" type="submit">Iniciar sesión</button>
+              <button class="auth-submit" type="submit" [disabled]="loading()">
+                {{ loading() ? 'Iniciando sesión…' : 'Iniciar sesión' }}
+              </button>
             </form>
 
             <p class="auth-switch">
@@ -201,21 +203,13 @@
                 }
               </label>
 
-              @if (registroSubmitted && registroForm.valid) {
-                <p class="auth-success">¡Cuenta creada! (demo, aún sin conexión al backend)</p>
+              @if (mode() === 'registro' && errorMessage()) {
+                <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
               }
 
-<<<<<<< HEAD
-        @if (errorMessage()) {
-          <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
-        }
-
-        <button class="auth-submit" type="submit" [disabled]="loading()">
-          {{ loading() ? 'Iniciando sesión…' : 'Iniciar sesión' }}
-        </button>
-      </form>
-=======
-              <button class="auth-submit" type="submit">Crear cuenta</button>
+              <button class="auth-submit" type="submit" [disabled]="loading()">
+                {{ loading() ? 'Creando cuenta…' : 'Crear cuenta' }}
+              </button>
             </form>
 
             <p class="auth-switch">
@@ -245,7 +239,6 @@
           </div>
         </div>
       </div>
->>>>>>> a6bed8d274dbf04d769eac150cb6a74b0026908a
 
     </div>
   </div>

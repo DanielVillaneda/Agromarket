@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <ion-content class="producto-content">
-  @if (product) {
+  @if (product(); as product) {
     <div class="producto-wrapper">
       <a class="producto-back" routerLink="/home">
         <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
@@ -10,14 +10,18 @@
       <div class="producto-card">
         <div class="producto-gallery">
           <div class="producto-photo producto-photo--main" [style.background]="product.accent">
-            <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+            @if (product.photos && product.photos.length) {
+              <img class="producto-photo-img" [src]="product.photos[0]" alt="" />
+            } @else {
+              <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+            }
           </div>
 
-          @if (product.photos && product.photos.length) {
+          @if (product.photos && product.photos.length > 1) {
             <div class="producto-thumbs">
-              @for (photo of product.photos; track photo) {
-                <div class="producto-photo" [style.background]="product.accent">
-                  <ion-icon [name]="photo" aria-hidden="true"></ion-icon>
+              @for (photo of product.photos.slice(1); track photo) {
+                <div class="producto-photo">
+                  <img class="producto-photo-img" [src]="photo" alt="" />
                 </div>
               }
             </div>
@@ -122,6 +126,10 @@
           </div>
         </div>
       </div>
+    </div>
+  } @else if (loading()) {
+    <div class="producto-empty">
+      <p>Cargando producto...</p>
     </div>
   } @else {
     <div class="producto-empty">

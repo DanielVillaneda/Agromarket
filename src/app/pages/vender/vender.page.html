@@ -122,8 +122,8 @@
           </div>
         </div>
 
-        @if (submitted && form.valid) {
-          <p class="vender-success">¡Producto publicado! (demo, aún sin conexión al backend)</p>
+        @if (submitError()) {
+          <p class="vender-error">{{ submitError() }}</p>
         }
 
         <button class="vender-submit" type="submit">Publicar producto</button>

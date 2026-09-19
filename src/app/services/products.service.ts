@@ -1,294 +1,186 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { Product } from '../components/product-card/product-card.component';
+import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
+
+interface ApiProduct {
+  id: number;
+  title: string;
+  price: number;
+  location: string;
+  icon: string;
+  accent: string;
+  description: string | null;
+  quantity: number;
+  photos: string[];
+  sellerId: number;
+  sellerName: string;
+  sellerPhone: string;
+  sellerEmail: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface CartResponse {
+  items: { product: ApiProduct; quantity: number }[];
+  total: number;
+  count: number;
+}
+
+interface PurchaseResponse {
+  id: number;
+  quantity: number;
+  unitPrice: number;
+  purchasedAt: string;
+  product: ApiProduct;
+}
+
+export interface ProductInput {
+  title: string;
+  price: number;
+  location: string;
+  description: string;
+  quantity: number;
+  photos?: string[];
+}
 
 /**
- * Fuente de datos de productos usada en toda la app mientras no exista un
- * backend real. Centraliza los productos del marketplace (home) y los
- * productos publicados por el usuario actual (venta/vender), y expone
- * operaciones básicas (buscar por id, actualizar, eliminar, favoritos,
- * compras) para que las páginas de detalle y de listado puedan trabajar
- * sobre los mismos datos.
+ * Fuente de datos de productos para toda la app: envuelve las llamadas HTTP
+ * al backend (ver `backend/src/modules/products|favorites|cart|purchases`)
+ * y expone el mismo tipo de signals que antes usaba el mock, para que las
+ * páginas casi no tengan que cambiar. Los datos que dependen de sesión
+ * (mis productos, favoritos, carrito, compras, vistos recientemente) se
+ * recargan automáticamente cuando cambia el estado de autenticación.
  */
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
 
-  private readonly _marketProducts = signal<Product[]>([
-    {
-      id: 1,
-      title: 'Abono 100% orgánico',
-      price: '$30.000',
-      location: 'Rivera · Huila',
-      icon: 'leaf-outline',
-      accent: 'linear-gradient(135deg, #8d6e63, #5d4037)',
-      description: 'Abono orgánico elaborado a partir de compost natural, ideal para mejorar la fertilidad del suelo sin usar químicos.',
-      quantity: '50 bultos disponibles',
-      photos: ['leaf-outline', 'nutrition-outline', 'flower-outline'],
-      sellerName: 'Carlos Pérez',
-      sellerPhone: '3201234567',
-      sellerEmail: 'carlos.perez@agromarket.co',
-    },
-    {
-      id: 2,
-      title: 'Pollitos Criollos para criar',
-      price: '$5.000',
-      location: 'Campoalegre · Huila',
-      icon: 'egg-outline',
-      accent: 'linear-gradient(135deg, #ffca28, #fb8c00)',
-      description: 'Pollitos criollos de un día de nacidos, criados en finca, resistentes y de buena postura.',
-      quantity: '30 unidades disponibles',
-      photos: ['egg-outline', 'paw-outline', 'leaf-outline'],
-      sellerName: 'María Gómez',
-      sellerPhone: '3109876543',
-      sellerEmail: 'maria.gomez@agromarket.co',
-    },
-    {
-      id: 3,
-      title: 'Semillas para Siembra',
-      price: '$5.000',
-      location: 'Rivera · Huila',
-      icon: 'flower-outline',
-      accent: 'linear-gradient(135deg, #9ccc65, #558b2f)',
-      description: 'Semillas seleccionadas de hortalizas, con alto porcentaje de germinación.',
-      quantity: '100 paquetes disponibles',
-      photos: ['flower-outline', 'leaf-outline', 'basket-outline'],
-      sellerName: 'Jorge Ramírez',
-      sellerPhone: '3157894561',
-      sellerEmail: 'jorge.ramirez@agromarket.co',
-    },
-    {
-      id: 4,
-      title: 'Yogurt Artesanal',
-      price: '$15.000',
-      location: 'Palermo · Huila',
-      icon: 'nutrition-outline',
-      accent: 'linear-gradient(135deg, #90caf9, #42a5f5)',
-      description: 'Yogurt artesanal elaborado con leche fresca de finca, sin conservantes.',
-      quantity: '20 litros disponibles',
-      photos: ['nutrition-outline', 'cafe-outline', 'restaurant-outline'],
-      sellerName: 'Diana Torres',
-      sellerPhone: '3112223344',
-      sellerEmail: 'diana.torres@agromarket.co',
-    },
-    {
-      id: 5,
-      title: 'Queso Artesanal',
-      price: '$25.000',
-      location: 'Yaguará · Huila',
-      icon: 'restaurant-outline',
-      accent: 'linear-gradient(135deg, #fff59d, #fdd835)',
-      description: 'Queso campesino artesanal, elaborado de forma tradicional con leche de vaca.',
-      quantity: '15 unidades disponibles',
-      photos: ['restaurant-outline', 'nutrition-outline', 'basket-outline'],
-      sellerName: 'Pedro Sánchez',
-      sellerPhone: '3134445566',
-      sellerEmail: 'pedro.sanchez@agromarket.co',
-    },
-    {
-      id: 6,
-      title: 'Ruanas de lana tejidas a mano',
-      price: '$60.000',
-      location: 'La Plata · Huila',
-      icon: 'shirt-outline',
-      accent: 'linear-gradient(135deg, #ce93d8, #8e24aa)',
-      description: 'Ruanas 100% lana virgen, tejidas a mano por artesanas de la región.',
-      quantity: '8 unidades disponibles',
-      photos: ['shirt-outline', 'leaf-outline', 'basket-outline'],
-      sellerName: 'Rosa Martínez',
-      sellerPhone: '3167778899',
-      sellerEmail: 'rosa.martinez@agromarket.co',
-    },
-  ]);
+  private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthService);
+  private readonly apiUrl = environment.apiUrl;
 
-  private readonly _myProducts = signal<Product[]>([
-    {
-      id: 101,
-      title: 'Café Orgánico de Altura',
-      price: '$18.000',
-      location: 'Neiva · Huila',
-      icon: 'cafe-outline',
-      accent: 'linear-gradient(135deg, #8d6e63, #4e342e)',
-      description: 'Café cultivado en las montañas del Huila, tueste medio, cosechado a mano.',
-      quantity: '25 kg disponibles',
-      photos: ['cafe-outline', 'leaf-outline', 'basket-outline'],
-    },
-    {
-      id: 102,
-      title: 'Aguacate Hass',
-      price: '$8.000',
-      location: 'Rivera · Huila',
-      icon: 'nutrition-outline',
-      accent: 'linear-gradient(135deg, #9ccc65, #558b2f)',
-      description: 'Aguacates Hass frescos, cosechados en finca, ideales para consumo directo.',
-      quantity: '40 unidades disponibles',
-      photos: ['nutrition-outline', 'leaf-outline', 'basket-outline'],
-    },
-    {
-      id: 103,
-      title: 'Miel de Abejas Pura',
-      price: '$22.000',
-      location: 'Neiva · Huila',
-      icon: 'flower-outline',
-      accent: 'linear-gradient(135deg, #ffca28, #f9a825)',
-      description: 'Miel 100% pura de abejas, extraída artesanalmente sin procesos industriales.',
-      quantity: '18 frascos disponibles',
-      photos: ['flower-outline', 'nutrition-outline', 'leaf-outline'],
-    },
-    {
-      id: 104,
-      title: 'Plátano Verde',
-      price: '$4.000',
-      location: 'Campoalegre · Huila',
-      icon: 'leaf-outline',
-      accent: 'linear-gradient(135deg, #aed581, #689f38)',
-      description: 'Plátano verde de excelente calidad, recién cosechado.',
-      quantity: '60 unidades disponibles',
-      photos: ['leaf-outline', 'basket-outline', 'nutrition-outline'],
-    },
-  ]);
+  private readonly _marketProducts = signal<Product[]>([]);
+  private readonly _myProducts = signal<Product[]>([]);
+  private readonly _favoriteProducts = signal<Product[]>([]);
+  private readonly _purchasedProducts = signal<Product[]>([]);
+  private readonly _recentlyViewedProducts = signal<Product[]>([]);
+  private readonly _cartItems = signal<{ product: Product; quantity: number }[]>([]);
+  private readonly _cartTotal = signal(0);
+  private readonly _cartCount = signal(0);
 
-  private readonly _favoriteIds = signal<Set<number>>(new Set());
-  private readonly _purchasedIds = signal<Set<number>>(new Set());
-  private readonly _cartItems = signal<Map<number, number>>(new Map());
-  private readonly _recentlyViewedIds = signal<number[]>([]);
-
-  /**
-   * Términos más buscados: dato de referencia mientras no exista analítica
-   * real de búsquedas en el backend.
-   */
   readonly topSearches: string[] = ['Café', 'Aguacate', 'Miel', 'Queso', 'Semillas'];
 
   readonly marketProducts = this._marketProducts.asReadonly();
   readonly myProducts = this._myProducts.asReadonly();
+  readonly favoriteProducts = this._favoriteProducts.asReadonly();
+  readonly purchasedProducts = this._purchasedProducts.asReadonly();
+  readonly recentlyViewedProducts = this._recentlyViewedProducts.asReadonly();
 
-  readonly favoriteProducts = computed(() =>
-    this._marketProducts().filter((product) => this._favoriteIds().has(product.id)),
-  );
+  readonly cartItems = computed(() => this._cartItems());
+  readonly cartTotal = this._cartTotal.asReadonly();
+  readonly cartCount = this._cartCount.asReadonly();
 
-  readonly purchasedProducts = computed(() =>
-    this._marketProducts().filter((product) => this._purchasedIds().has(product.id)),
-  );
+  constructor() {
+    effect(() => {
+      // Leer isAuthenticated() aquí hace que el effect se vuelva a ejecutar
+      // en cada login/logout, así el mercado se recarga con el filtro
+      // correcto (el backend excluye los productos propios del vendedor).
+      const authenticated = this.auth.isAuthenticated();
 
-  readonly cartItems = computed(() => {
-    const items = this._cartItems();
-    return this._marketProducts()
-      .filter((product) => items.has(product.id))
-      .map((product) => ({ product, quantity: items.get(product.id) as number }));
-  });
+      this.loadMarketProducts();
 
-  readonly cartCount = computed(() =>
-    Array.from(this._cartItems().values()).reduce((sum, quantity) => sum + quantity, 0),
-  );
-
-  readonly cartTotal = computed(() =>
-    this.cartItems().reduce(
-      (sum, item) => sum + this.parsePriceValue(item.product.price) * item.quantity,
-      0,
-    ),
-  );
-
-  readonly recentlyViewedProducts = computed(() => {
-    const ids = this._recentlyViewedIds();
-    return ids
-      .map((id) => this.getMarketProduct(id))
-      .filter((product): product is Product => !!product);
-  });
-
-  getMarketProduct(id: number): Product | undefined {
-    return this._marketProducts().find((product) => product.id === id);
+      if (authenticated) {
+        this.loadMyProducts();
+        this.loadFavorites();
+        this.loadCart();
+        this.loadPurchases();
+        this.loadRecentlyViewed();
+      } else {
+        this._myProducts.set([]);
+        this._favoriteProducts.set([]);
+        this._cartItems.set([]);
+        this._cartTotal.set(0);
+        this._cartCount.set(0);
+        this._purchasedProducts.set([]);
+        this._recentlyViewedProducts.set([]);
+      }
+    });
   }
 
-  getMyProduct(id: number): Product | undefined {
-    return this._myProducts().find((product) => product.id === id);
+  getProduct(id: number): Observable<Product> {
+    return this.http.get<ApiProduct>(`${this.apiUrl}/products/${id}`).pipe(map((p) => this.mapProduct(p)));
   }
 
-  updateMyProduct(id: number, changes: Partial<Product>): void {
-    this._myProducts.update((list) =>
-      list.map((product) => (product.id === id ? { ...product, ...changes } : product)),
+  createProduct(input: ProductInput): Observable<Product> {
+    return this.http.post<ApiProduct>(`${this.apiUrl}/products`, input).pipe(
+      map((p) => this.mapProduct(p)),
+      tap((product) => this._myProducts.update((list) => [product, ...list])),
     );
   }
 
-  removeMyProduct(id: number): void {
-    this._myProducts.update((list) => list.filter((product) => product.id !== id));
+  updateMyProduct(id: number, changes: Partial<ProductInput>): Observable<Product> {
+    return this.http.put<ApiProduct>(`${this.apiUrl}/products/${id}`, changes).pipe(
+      map((p) => this.mapProduct(p)),
+      tap((product) =>
+        this._myProducts.update((list) => list.map((item) => (item.id === id ? product : item))),
+      ),
+    );
+  }
+
+  removeMyProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/products/${id}`).pipe(
+      tap(() => this._myProducts.update((list) => list.filter((item) => item.id !== id))),
+    );
   }
 
   isFavorite(id: number): boolean {
-    return this._favoriteIds().has(id);
+    return this._favoriteProducts().some((product) => product.id === id);
   }
 
-  toggleFavorite(id: number): void {
-    this._favoriteIds.update((current) => {
-      const next = new Set(current);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+  toggleFavorite(id: number): Observable<{ isFavorite: boolean }> {
+    return this.http.post<{ isFavorite: boolean }>(`${this.apiUrl}/favorites/${id}`, {}).pipe(
+      tap(() => this.loadFavorites()),
+    );
   }
 
   isPurchased(id: number): boolean {
-    return this._purchasedIds().has(id);
-  }
-
-  buyProduct(id: number): void {
-    this._purchasedIds.update((current) => {
-      const next = new Set(current);
-      next.add(id);
-      return next;
-    });
-  }
-
-  isInCart(id: number): boolean {
-    return this._cartItems().has(id);
+    return this._purchasedProducts().some((product) => product.id === id);
   }
 
   getCartQuantity(id: number): number {
-    return this._cartItems().get(id) ?? 0;
+    return this._cartItems().find((item) => item.product.id === id)?.quantity ?? 0;
+  }
+
+  isInCart(id: number): boolean {
+    return this.getCartQuantity(id) > 0;
   }
 
   addToCart(id: number, quantity = 1): void {
-    this._cartItems.update((current) => {
-      const next = new Map(current);
-      next.set(id, (next.get(id) ?? 0) + quantity);
-      return next;
-    });
+    this.http.post(`${this.apiUrl}/cart/${id}`, { quantity }).subscribe(() => this.loadCart());
   }
 
   updateCartQuantity(id: number, quantity: number): void {
-    this._cartItems.update((current) => {
-      const next = new Map(current);
-      if (quantity <= 0) {
-        next.delete(id);
-      } else {
-        next.set(id, quantity);
-      }
-      return next;
-    });
+    this.http.put(`${this.apiUrl}/cart/${id}`, { quantity }).subscribe(() => this.loadCart());
   }
 
   removeFromCart(id: number): void {
-    this._cartItems.update((current) => {
-      const next = new Map(current);
-      next.delete(id);
-      return next;
-    });
+    this.http.delete(`${this.apiUrl}/cart/${id}`).subscribe(() => this.loadCart());
   }
 
   clearCart(): void {
-    this._cartItems.set(new Map());
+    this.http.delete(`${this.apiUrl}/cart`).subscribe(() => this.loadCart());
   }
 
-  private parsePriceValue(price: string): number {
-    const digits = price.replace(/[^0-9]/g, '');
-    return digits ? Number(digits) : 0;
-  }
-
-  markViewed(id: number): void {
-    this._recentlyViewedIds.update((current) => {
-      const withoutId = current.filter((existingId) => existingId !== id);
-      return [id, ...withoutId].slice(0, 6);
-    });
+  checkout(): Observable<{ purchasedCount: number }> {
+    return this.http.post<{ purchasedCount: number }>(`${this.apiUrl}/purchases/checkout`, {}).pipe(
+      tap(() => {
+        this.loadCart();
+        this.loadPurchases();
+      }),
+    );
   }
 
   searchProducts(query: string): Product[] {
@@ -303,11 +195,74 @@ export class ProductsService {
     );
   }
 
+  private loadMarketProducts(): void {
+    this.http.get<ApiProduct[]>(`${this.apiUrl}/products`).subscribe({
+      next: (products) => this._marketProducts.set(products.map((p) => this.mapProduct(p))),
+    });
+  }
+
+  private loadMyProducts(): void {
+    this.http.get<ApiProduct[]>(`${this.apiUrl}/products/mine`).subscribe({
+      next: (products) => this._myProducts.set(products.map((p) => this.mapProduct(p))),
+    });
+  }
+
+  private loadFavorites(): void {
+    this.http.get<ApiProduct[]>(`${this.apiUrl}/favorites`).subscribe({
+      next: (products) => this._favoriteProducts.set(products.map((p) => this.mapProduct(p))),
+    });
+  }
+
+  private loadCart(): void {
+    this.http.get<CartResponse>(`${this.apiUrl}/cart`).subscribe({
+      next: (res) => {
+        this._cartItems.set(
+          res.items.map((item) => ({ product: this.mapProduct(item.product), quantity: item.quantity })),
+        );
+        this._cartTotal.set(res.total);
+        this._cartCount.set(res.count);
+      },
+    });
+  }
+
+  private loadPurchases(): void {
+    this.http.get<PurchaseResponse[]>(`${this.apiUrl}/purchases`).subscribe({
+      next: (purchases) => this._purchasedProducts.set(purchases.map((purchase) => this.mapProduct(purchase.product))),
+    });
+  }
+
+  private loadRecentlyViewed(): void {
+    this.http.get<ApiProduct[]>(`${this.apiUrl}/recently-viewed`).subscribe({
+      next: (products) => this._recentlyViewedProducts.set(products.map((p) => this.mapProduct(p))),
+    });
+  }
+
+  private mapProduct(p: ApiProduct): Product {
+    return {
+      id: p.id,
+      title: p.title,
+      price: this.formatPrice(p.price),
+      location: p.location,
+      icon: p.icon,
+      accent: p.accent,
+      description: p.description ?? undefined,
+      quantity: `${p.quantity} disponibles`,
+      photos: p.photos,
+      sellerName: p.sellerName,
+      sellerPhone: p.sellerPhone,
+      sellerEmail: p.sellerEmail,
+    };
+  }
+
+  private formatPrice(value: number): string {
+    return `$${value.toLocaleString('es-CO')}`;
+  }
+
   private normalize(value: string): string {
     return value
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[̀-ͯ]/g, '')
       .trim();
   }
 

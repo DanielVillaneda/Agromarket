@@ -1,6 +1,10 @@
 <article class="product-card">
   <div class="product-thumb" [style.background]="product.accent">
-    <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+    @if (product.photos && product.photos.length) {
+      <img class="product-thumb-photo" [src]="product.photos[0]" alt="" />
+    } @else {
+      <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+    }
   </div>
 
   <div class="product-info">
