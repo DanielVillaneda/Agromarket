@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "www",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://RENDER_URL_PENDIENTE/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://agromarket-api-5yzi.onrender.com/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
