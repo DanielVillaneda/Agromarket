@@ -1,0 +1,7 @@
+# Al desplegar el frontend con la CLI de Vercel no se suben estas carpetas.
+node_modules
+www
+backend
+android
+.env
+.env.*
