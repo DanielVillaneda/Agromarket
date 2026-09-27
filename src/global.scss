@@ -34,7 +34,9 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* La app está diseñada solo en modo claro: no se sigue el modo oscuro del
+   teléfono (volvía negro el fondo y la zona de la hora en iPhone). */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
 /* Oculta las flechas/spinner nativos de los campos numéricos en toda la app. */
 input[type="number"] {
@@ -61,4 +63,12 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .brand-wordmark-accent {
   color: #7cb342;
+}
+
+/* Fondo detrás de las páginas: el mismo crema de la barra superior, para que
+   el navegador del celular pinte con ese color la zona de la hora y los
+   bordes al hacer scroll elástico. */
+html,
+body {
+  background: #f4f6ec;
 }
