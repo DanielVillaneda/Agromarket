@@ -41,7 +41,8 @@ export class ProductoVenderPage {
   readonly form: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
     precio: ['', [Validators.required, Validators.min(1)]],
-    cantidad: ['', [Validators.required, Validators.min(1)]],
+    // El stock restante puede tener decimales (ej. después de vender libras de un producto por kilo).
+    cantidad: ['', [Validators.required, Validators.min(0.01)]],
     unidad: ['unidad', [Validators.required]],
     ubicacion: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],

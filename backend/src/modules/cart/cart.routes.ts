@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { prisma } from '../../lib/prisma';
 import { asyncHandler } from '../../lib/asyncHandler';
+import { parseId } from '../../lib/params';
 import { badRequest, notFound } from '../../lib/httpError';
 import { requireAuth } from '../../middleware/auth';
 import { productInclude, serializeProduct } from '../products/product.serializer';
 import { productUnitLabels, productUnits, ProductUnit } from '../products/product.schemas';
 import { canConvert, convertPrice, convertWeight, formatAmount } from '../../lib/units';
-import { cartQuantitySchema } from './cart.schemas';
+import { cartQuantitySchema, cartUpdateSchema } from './cart.schemas';
 
 export const cartRouter = Router();
 
@@ -72,7 +73,7 @@ cartRouter.get(
 cartRouter.post(
   '/:productId',
   asyncHandler(async (req, res) => {
-    const productId = Number(req.params.productId);
+    const productId = parseId(req.params.productId);
     const userId = req.userId!;
     const { quantity, unit: requestedUnit } = cartQuantitySchema.parse({
       quantity: req.body.quantity ?? 1,
@@ -82,6 +83,9 @@ cartRouter.post(
     const product = await prisma.product.findUnique({ where: { id: productId } });
     if (!product) {
       throw notFound('No encontramos este producto.');
+    }
+    if (product.sellerId === userId) {
+      throw badRequest('No puedes comprar tu propio producto.');
     }
 
     const existing = await prisma.cartItem.findUnique({
@@ -122,15 +126,15 @@ cartRouter.post(
 cartRouter.put(
   '/:productId',
   asyncHandler(async (req, res) => {
-    const productId = Number(req.params.productId);
+    const productId = parseId(req.params.productId);
     const userId = req.userId!;
-    const quantity = Number(req.body.quantity);
+    const { quantity } = cartUpdateSchema.parse({ quantity: req.body.quantity });
     const requestedUnit =
       typeof req.body.unit === 'string' && (productUnits as readonly string[]).includes(req.body.unit)
         ? (req.body.unit as ProductUnit)
         : undefined;
 
-    if (!quantity || quantity <= 0) {
+    if (quantity <= 0) {
       await prisma.cartItem.deleteMany({ where: { userId, productId } });
       res.json({ quantity: 0 });
       return;
@@ -143,6 +147,9 @@ cartRouter.put(
 
     if (!product) {
       throw notFound('No encontramos este producto.');
+    }
+    if (product.sellerId === userId) {
+      throw badRequest('No puedes comprar tu propio producto.');
     }
 
     const itemUnit = requestedUnit ?? existing?.unit ?? product.unit;
@@ -172,7 +179,7 @@ cartRouter.put(
 cartRouter.delete(
   '/:productId',
   asyncHandler(async (req, res) => {
-    const productId = Number(req.params.productId);
+    const productId = parseId(req.params.productId);
     await prisma.cartItem.deleteMany({ where: { userId: req.userId, productId } });
     res.status(204).send();
   }),

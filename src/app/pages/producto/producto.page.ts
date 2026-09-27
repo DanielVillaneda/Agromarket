@@ -173,7 +173,7 @@ export class ProductoPage {
 
   increaseCartQuantity(): void {
     if (this.atMaxQuantity()) {
-      this.cartError.set(`Solo hay ${this.maxQuantity()} ${this.unitLabel()} disponibles de este producto.`);
+      this.cartError.set(`Solo hay ${Math.round(this.maxQuantity() * 100) / 100} ${this.unitLabel()} disponibles de este producto.`);
       return;
     }
 

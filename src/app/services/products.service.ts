@@ -333,7 +333,7 @@ export class ProductsService {
       icon: p.icon,
       accent: p.accent,
       description: p.description ?? undefined,
-      quantity: `${p.quantity} ${PRODUCT_UNIT_LABELS[p.unit] ?? PRODUCT_UNIT_LABELS.unidad} disponibles`,
+      quantity: `${Math.round(p.quantity * 100) / 100} ${PRODUCT_UNIT_LABELS[p.unit] ?? PRODUCT_UNIT_LABELS.unidad} disponibles`,
       rawQuantity: p.quantity,
       unit: p.unit,
       photos: p.photos,

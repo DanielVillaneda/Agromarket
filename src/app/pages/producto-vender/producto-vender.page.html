@@ -66,7 +66,7 @@
             <label class="pv-field">
               <span class="pv-label">Cantidad disponible</span>
               <div class="pv-quantity-group">
-                <input class="pv-input" type="number" formControlName="cantidad" min="1" />
+                <input class="pv-input" type="number" formControlName="cantidad" min="0.01" step="any" />
                 <select class="pv-select" formControlName="unidad">
                   @for (unit of unitOptions; track unit) {
                     <option [value]="unit">{{ unitLabels[unit] }}</option>
@@ -78,7 +78,7 @@
                   @if (cantidad.hasError('required')) {
                     Ingresa la cantidad disponible.
                   } @else if (cantidad.hasError('min')) {
-                    Debe ser al menos 1.
+                    Debe ser mayor a 0.
                   }
                 </span>
               }

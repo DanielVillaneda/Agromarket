@@ -17,7 +17,9 @@ export const createProductSchema = z.object({
   price: z.coerce.number().int().positive('El precio debe ser mayor a 0.'),
   location: z.string().trim().min(1, 'Ingresa tu ubicación.'),
   description: z.string().trim().min(10, 'Escribe al menos 10 caracteres.'),
-  quantity: z.coerce.number().int().min(1, 'Debe ser al menos 1.'),
+  // Puede tener decimales: tras vender en otra unidad (ej. 1 libra de un producto
+  // por kilo) el stock restante queda fraccionado y el vendedor debe poder editarlo.
+  quantity: z.coerce.number().positive('Debe ser mayor a 0.'),
   unit: z.enum(productUnits).optional(),
   icon: z.string().trim().optional(),
   accent: z.string().trim().optional(),

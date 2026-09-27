@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../../lib/prisma';
 import { asyncHandler } from '../../lib/asyncHandler';
+import { parseId } from '../../lib/params';
 import { forbidden, notFound } from '../../lib/httpError';
 import { requireAuth, attachUserIfPresent } from '../../middleware/auth';
 import { productInclude, serializeProduct } from './product.serializer';
@@ -53,7 +54,7 @@ productsRouter.get(
   '/:id',
   attachUserIfPresent,
   asyncHandler(async (req, res) => {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
 
     const product = await prisma.product.findUnique({ where: { id }, include: productInclude });
     if (!product) {
@@ -105,7 +106,7 @@ productsRouter.put(
   '/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
     const data = updateProductSchema.parse(req.body);
 
     const existing = await prisma.product.findUnique({ where: { id } });
@@ -143,7 +144,7 @@ productsRouter.delete(
   '/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
 
     const existing = await prisma.product.findUnique({ where: { id } });
     if (!existing) {

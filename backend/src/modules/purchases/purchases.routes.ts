@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../../lib/prisma';
 import { asyncHandler } from '../../lib/asyncHandler';
-import { badRequest } from '../../lib/httpError';
+import { badRequest, conflict } from '../../lib/httpError';
 import { requireAuth } from '../../middleware/auth';
 import { productInclude, serializeProduct } from '../products/product.serializer';
 import { productUnitLabels, ProductUnit } from '../products/product.schemas';
@@ -75,10 +75,42 @@ purchasesRouter.post(
     }
 
     const purchases = await prisma.$transaction(async (tx) => {
-      const created = await Promise.all(
-        cartItems.map((item) => {
-          const pricePerItemUnit = Math.round(convertPrice(item.product.price, item.product.unit, item.unit));
-          return tx.purchase.create({
+      // Vacía primero el carrito leído: si otro checkout del mismo usuario
+      // corre en paralelo, este delete espera al otro y encuentra menos
+      // filas, así que la compra no se registra dos veces.
+      const deleted = await tx.cartItem.deleteMany({
+        where: { id: { in: cartItems.map((item) => item.id) } },
+      });
+      if (deleted.count !== cartItems.length) {
+        throw conflict('Tu carrito cambió mientras se procesaba la compra. Revísalo e inténtalo de nuevo.');
+      }
+
+      const created = [];
+      for (const item of cartItems) {
+        // Se descuenta en la unidad nativa del producto, sin redondear
+        // (1 libra de un producto por kilo descuenta 0,4536 kilos). Solo se
+        // redondea a 6 decimales para no arrastrar ruido de punto flotante.
+        const decrementInProductUnit =
+          Math.round(convertWeight(item.quantity, item.unit, item.product.unit) * 1e6) / 1e6;
+
+        // Descuento condicional: solo aplica si todavía hay stock suficiente
+        // (y la unidad no cambió). La validación de arriba corre fuera de la
+        // transacción y otra compra simultánea pudo agotar el stock desde entonces.
+        const updated = await tx.product.updateMany({
+          where: {
+            id: item.productId,
+            unit: item.product.unit,
+            quantity: { gte: decrementInProductUnit - 1e-9 },
+          },
+          data: { quantity: { decrement: decrementInProductUnit } },
+        });
+        if (updated.count === 0) {
+          throw badRequest(`Ya no hay suficiente stock de "${item.product.title}". Revisa tu carrito.`);
+        }
+
+        const pricePerItemUnit = Math.round(convertPrice(item.product.price, item.product.unit, item.unit));
+        created.push(
+          await tx.purchase.create({
             data: {
               userId,
               productId: item.productId,
@@ -86,23 +118,9 @@ purchasesRouter.post(
               unit: item.unit,
               unitPrice: pricePerItemUnit,
             },
-          });
-        }),
-      );
-
-      // Descuenta del stock del producto lo que se acaba de vender,
-      // convirtiendo la cantidad comprada a la unidad nativa del producto.
-      await Promise.all(
-        cartItems.map((item) => {
-          const decrementInProductUnit = Math.round(convertWeight(item.quantity, item.unit, item.product.unit));
-          return tx.product.update({
-            where: { id: item.productId },
-            data: { quantity: { decrement: decrementInProductUnit } },
-          });
-        }),
-      );
-
-      await tx.cartItem.deleteMany({ where: { userId } });
+          }),
+        );
+      }
 
       return created;
     });

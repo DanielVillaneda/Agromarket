@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { prisma } from '../../lib/prisma';
 import { asyncHandler } from '../../lib/asyncHandler';
+import { parseId } from '../../lib/params';
+import { notFound } from '../../lib/httpError';
 import { requireAuth } from '../../middleware/auth';
 import { productInclude, serializeProduct } from '../products/product.serializer';
 
@@ -27,7 +29,7 @@ favoritesRouter.get(
 favoritesRouter.post(
   '/:productId',
   asyncHandler(async (req, res) => {
-    const productId = Number(req.params.productId);
+    const productId = parseId(req.params.productId);
     const userId = req.userId!;
 
     const existing = await prisma.favorite.findUnique({
@@ -38,6 +40,11 @@ favoritesRouter.post(
       await prisma.favorite.delete({ where: { id: existing.id } });
       res.json({ isFavorite: false });
       return;
+    }
+
+    const product = await prisma.product.findUnique({ where: { id: productId }, select: { id: true } });
+    if (!product) {
+      throw notFound('No encontramos este producto.');
     }
 
     await prisma.favorite.create({ data: { userId, productId } });
