@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 4 100 112" role="img" aria-label="AgroMarket">
+  <path d="M60 10 C36 10 20 28 20 50 C20 78 60 110 60 110 C60 110 100 78 100 50 C100 28 84 10 60 10Z" fill="#2e7d32"/>
+  <circle cx="60" cy="49" r="27" fill="#f4f6ec"/>
+  <circle cx="52" cy="46" r="7" fill="#e53935"/>
+  <circle cx="64" cy="43" r="7" fill="#f9c23c"/>
+  <path d="M70 44 C70 34 76 30 82 30 C82 38 77 44 70 44Z" fill="#7cb342"/>
+  <path d="M40 50 H80 L74 66 H46Z" fill="#8d6e63"/>
+  <path d="M44 56 H76" stroke="#6d4c41" stroke-width="2.5"/>
+</svg>

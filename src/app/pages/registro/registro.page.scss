@@ -43,10 +43,21 @@
   text-align: center;
 }
 
-.auth-logo {
-  width: 96px;
-  height: auto;
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 8px;
+}
+
+.auth-logo {
+  width: auto;
+  height: 58px;
+}
+
+.auth-wordmark {
+  font-size: 1.3rem;
 }
 
 .auth-title {

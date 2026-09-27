@@ -22,14 +22,25 @@
 .navbar-brand {
   display: flex;
   align-items: center;
+  gap: 8px;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .navbar-logo {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-  border-radius: 8px;
+  width: auto;
+  height: 36px;
+}
+
+.navbar-wordmark {
+  font-size: 1.25rem;
+}
+
+// Con menos ancho el nombre le quita espacio al menú y al buscador: queda solo el pin.
+@media (max-width: 1359px) {
+  .navbar-wordmark {
+    display: none;
+  }
 }
 
 .navbar-links {

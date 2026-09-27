@@ -19,9 +19,25 @@
   gap: 10px;
 }
 
+.footer-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .footer-logo {
-  width: 56px;
-  height: auto;
+  width: auto;
+  height: 46px;
+}
+
+// El footer es oscuro: el nombre va en tonos claros.
+.footer-wordmark {
+  font-size: 1.5rem;
+  color: #f4f6ec;
+}
+
+.footer-wordmark .brand-wordmark-accent {
+  color: #9ccc65;
 }
 
 .footer-tagline {
