@@ -1,0 +1,60 @@
+<app-navbar></app-navbar>
+<ion-content class="perfil-content">
+  <section class="perfil-section">
+    @if (user(); as user) {
+      <div class="perfil-card">
+        <div class="perfil-avatar" aria-hidden="true">{{ initials() }}</div>
+        <div class="perfil-info">
+          <h2 class="perfil-name">{{ user.nombre }}</h2>
+          <p class="perfil-detail">{{ user.email }}</p>
+          @if (user.telefono) {
+            <p class="perfil-detail">{{ user.telefono }}</p>
+          }
+        </div>
+      </div>
+
+      <nav class="perfil-list" aria-label="Mi cuenta">
+        @for (link of accountLinks; track link.path) {
+          <a class="perfil-item" [routerLink]="link.path">
+            <ion-icon [name]="link.icon" aria-hidden="true"></ion-icon>
+            <span>{{ link.label }}</span>
+            <ion-icon class="perfil-chevron" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+          </a>
+        }
+      </nav>
+    } @else {
+      <div class="perfil-card perfil-card--guest">
+        <div class="perfil-avatar" aria-hidden="true">
+          <ion-icon name="person-outline"></ion-icon>
+        </div>
+        <h2 class="perfil-name">Bienvenido a AgroMarket</h2>
+        <p class="perfil-detail">Inicia sesión para comprar, vender y guardar tus favoritos.</p>
+        <div class="perfil-actions">
+          <a class="perfil-btn perfil-btn--solid" routerLink="/login">
+            <ion-icon name="log-in-outline" aria-hidden="true"></ion-icon>
+            Iniciar sesión
+          </a>
+          <a class="perfil-btn perfil-btn--ghost" routerLink="/registro">
+            <ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
+            Registrarse
+          </a>
+        </div>
+      </div>
+    }
+
+    <nav class="perfil-list" aria-label="Información">
+      <a class="perfil-item" routerLink="/nosotros">
+        <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+        <span>Sobre nosotros</span>
+        <ion-icon class="perfil-chevron" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+      </a>
+    </nav>
+
+    @if (user()) {
+      <button type="button" class="perfil-logout" (click)="logout()">
+        <ion-icon name="log-out-outline" aria-hidden="true"></ion-icon>
+        Cerrar sesión
+      </button>
+    }
+  </section>
+</ion-content>

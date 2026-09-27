@@ -15,12 +15,6 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 400) {
-  .product-card {
-    max-width: 300px;
-  }
-}
-
 .product-thumb {
   display: flex;
   align-items: center;
@@ -77,4 +71,26 @@
   margin: 0;
   font-size: 0.78rem;
   color: #8a938a;
+}
+
+// En celular las tarjetas van de a 2 por fila: textos y relleno más compactos.
+@media (max-width: 480px) {
+  .product-info {
+    padding: 8px 10px 10px;
+  }
+
+  .product-title,
+  .product-price {
+    font-size: 0.85rem;
+  }
+
+  .product-location {
+    font-size: 0.72rem;
+  }
+
+  .product-owner-badge {
+    display: block;
+    width: fit-content;
+    margin: 4px 0 0;
+  }
 }

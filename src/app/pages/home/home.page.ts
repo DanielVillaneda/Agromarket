@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
@@ -10,11 +10,12 @@ import { FooterComponent } from '../../components/footer/footer.component';
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
-  imports: [IonContent, RouterLink, ProductCardComponent, NavbarComponent, FooterComponent],
+  imports: [IonContent, IonIcon, RouterLink, ProductCardComponent, NavbarComponent, FooterComponent],
 })
 export class HomePage implements AfterViewInit {
   private readonly productsService = inject(ProductsService);
   readonly products = this.productsService.marketProducts;
+  readonly productsLoaded = this.productsService.marketProductsLoaded;
 
   @ViewChild('heroVideo') private readonly heroVideoRef?: ElementRef<HTMLVideoElement>;
 

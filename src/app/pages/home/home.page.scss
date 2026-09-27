@@ -99,7 +99,10 @@
 
 @media (max-width: 480px) {
   .product-grid {
-    grid-template-columns: 1fr;
+    // 2 columnas también en celular: con una sola, cada producto ocupaba
+    // la pantalla completa.
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 }
 
@@ -190,4 +193,49 @@
   .footer-grid {
     grid-template-columns: 1fr;
   }
+}
+
+// Celular: el video ya no ocupa toda la pantalla, así se asoman los
+// productos de "Lo más reciente" apenas se entra.
+@media (max-width: 767px) {
+  .hero {
+    min-height: 55vh;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.8rem;
+  }
+
+  .hero-tagline {
+    font-size: 1.7rem;
+  }
+
+  .recent {
+    padding: 20px 14px 32px;
+  }
+}
+
+.recent-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 24px;
+  text-align: center;
+  color: #6b7568;
+}
+
+.recent-empty ion-icon {
+  font-size: 2.6rem;
+  color: #2e7d32;
+}
+
+.recent-empty p {
+  margin: 0;
+}
+
+.recent-empty a {
+  color: #2e7d32;
+  font-weight: 700;
+  text-decoration: none;
 }

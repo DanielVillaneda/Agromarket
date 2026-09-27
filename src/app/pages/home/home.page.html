@@ -6,7 +6,7 @@
     </video>
 
     <div class="hero-overlay">
-      <p class="hero-eyebrow">AgroMarket</p>
+      <p class="hero-eyebrow" translate="no">AgroMarket</p>
       <h1 class="hero-tagline">Conectamos el campo con nuevas oportunidades</h1>
     </div>
   </section>
@@ -21,6 +21,14 @@
         </a>
       }
     </div>
+
+    @if (productsLoaded() && !products().length) {
+      <div class="recent-empty">
+        <ion-icon name="leaf-outline" aria-hidden="true"></ion-icon>
+        <p>Aún no hay productos publicados.</p>
+        <a routerLink="/vender">Publica el primero</a>
+      </div>
+    }
   </section>
 
   <app-footer></app-footer>

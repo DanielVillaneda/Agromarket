@@ -322,3 +322,26 @@
     width: 140px;
   }
 }
+
+// En celulares la navegación, el carrito y la sesión viven en la barra de
+// pestañas inferior (TabBarComponent) y en la página Perfil: arriba solo
+// quedan el logo y el buscador a todo el ancho.
+@media (max-width: 767px) {
+  .app-navbar ion-toolbar {
+    --padding-start: 14px;
+    --padding-end: 14px;
+    --min-height: 60px;
+  }
+
+  .navbar-links,
+  .navbar-cart,
+  .navbar-auth {
+    display: none;
+  }
+
+  .navbar-search {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+}

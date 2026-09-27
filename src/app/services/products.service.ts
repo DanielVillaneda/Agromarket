@@ -113,6 +113,7 @@ export class ProductsService {
   private readonly apiUrl = environment.apiUrl;
 
   private readonly _marketProducts = signal<Product[]>([]);
+  private readonly _marketProductsLoaded = signal(false);
   private readonly _searchableProducts = signal<Product[]>([]);
   private readonly _myProducts = signal<Product[]>([]);
   private readonly _favoriteProducts = signal<Product[]>([]);
@@ -125,6 +126,8 @@ export class ProductsService {
   readonly topSearches: string[] = ['Café', 'Aguacate', 'Miel', 'Queso', 'Semillas'];
 
   readonly marketProducts = this._marketProducts.asReadonly();
+  /** true cuando ya llegó la primera respuesta del mercado (para no mostrar "vacío" mientras carga). */
+  readonly marketProductsLoaded = this._marketProductsLoaded.asReadonly();
   readonly myProducts = this._myProducts.asReadonly();
   readonly favoriteProducts = this._favoriteProducts.asReadonly();
   readonly purchasedProducts = this._purchasedProducts.asReadonly();
@@ -268,7 +271,10 @@ export class ProductsService {
 
   private loadMarketProducts(): void {
     this.http.get<ApiProduct[]>(`${this.apiUrl}/products`).subscribe({
-      next: (products) => this._marketProducts.set(products.map((p) => this.mapProduct(p))),
+      next: (products) => {
+        this._marketProducts.set(products.map((p) => this.mapProduct(p)));
+        this._marketProductsLoaded.set(true);
+      },
     });
   }
 
@@ -333,7 +339,7 @@ export class ProductsService {
       icon: p.icon,
       accent: p.accent,
       description: p.description ?? undefined,
-      quantity: `${Math.round(p.quantity * 100) / 100} ${PRODUCT_UNIT_LABELS[p.unit] ?? PRODUCT_UNIT_LABELS.unidad} disponibles`,
+      quantity: `${p.quantity.toLocaleString('es-CO', { maximumFractionDigits: 2 })} ${PRODUCT_UNIT_LABELS[p.unit] ?? PRODUCT_UNIT_LABELS.unidad} disponibles`,
       rawQuantity: p.quantity,
       unit: p.unit,
       photos: p.photos,

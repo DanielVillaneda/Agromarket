@@ -59,6 +59,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/carritocompras/carritocompras.page').then( m => m.CarritocomprasPage)
   },
   {
+    path: 'perfil',
+    loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage)
+  },
+  {
     path: 'search',
     loadComponent: () => import('./pages/search/search.page').then( m => m.SearchPage)
   },

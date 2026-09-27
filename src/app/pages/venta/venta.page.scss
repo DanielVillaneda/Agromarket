@@ -65,11 +65,20 @@
 
 @media (max-width: 480px) {
   .product-grid {
-    grid-template-columns: 1fr;
+    // 2 columnas también en celular: con una sola, cada producto ocupaba
+    // la pantalla completa.
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .venta-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .venta-section {
+    padding: 20px 14px 32px;
   }
 }

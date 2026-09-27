@@ -1,0 +1,8 @@
+// En celulares, las páginas terminan justo encima de la barra de pestañas
+// (64px + zona segura, igual que en tab-bar.component.scss) para que la
+// barra nunca tape el final del contenido.
+@media (max-width: 767px) {
+  .has-tab-bar ion-router-outlet {
+    bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+}

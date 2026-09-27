@@ -1,0 +1,19 @@
+<nav class="tab-bar" aria-label="Navegación principal">
+  @for (tab of tabs; track tab.path) {
+    <a
+      class="tab"
+      [class.tab--primary]="tab.primary"
+      [routerLink]="tab.path"
+      routerLinkActive="tab--active"
+      [routerLinkActiveOptions]="{ exact: !!tab.exact }"
+    >
+      <span class="tab-icon">
+        <ion-icon [name]="tab.icon" aria-hidden="true"></ion-icon>
+        @if (tab.path === '/carritocompras' && cartCount() > 0) {
+          <span class="tab-badge">{{ cartCount() }}</span>
+        }
+      </span>
+      <span class="tab-label">{{ tab.label }}</span>
+    </a>
+  }
+</nav>

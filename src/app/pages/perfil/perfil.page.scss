@@ -1,0 +1,155 @@
+.perfil-content {
+  --background: #f7f8f3;
+}
+
+.perfil-section {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.perfil-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #eef1ea;
+}
+
+.perfil-card--guest {
+  flex-direction: column;
+  text-align: center;
+  padding: 28px 20px;
+}
+
+.perfil-avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #e8f2dc;
+  color: #2e7d32;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.perfil-avatar ion-icon {
+  font-size: 1.8rem;
+}
+
+.perfil-info {
+  min-width: 0;
+}
+
+.perfil-name {
+  margin: 0 0 2px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2d1f;
+}
+
+.perfil-detail {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7563;
+  overflow-wrap: anywhere;
+}
+
+.perfil-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.perfil-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.perfil-btn--solid {
+  background: #222a1f;
+  color: #ffffff;
+}
+
+.perfil-btn--ghost {
+  background: #eef1e6;
+  color: #33402f;
+}
+
+.perfil-list {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #eef1ea;
+  overflow: hidden;
+}
+
+.perfil-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  color: #33402f;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.perfil-item + .perfil-item {
+  border-top: 1px solid #eef1ea;
+}
+
+.perfil-item:active {
+  background: #f4f6ec;
+}
+
+.perfil-item ion-icon {
+  font-size: 1.3rem;
+  color: #2e7d32;
+}
+
+.perfil-item span {
+  flex: 1;
+}
+
+.perfil-item .perfil-chevron {
+  font-size: 1.1rem;
+  color: #a3ab98;
+}
+
+.perfil-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid #f3d6d6;
+  background: #ffffff;
+  color: #c62828;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.perfil-logout ion-icon {
+  font-size: 1.2rem;
+}
