@@ -4,6 +4,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PRODUCT_UNITS, PRODUCT_UNIT_LABELS, ProductsService } from '../../services/products.service';
+import { readImageAsResizedDataUrl } from '../../services/image-utils';
 import { Product } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 
@@ -116,11 +117,11 @@ export class ProductoVenderPage {
     }
 
     Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.images.update((current) => [...current, { id: this.nextImageId++, dataUrl: reader.result as string }]);
-      };
-      reader.readAsDataURL(file);
+      readImageAsResizedDataUrl(file)
+        .then((dataUrl) => {
+          this.images.update((current) => [...current, { id: this.nextImageId++, dataUrl }]);
+        })
+        .catch((err: Error) => this.saveError.set(err.message));
     });
 
     input.value = '';
@@ -132,6 +133,11 @@ export class ProductoVenderPage {
 
   onSave(): void {
     this.saveError.set(null);
+
+    if (!this.images().length) {
+      this.saveError.set('El producto debe tener al menos una foto.');
+      return;
+    }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();

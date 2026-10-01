@@ -6,13 +6,31 @@
     </video>
 
     <div class="hero-overlay">
-      <p class="hero-eyebrow" translate="no">AgroMarket</p>
-      <h1 class="hero-tagline">Conectamos el campo con nuevas oportunidades</h1>
+      <h1 class="hero-tagline">Del campo del Huila a tu mesa</h1>
+      <p class="hero-subtitle">Compra directo a los productores de la región, sin intermediarios y a precios justos.</p>
+      <div class="hero-actions">
+        <a class="hero-btn hero-btn--solid" routerLink="/vender">
+          <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
+          Vender mi cosecha
+        </a>
+      </div>
     </div>
   </section>
 
-  <section class="recent">
-    <h2 class="recent-title">Lo más reciente</h2>
+  <section class="trust" aria-label="Por qué AgroMarket">
+    @for (item of trustItems; track item.title) {
+      <div class="trust-item">
+        <span class="trust-icon"><ion-icon [name]="item.icon" aria-hidden="true"></ion-icon></span>
+        <div>
+          <p class="trust-title">{{ item.title }}</p>
+          <p class="trust-text">{{ item.text }}</p>
+        </div>
+      </div>
+    }
+  </section>
+
+  <section class="recent" aria-labelledby="recent-title">
+    <h2 class="section-title" id="recent-title">Lo más reciente</h2>
 
     <div class="product-grid">
       @for (product of products(); track product.id) {
@@ -29,6 +47,19 @@
         <a routerLink="/vender">Publica el primero</a>
       </div>
     }
+  </section>
+
+  <section class="seller-cta" aria-labelledby="seller-cta-title">
+    <div class="seller-cta-image" aria-hidden="true"></div>
+    <div class="seller-cta-body">
+      <p class="seller-cta-eyebrow">¿Eres productor?</p>
+      <h2 class="seller-cta-title" id="seller-cta-title">Vende tu cosecha directo a quien la compra</h2>
+      <p class="seller-cta-text">Publica tus productos gratis, define tu precio y recibe los pedidos de compradores del Huila sin intermediarios.</p>
+      <a class="hero-btn hero-btn--solid" routerLink="/vender">
+        <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+        Publicar un producto
+      </a>
+    </div>
   </section>
 
   <app-footer></app-footer>

@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { PRODUCT_UNITS, PRODUCT_UNIT_LABELS, ProductUnit, ProductsService } from '../../services/products.service';
+import { readImageAsResizedDataUrl } from '../../services/image-utils';
 
 interface ProductImage {
   id: number;
@@ -75,11 +76,11 @@ export class VenderPage {
     }
 
     Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.images.update((current) => [...current, { id: this.nextImageId++, dataUrl: reader.result as string }]);
-      };
-      reader.readAsDataURL(file);
+      readImageAsResizedDataUrl(file)
+        .then((dataUrl) => {
+          this.images.update((current) => [...current, { id: this.nextImageId++, dataUrl }]);
+        })
+        .catch((err: Error) => this.submitError.set(err.message));
     });
 
     input.value = '';
@@ -93,7 +94,7 @@ export class VenderPage {
     this.submitted = true;
     this.submitError.set(null);
 
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.images().length) {
       this.form.markAllAsTouched();
       return;
     }

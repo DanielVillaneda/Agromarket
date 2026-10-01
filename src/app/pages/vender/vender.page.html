@@ -11,7 +11,7 @@
     <div class="vender-card">
       <h1 class="vender-title">Vender un producto</h1>
       <p class="vender-subtitle">
-        Completa la información y agrega fotos para publicar tu producto en AgroMarket.
+        Completa la información y agrega al menos una foto para publicar tu producto en AgroMarket.
       </p>
 
       <form class="vender-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
@@ -121,12 +121,23 @@
               </div>
             }
 
+            <!-- capture="environment": en el celular abre directo la cámara trasera. -->
             <label class="vender-image-add">
               <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
-              <span>Agregar foto</span>
+              <span>Tomar foto</span>
+              <input type="file" accept="image/*" capture="environment" hidden (change)="onImagesSelected($event)" />
+            </label>
+
+            <label class="vender-image-add">
+              <ion-icon name="images-outline" aria-hidden="true"></ion-icon>
+              <span>Galería</span>
               <input type="file" accept="image/*" multiple hidden (change)="onImagesSelected($event)" />
             </label>
           </div>
+
+          @if (submitted && !images().length) {
+            <span class="vender-error">Agrega al menos una foto del producto.</span>
+          }
         </div>
 
         @if (submitError()) {

@@ -202,9 +202,24 @@ export class ProductsService {
     return this._favoriteProducts().some((product) => product.id === id);
   }
 
-  toggleFavorite(id: number): Observable<{ isFavorite: boolean }> {
+  /**
+   * Agrega o quita de favoritos. Si se pasa `product`, el cambio se refleja
+   * al instante en la UI (el corazón de la tarjeta) sin esperar al backend;
+   * al responder, la lista se recarga para quedar sincronizada.
+   */
+  toggleFavorite(id: number, product?: Product): Observable<{ isFavorite: boolean }> {
+    if (product) {
+      this._favoriteProducts.update((current) =>
+        current.some((p) => p.id === id) ? current.filter((p) => p.id !== id) : [product, ...current],
+      );
+    }
+
     return this.http.post<{ isFavorite: boolean }>(`${this.apiUrl}/favorites/${id}`, {}).pipe(
-      tap(() => this.loadFavorites()),
+      tap({
+        next: () => this.loadFavorites(),
+        // Si falla, se deshace el cambio optimista recargando la lista real.
+        error: () => this.loadFavorites(),
+      }),
     );
   }
 

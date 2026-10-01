@@ -1,6 +1,8 @@
 import { Component, Input, computed, inject } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ProductsService } from '../../services/products.service';
 
 export interface Product {
   id: number;
@@ -30,6 +32,8 @@ export interface Product {
 export class ProductCardComponent {
 
   private readonly auth = inject(AuthService);
+  private readonly productsService = inject(ProductsService);
+  private readonly router = inject(Router);
 
   @Input({ required: true }) product!: Product;
 
@@ -37,5 +41,30 @@ export class ProductCardComponent {
     const userId = this.auth.currentUser()?.id;
     return userId !== undefined && userId === this.product.sellerId;
   });
+
+  isFavorite(): boolean {
+    return this.productsService.isFavorite(this.product.id);
+  }
+
+  /**
+   * El corazón está dentro del enlace de la tarjeta: se cancela la
+   * navegación para que marcar favorito no abra el producto.
+   */
+  onFavoriteClick(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.productsService.toggleFavorite(this.product.id, this.product).subscribe();
+  }
+
+  /** "kilo", "libra"... para mostrar el precio como "$1.000 / kilo". */
+  get unitLabel(): string {
+    return this.product.unit ?? 'unidad';
+  }
 
 }

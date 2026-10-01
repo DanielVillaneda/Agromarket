@@ -14,7 +14,27 @@
         <span class="product-owner-badge">Mío</span>
       }
     </h3>
-    <p class="product-price">{{ product.price }}</p>
-    <p class="product-location">{{ product.location }}</p>
+    <div class="product-price-row">
+      <p class="product-price">
+        {{ product.price }}
+        <span class="product-unit">/ {{ unitLabel }}</span>
+      </p>
+      @if (!isMine()) {
+        <button
+          type="button"
+          class="product-fav"
+          [class.product-fav--active]="isFavorite()"
+          (click)="onFavoriteClick($event)"
+          [attr.aria-label]="isFavorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+          [attr.aria-pressed]="isFavorite()"
+        >
+          <ion-icon [name]="isFavorite() ? 'heart' : 'heart-outline'" aria-hidden="true"></ion-icon>
+        </button>
+      }
+    </div>
+    <p class="product-location">
+      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+      {{ product.location }}
+    </p>
   </div>
 </article>

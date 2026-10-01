@@ -44,6 +44,10 @@ export class LoginPage {
 
   readonly mode = signal<AuthMode>(this.router.url.includes('registro') ? 'registro' : 'login');
   readonly registroStep = signal<1 | 2>(1);
+  // Botón de "ver contraseña" (ojo) en cada formulario; en el registro uno
+  // solo muestra ambos campos para poder comparar que coincidan.
+  readonly showLoginPassword = signal(false);
+  readonly showRegistroPassword = signal(false);
 
   loginSubmitted = false;
   registroSubmitted = false;

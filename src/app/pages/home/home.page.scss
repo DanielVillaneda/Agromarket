@@ -2,9 +2,11 @@
   --background: #ffffff;
 }
 
+// ---------- Portada con video ----------
+
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 82vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,40 +22,90 @@
   z-index: 0;
 }
 
+// Capa verde oscura sobre el video: une la imagen con la paleta de la
+// marca y hace legible el texto blanco sin importar el cuadro del video.
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(20, 45, 20, 0.35) 0%, rgba(20, 45, 20, 0.2) 45%, rgba(18, 40, 18, 0.7) 100%);
+}
+
 .hero-overlay {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 32px 16px;
+  gap: 12px;
+  max-width: 760px;
+  padding: 40px 20px;
   text-align: center;
-}
-
-.hero-eyebrow {
-  margin: 0;
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #d7f2a4;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  animation: hero-fade-up 0.7s ease both;
 }
 
 .hero-tagline {
   margin: 0;
-  max-width: 720px;
   font-family: 'Poppins', 'Segoe UI', sans-serif;
   font-size: clamp(2rem, 5vw, 3.4rem);
   font-weight: 800;
   letter-spacing: -0.01em;
-  line-height: 1.18;
+  line-height: 1.15;
   color: #ffffff;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
   animation: hero-fade-up 0.8s ease 0.1s both;
+}
+
+.hero-subtitle {
+  margin: 0;
+  max-width: 540px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #eef5e6;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  animation: hero-fade-up 0.8s ease 0.2s both;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+  animation: hero-fade-up 0.8s ease 0.3s both;
+}
+
+// Botón redondeado reutilizado en la portada y en el bloque de vendedores.
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.hero-btn:hover {
+  transform: translateY(-1px);
+}
+
+.hero-btn ion-icon {
+  font-size: 1.15rem;
+}
+
+.hero-btn--solid {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.hero-btn--solid:hover {
+  background: #256628;
 }
 
 @keyframes hero-fade-up {
@@ -68,20 +120,75 @@
   }
 }
 
-.recent {
-  padding: 24px 24px 40px;
+// ---------- Franja de confianza ----------
+
+.trust {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 1100px;
+  margin: -44px auto 0;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
 }
 
-.recent-title {
-  margin: 0 0 16px;
-  font-size: 1.3rem;
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(31, 45, 31, 0.1);
+}
+
+.trust-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #e8f2dc;
+  color: #2e7d32;
+  font-size: 1.35rem;
+}
+
+.trust-title {
+  margin: 0 0 2px;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1f2d1f;
 }
 
+.trust-text {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #6b7568;
+}
+
+// ---------- Secciones ----------
+
+.section-title {
+  margin: 0 0 16px;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1f2d1f;
+}
+
+.recent {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 24px 40px;
+}
+
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -89,130 +196,6 @@
   display: block;
   color: inherit;
   text-decoration: none;
-}
-
-@media (max-width: 720px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .product-grid {
-    // 2 columnas también en celular: con una sola, cada producto ocupaba
-    // la pantalla completa.
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-}
-
-.home-footer {
-  margin-top: 12px;
-  padding: 40px 24px 28px;
-  background: #1f2d1f;
-  color: #e7ede4;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr;
-  gap: 28px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-logo {
-  width: 56px;
-  height: auto;
-}
-
-.footer-tagline {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #c3cdbe;
-  line-height: 1.5;
-}
-
-.footer-heading {
-  margin: 0 0 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.footer-text {
-  margin: 0;
-  font-size: 0.82rem;
-  color: #c3cdbe;
-  line-height: 1.6;
-}
-
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.footer-links a,
-.footer-contact {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #c3cdbe;
-  font-size: 0.85rem;
-  text-decoration: none;
-}
-
-.footer-links a:hover,
-.footer-contact:hover {
-  color: #ffffff;
-}
-
-.footer-bottom {
-  margin-top: 28px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  text-align: center;
-  font-size: 0.75rem;
-  color: #9aa89a;
-}
-
-@media (max-width: 760px) {
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-// Celular: el video ya no ocupa toda la pantalla, así se asoman los
-// productos de "Lo más reciente" apenas se entra.
-@media (max-width: 767px) {
-  .hero {
-    min-height: 55vh;
-  }
-
-  .hero-eyebrow {
-    font-size: 0.8rem;
-  }
-
-  .hero-tagline {
-    font-size: 1.7rem;
-  }
-
-  .recent {
-    padding: 20px 14px 32px;
-  }
 }
 
 .recent-empty {
@@ -238,4 +221,147 @@
   color: #2e7d32;
   font-weight: 700;
   text-decoration: none;
+}
+
+// ---------- Invitación a vendedores ----------
+
+.seller-cta {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  max-width: 1100px;
+  margin: 8px auto 48px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f4f6ec;
+}
+
+.seller-cta-image {
+  min-height: 260px;
+  background: url('/assets/images/venta_agricola.jpg') center / cover no-repeat;
+}
+
+.seller-cta-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 36px;
+}
+
+.seller-cta-eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #558b2f;
+}
+
+.seller-cta-title {
+  margin: 0;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1f2d1f;
+}
+
+.seller-cta-text {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #4b5646;
+}
+
+// ---------- Tamaños de pantalla ----------
+
+@media (max-width: 1100px) {
+  .seller-cta {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+// Celular: el video no ocupa toda la pantalla y todo se apila.
+@media (max-width: 767px) {
+  .hero {
+    min-height: 64vh;
+  }
+
+  .hero-tagline {
+    font-size: 1.85rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.92rem;
+  }
+
+  .hero-btn {
+    padding: 11px 18px;
+    font-size: 0.88rem;
+  }
+
+  // En celular, una fila compacta de 3 (ícono + título) para no empujar
+  // los productos muy abajo.
+  .trust {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: -28px;
+    padding: 0 14px;
+  }
+
+  .trust-item {
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 6px;
+    text-align: center;
+  }
+
+  .trust-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+
+  .trust-title {
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .trust-text {
+    display: none;
+  }
+
+  .recent {
+    padding: 20px 14px 32px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .seller-cta {
+    grid-template-columns: 1fr;
+    margin: 0 14px 32px;
+  }
+
+  .seller-cta-image {
+    min-height: 160px;
+  }
+
+  .seller-cta-body {
+    padding: 22px 20px 26px;
+  }
+
+  .seller-cta-title {
+    font-size: 1.3rem;
+  }
 }

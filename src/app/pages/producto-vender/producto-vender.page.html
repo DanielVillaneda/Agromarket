@@ -26,9 +26,16 @@
             </div>
           }
 
+          <!-- capture="environment": en el celular abre directo la cámara trasera. -->
           <label class="pv-image-add">
             <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
-            <span>Agregar foto</span>
+            <span>Tomar foto</span>
+            <input type="file" accept="image/*" capture="environment" hidden (change)="onImagesSelected($event)" />
+          </label>
+
+          <label class="pv-image-add">
+            <ion-icon name="images-outline" aria-hidden="true"></ion-icon>
+            <span>Galería</span>
             <input type="file" accept="image/*" multiple hidden (change)="onImagesSelected($event)" />
           </label>
         </div>

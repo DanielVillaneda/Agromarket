@@ -17,6 +17,12 @@ export class HomePage implements AfterViewInit, ViewDidEnter {
   readonly products = this.productsService.marketProducts;
   readonly productsLoaded = this.productsService.marketProductsLoaded;
 
+  readonly trustItems = [
+    { icon: 'leaf-outline', title: 'Productos frescos', text: 'Recién cosechados en fincas de la región.' },
+    { icon: 'people-outline', title: 'Directo del productor', text: 'Sin intermediarios: mejor precio para todos.' },
+    { icon: 'location-outline', title: 'Hecho en el Huila', text: 'Apoyas la economía del campo local.' },
+  ];
+
   @ViewChild('heroVideo') private readonly heroVideoRef?: ElementRef<HTMLVideoElement>;
 
   ngAfterViewInit(): void {

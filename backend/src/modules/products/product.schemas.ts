@@ -23,7 +23,9 @@ export const createProductSchema = z.object({
   unit: z.enum(productUnits).optional(),
   icon: z.string().trim().optional(),
   accent: z.string().trim().optional(),
-  photos: z.array(z.string().trim().min(1)).optional(),
+  // Toda publicación necesita al menos una foto (en la edición, si se envían
+  // fotos, tampoco puede quedar la lista vacía).
+  photos: z.array(z.string().trim().min(1)).min(1, 'Agrega al menos una foto del producto.'),
 });
 
 export const updateProductSchema = createProductSchema.partial();

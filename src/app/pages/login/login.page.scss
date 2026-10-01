@@ -235,6 +235,42 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+// Campo de contraseña con el botón de "ver contraseña" (ojo) adentro.
+.auth-password {
+  position: relative;
+  display: flex;
+}
+
+.auth-password .auth-input {
+  flex: 1;
+  min-width: 0;
+  padding-right: 44px;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6b7568;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.auth-password-toggle:hover {
+  color: #2e7d32;
+  background: rgba(76, 175, 80, 0.1);
+}
+
 .auth-input:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);

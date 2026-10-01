@@ -62,15 +62,75 @@
 
 .product-price {
   margin: 0 0 4px;
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   font-weight: 700;
-  color: #1f2d1f;
+  color: #2e7d32;
+}
+
+.product-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+
+.product-price-row .product-price {
+  margin: 0;
+  min-width: 0;
+}
+
+// Corazón para agregar a favoritos sin entrar al producto.
+.product-fav {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #e0e4d6;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #6b7568;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.product-fav:hover {
+  color: #d32f2f;
+  border-color: #ef9a9a;
+}
+
+.product-fav:active {
+  transform: scale(0.9);
+}
+
+.product-fav--active {
+  color: #d32f2f;
+  border-color: #ef9a9a;
+  background: #ffebee;
+}
+
+.product-unit {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #6b7568;
 }
 
 .product-location {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   margin: 0;
   font-size: 0.78rem;
   color: #8a938a;
+}
+
+.product-location ion-icon {
+  flex-shrink: 0;
+  font-size: 0.9rem;
 }
 
 // En celular las tarjetas van de a 2 por fila: textos y relleno más compactos.
