@@ -10,12 +10,56 @@
       </a>
     </div>
 
-    <div class="product-grid">
-      @for (product of products(); track product.id) {
-        <a class="product-link" [routerLink]="['/producto-vender', product.id]">
-          <app-product-card [product]="product"></app-product-card>
-        </a>
-      }
-    </div>
+    @if (products().length) {
+      <div class="venta-table-wrapper">
+        <table class="venta-table">
+          <thead>
+            <tr>
+              <th class="venta-col-photo"></th>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th class="venta-col-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of products(); track product.id) {
+              <tr>
+                <td class="venta-col-photo">
+                  <a class="venta-thumb" [routerLink]="['/producto-vender', product.id]" [style.background]="product.accent">
+                    @if (product.photos && product.photos.length) {
+                      <img [src]="product.photos[0]" alt="" />
+                    } @else {
+                      <ion-icon [name]="product.icon" aria-hidden="true"></ion-icon>
+                    }
+                  </a>
+                </td>
+                <td class="venta-col-name">
+                  <a class="venta-name-link" [routerLink]="['/producto-vender', product.id]">{{ product.title }}</a>
+                  <span class="venta-location">
+                    <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                    {{ product.location }}
+                  </span>
+                </td>
+                <td class="venta-nowrap">{{ product.price }} <span class="venta-unit-hint">/ {{ product.unit }}</span></td>
+                <td class="venta-nowrap">{{ product.quantity }}</td>
+                <td class="venta-col-actions">
+                  <a class="venta-action venta-action--edit" [routerLink]="['/producto-vender', product.id]" aria-label="Editar producto">
+                    <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+                    <span class="venta-action-label">Editar</span>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="venta-empty">
+        <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
+        <p>Aún no has publicado productos.</p>
+        <a routerLink="/vender">Publica el primero</a>
+      </div>
+    }
   </section>
 </ion-content>

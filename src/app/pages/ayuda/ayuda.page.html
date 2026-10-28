@@ -1,0 +1,43 @@
+<app-navbar></app-navbar>
+<ion-content class="ayuda-content">
+  <section class="ayuda-hero">
+    <p class="ayuda-eyebrow">Centro de ayuda</p>
+    <h1 class="ayuda-title">¿En qué te podemos ayudar?</h1>
+    <p class="ayuda-lead">
+      Respuestas a las preguntas más frecuentes sobre comprar, vender y usar AgroMarket. Si no encuentras lo que buscas, escríbenos directamente.
+    </p>
+  </section>
+
+  <section class="ayuda-faq">
+    <h2 class="ayuda-section-title">Preguntas frecuentes</h2>
+
+    <div class="faq-list">
+      @for (faq of faqs; track faq.question; let i = $index) {
+        <div class="faq-item" [class.faq-item--open]="openIndex() === i">
+          <button type="button" class="faq-question" (click)="toggle(i)" [attr.aria-expanded]="openIndex() === i">
+            <span>{{ faq.question }}</span>
+            <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
+          </button>
+          @if (openIndex() === i) {
+            <p class="faq-answer">{{ faq.answer }}</p>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="ayuda-contact">
+    <h2 class="ayuda-section-title">¿Necesitas más ayuda?</h2>
+
+    <div class="contact-grid">
+      <a class="contact-item" href="mailto:contacto@agromarket.co">
+        <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+        contacto@agromarket.co
+      </a>
+      <a class="contact-item" href="tel:+578001234567">
+        <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+        +57 (8) 000 0000
+      </a>
+    </div>
+  </section>
+</ion-content>

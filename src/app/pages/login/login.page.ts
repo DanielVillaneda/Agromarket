@@ -12,7 +12,15 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 
-type AuthMode = 'login' | 'registro';
+type AuthMode = 'login' | 'registro' | 'recuperar';
+
+function passwordsMatchValidatorFields(passwordField: string, confirmField: string) {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const password = group.get(passwordField)?.value;
+    const confirmPassword = group.get(confirmField)?.value;
+    return password && confirmPassword && password !== confirmPassword ? { passwordsMismatch: true } : null;
+  };
+}
 
 function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;
@@ -68,6 +76,21 @@ export class LoginPage {
     { validators: passwordsMatchValidator },
   );
 
+  // --- Recuperar cuenta: correo -> código de 6 dígitos -> nueva contraseña ---
+  readonly recuperarStep = signal<1 | 2 | 3>(1);
+  readonly recuperarInfo = signal<string | null>(null);
+  readonly showRecuperarPassword = signal(false);
+
+  readonly recuperarForm: FormGroup = this.fb.group(
+    {
+      email: ['', [Validators.required, Validators.email]],
+      code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    { validators: passwordsMatchValidatorFields('password', 'confirmPassword') },
+  );
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly auth: AuthService,
@@ -102,12 +125,34 @@ export class LoginPage {
     return this.registroForm.controls['confirmPassword'];
   }
 
+  get recuperarEmail() {
+    return this.recuperarForm.controls['email'];
+  }
+
+  get recuperarCode() {
+    return this.recuperarForm.controls['code'];
+  }
+
+  get recuperarPassword() {
+    return this.recuperarForm.controls['password'];
+  }
+
+  get recuperarConfirmPassword() {
+    return this.recuperarForm.controls['confirmPassword'];
+  }
+
   setMode(mode: AuthMode): void {
     this.mode.set(mode);
     this.errorMessage.set(null);
 
     if (mode === 'registro') {
       this.registroStep.set(1);
+    }
+
+    if (mode === 'recuperar') {
+      this.recuperarStep.set(1);
+      this.recuperarInfo.set(null);
+      this.recuperarForm.reset();
     }
   }
 
@@ -177,6 +222,96 @@ export class LoginPage {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         this.errorMessage.set(err.error?.message ?? 'No se pudo crear la cuenta. Intenta de nuevo.');
+      },
+    });
+  }
+
+  /** Paso 1: pide el envío del código de 6 dígitos al correo ingresado. */
+  onRecuperarEmailSubmit(): void {
+    this.errorMessage.set(null);
+    this.recuperarEmail.markAsTouched();
+
+    if (this.recuperarEmail.invalid) {
+      return;
+    }
+
+    this.loading.set(true);
+    const email = this.recuperarEmail.value;
+
+    this.auth.solicitarRecuperacion(email).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.recuperarInfo.set(`Si ${email} está registrado, te enviamos un código de 6 dígitos (revisa también spam). Válido por 15 minutos.`);
+        this.recuperarStep.set(2);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.errorMessage.set(err.error?.message ?? 'No se pudo enviar el código. Intenta de nuevo.');
+      },
+    });
+  }
+
+  /** Paso 2: valida el código antes de dejar definir la nueva contraseña. */
+  onRecuperarCodeSubmit(): void {
+    this.errorMessage.set(null);
+    this.recuperarCode.markAsTouched();
+
+    if (this.recuperarCode.invalid) {
+      return;
+    }
+
+    this.loading.set(true);
+    const { email, code } = this.recuperarForm.value;
+
+    this.auth.verificarCodigoRecuperacion(email, code).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.recuperarInfo.set(null);
+        this.recuperarStep.set(3);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.errorMessage.set(err.error?.message ?? 'El código es inválido o expiró.');
+      },
+    });
+  }
+
+  /** Reenvía un nuevo código al mismo correo (ej. si expiró o no llegó). */
+  onResendCode(): void {
+    this.errorMessage.set(null);
+    this.recuperarInfo.set(null);
+    const email = this.recuperarForm.value.email;
+
+    this.auth.solicitarRecuperacion(email).subscribe({
+      next: () => this.recuperarInfo.set('Te enviamos un nuevo código.'),
+      error: () => this.errorMessage.set('No se pudo reenviar el código. Intenta de nuevo.'),
+    });
+  }
+
+  /** Paso 3: define la nueva contraseña (el backend vuelve a validar el código). */
+  onRecuperarPasswordSubmit(): void {
+    this.errorMessage.set(null);
+
+    if (this.recuperarPassword.invalid || this.recuperarConfirmPassword.invalid || this.recuperarForm.hasError('passwordsMismatch')) {
+      this.recuperarPassword.markAsTouched();
+      this.recuperarConfirmPassword.markAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    const { email, code, password } = this.recuperarForm.value;
+
+    this.auth.restablecerPassword(email, code, password).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.setMode('login');
+        this.loginForm.patchValue({ email });
+        this.recuperarInfo.set(null);
+        this.errorMessage.set(null);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.errorMessage.set(err.error?.message ?? 'No se pudo actualizar la contraseña. Intenta de nuevo.');
       },
     });
   }

@@ -15,5 +15,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Ingresa tu contraseña.'),
 });
 
+export const solicitarRecuperacionSchema = z.object({
+  email: z.string().trim().email('Correo electrónico inválido.'),
+});
+
+export const verificarCodigoSchema = z.object({
+  email: z.string().trim().email('Correo electrónico inválido.'),
+  code: z.string().trim().regex(/^[0-9]{6}$/, 'El código debe tener 6 dígitos.'),
+});
+
+export const restablecerPasswordSchema = z.object({
+  email: z.string().trim().email('Correo electrónico inválido.'),
+  code: z.string().trim().regex(/^[0-9]{6}$/, 'El código debe tener 6 dígitos.'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres.'),
+});
+
 export type RegistroInput = z.infer<typeof registroSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

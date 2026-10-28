@@ -21,7 +21,81 @@
             <ion-icon class="perfil-chevron" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
           </a>
         }
+
+        @if (isAdmin()) {
+          <a class="perfil-item" routerLink="/admin">
+            <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
+            <span>Panel de administración</span>
+            <ion-icon class="perfil-chevron" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+          </a>
+        }
       </nav>
+
+      <div class="perfil-payment-card">
+        <div class="perfil-payment-header">
+          <h3 class="perfil-payment-title">
+            <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
+            Método de pago
+          </h3>
+          @if (paymentMethod() && !editingPayment()) {
+            <button type="button" class="perfil-payment-link" (click)="editPayment()">Editar</button>
+          }
+        </div>
+
+        <p class="perfil-payment-hint">
+          Solo se usa para mostrarlo en tu historial de "Mis compras". No procesamos ningún cobro real ni guardamos el número completo de tu tarjeta.
+        </p>
+
+        @if (!editingPayment() && paymentMethod(); as method) {
+          <div class="perfil-payment-display">
+            <ion-icon name="card" aria-hidden="true"></ion-icon>
+            <div>
+              <p class="perfil-payment-bank">{{ method.bankName }}</p>
+              <p class="perfil-payment-detail">{{ method.holderName }} · •••• {{ method.last4 }}</p>
+            </div>
+          </div>
+          <button type="button" class="perfil-payment-remove" (click)="removePayment()">Quitar método de pago</button>
+        } @else {
+          <form class="perfil-payment-form" [formGroup]="paymentForm" (ngSubmit)="savePayment()" novalidate>
+            <label class="perfil-payment-field">
+              <span>Banco</span>
+              <input type="text" formControlName="bankName" placeholder="Ej. Bancolombia" />
+              @if (bankName.invalid && bankName.touched) {
+                <span class="perfil-payment-error">Ingresa el nombre del banco.</span>
+              }
+            </label>
+
+            <label class="perfil-payment-field">
+              <span>Titular de la tarjeta</span>
+              <input type="text" formControlName="holderName" placeholder="Nombre como aparece en la tarjeta" />
+              @if (holderName.invalid && holderName.touched) {
+                <span class="perfil-payment-error">Ingresa el nombre del titular.</span>
+              }
+            </label>
+
+            <label class="perfil-payment-field">
+              <span>Últimos 4 dígitos</span>
+              <input type="text" inputmode="numeric" maxlength="4" formControlName="last4" placeholder="0000" />
+              @if (last4.invalid && last4.touched) {
+                <span class="perfil-payment-error">Ingresa los 4 dígitos finales de la tarjeta.</span>
+              }
+            </label>
+
+            @if (paymentError()) {
+              <p class="perfil-payment-error">{{ paymentError() }}</p>
+            }
+
+            <div class="perfil-payment-actions">
+              @if (paymentMethod()) {
+                <button type="button" class="perfil-payment-cancel" (click)="cancelEditPayment()">Cancelar</button>
+              }
+              <button type="submit" class="perfil-payment-save" [disabled]="paymentSaving()">
+                {{ paymentSaving() ? 'Guardando…' : 'Guardar' }}
+              </button>
+            </div>
+          </form>
+        }
+      </div>
     } @else {
       <div class="perfil-card perfil-card--guest">
         <div class="perfil-avatar" aria-hidden="true">
@@ -46,6 +120,11 @@
       <a class="perfil-item" routerLink="/nosotros">
         <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
         <span>Sobre nosotros</span>
+        <ion-icon class="perfil-chevron" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+      </a>
+      <a class="perfil-item" routerLink="/ayuda">
+        <ion-icon name="help-buoy-outline" aria-hidden="true"></ion-icon>
+        <span>Centro de ayuda</span>
         <ion-icon class="perfil-chevron" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
       </a>
     </nav>

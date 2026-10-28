@@ -1,0 +1,199 @@
+.admin-content {
+  --background: #f7f8f3;
+}
+
+.admin-section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+.admin-title {
+  margin: 0 0 18px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2d1f;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid #e0e4d6;
+  background: #ffffff;
+  color: #33402f;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-tab--active {
+  background: #22281f;
+  border-color: #22281f;
+  color: #ffffff;
+}
+
+.admin-error {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ffebee;
+  color: #c62828;
+  font-size: 0.85rem;
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.admin-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #eef1ea;
+}
+
+.admin-stat-card ion-icon {
+  font-size: 1.5rem;
+  color: #2e7d32;
+  margin-bottom: 4px;
+}
+
+.admin-stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1f2d1f;
+}
+
+.admin-stat-label {
+  font-size: 0.78rem;
+  color: #8a938a;
+}
+
+// Mismo patrón que la tabla de "Mis productos en venta": scroll horizontal
+// en vez de que las columnas se encojan y los textos se distorsionen.
+.admin-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #eef1ea;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #eef1ea;
+  font-size: 0.86rem;
+  color: #33402f;
+}
+
+.admin-table th {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6b7568;
+  background: #fafbf7;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-row--blocked {
+  opacity: 0.65;
+}
+
+.admin-nowrap {
+  white-space: nowrap;
+}
+
+.admin-badge {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.admin-badge--role {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.admin-badge--active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.admin-badge--blocked {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.admin-col-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.admin-action {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e0e4d6;
+  background: #ffffff;
+  color: #33402f;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-action:hover {
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.admin-action--danger {
+  border-color: #f3d6d6;
+  color: #c62828;
+}
+
+.admin-action--danger:hover {
+  border-color: #c62828;
+  background: #ffebee;
+}
+
+.admin-self-hint {
+  font-size: 0.78rem;
+  color: #8a938a;
+}
+
+@media (max-width: 720px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-section {
+    padding: 20px 14px 32px;
+  }
+}

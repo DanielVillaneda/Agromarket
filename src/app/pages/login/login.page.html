@@ -7,6 +7,148 @@
 
 <ion-content class="auth-content" [fullscreen]="true">
   <div class="auth-wrapper">
+    @if (mode() === 'recuperar') {
+      <div class="auth-container auth-container--single">
+        <div class="auth-form-panel auth-form-panel--recuperar">
+          <div class="auth-form-scroll">
+            <div class="auth-brand">
+              <img class="auth-logo" src="assets/icon/agromarket-pin.svg" alt="" />
+              <span class="brand-wordmark auth-wordmark" translate="no">Agro<span class="brand-wordmark-accent">Market</span></span>
+            </div>
+
+            <h1 class="auth-title">Recuperar cuenta</h1>
+            <p class="auth-subtitle">
+              @switch (recuperarStep()) {
+                @case (1) { Ingresa tu correo y te enviaremos un código de verificación. }
+                @case (2) { Ingresa el código de 6 dígitos que te enviamos. }
+                @case (3) { Define tu nueva contraseña. }
+              }
+            </p>
+            <p class="auth-step-indicator">Paso {{ recuperarStep() }} de 3</p>
+
+            <form class="auth-form" [formGroup]="recuperarForm" novalidate>
+              @if (recuperarStep() === 1) {
+                <label class="auth-field">
+                  <span class="auth-label">Correo electrónico</span>
+                  <input
+                    class="auth-input"
+                    type="email"
+                    formControlName="email"
+                    placeholder="correo@ejemplo.com"
+                    autocomplete="email"
+                  />
+                  @if (recuperarEmail.invalid && recuperarEmail.touched) {
+                    <span class="auth-error">
+                      @if (recuperarEmail.hasError('required')) {
+                        Ingresa tu correo electrónico.
+                      } @else if (recuperarEmail.hasError('email')) {
+                        Ingresa un correo electrónico válido.
+                      }
+                    </span>
+                  }
+                </label>
+
+                @if (errorMessage()) {
+                  <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
+                }
+
+                <button class="auth-submit" type="button" [disabled]="loading()" (click)="onRecuperarEmailSubmit()">
+                  {{ loading() ? 'Enviando código…' : 'Enviar código' }}
+                </button>
+              }
+
+              @if (recuperarStep() === 2) {
+                @if (recuperarInfo()) {
+                  <p class="auth-info">{{ recuperarInfo() }}</p>
+                }
+
+                <label class="auth-field">
+                  <span class="auth-label">Código de verificación</span>
+                  <input
+                    class="auth-input auth-input--code"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="6"
+                    formControlName="code"
+                    placeholder="000000"
+                  />
+                  @if (recuperarCode.invalid && recuperarCode.touched) {
+                    <span class="auth-error">Ingresa el código de 6 dígitos.</span>
+                  }
+                </label>
+
+                @if (errorMessage()) {
+                  <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
+                }
+
+                <p class="auth-switch">
+                  ¿No te llegó?
+                  <button type="button" class="auth-switch-link" (click)="onResendCode()">Reenviar código</button>
+                </p>
+
+                <button class="auth-submit" type="button" [disabled]="loading()" (click)="onRecuperarCodeSubmit()">
+                  {{ loading() ? 'Verificando…' : 'Verificar código' }}
+                </button>
+              }
+
+              @if (recuperarStep() === 3) {
+                <label class="auth-field">
+                  <span class="auth-label">Nueva contraseña</span>
+                  <div class="auth-password">
+                    <input
+                      class="auth-input"
+                      [type]="showRecuperarPassword() ? 'text' : 'password'"
+                      formControlName="password"
+                      placeholder="••••••••"
+                      autocomplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      class="auth-password-toggle"
+                      (click)="showRecuperarPassword.set(!showRecuperarPassword())"
+                      [attr.aria-label]="showRecuperarPassword() ? 'Ocultar contraseña' : 'Ver contraseña'"
+                    >
+                      <ion-icon [name]="showRecuperarPassword() ? 'eye-off-outline' : 'eye-outline'" aria-hidden="true"></ion-icon>
+                    </button>
+                  </div>
+                  @if (recuperarPassword.invalid && recuperarPassword.touched) {
+                    <span class="auth-error">Debe tener al menos 6 caracteres.</span>
+                  }
+                </label>
+
+                <label class="auth-field">
+                  <span class="auth-label">Confirmar nueva contraseña</span>
+                  <div class="auth-password">
+                    <input
+                      class="auth-input"
+                      [type]="showRecuperarPassword() ? 'text' : 'password'"
+                      formControlName="confirmPassword"
+                      placeholder="••••••••"
+                      autocomplete="new-password"
+                    />
+                  </div>
+                  @if (recuperarConfirmPassword.touched && recuperarForm.hasError('passwordsMismatch')) {
+                    <span class="auth-error">Las contraseñas no coinciden.</span>
+                  }
+                </label>
+
+                @if (errorMessage()) {
+                  <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
+                }
+
+                <button class="auth-submit" type="button" [disabled]="loading()" (click)="onRecuperarPasswordSubmit()">
+                  {{ loading() ? 'Guardando…' : 'Cambiar contraseña' }}
+                </button>
+              }
+            </form>
+
+            <p class="auth-switch">
+              <button type="button" class="auth-switch-link" (click)="setMode('login')">Volver a iniciar sesión</button>
+            </p>
+          </div>
+        </div>
+      </div>
+    } @else {
     <div class="auth-container" [class.auth-container--active]="mode() === 'registro'">
 
       <div class="auth-pill-toggle">
@@ -90,6 +232,10 @@
                   </span>
                 }
               </label>
+
+              <p class="auth-forgot">
+                <button type="button" class="auth-switch-link" (click)="setMode('recuperar')">¿Olvidaste tu contraseña?</button>
+              </p>
 
               @if (mode() === 'login' && errorMessage()) {
                 <p class="auth-error auth-error--form">{{ errorMessage() }}</p>
@@ -285,5 +431,6 @@
       </div>
 
     </div>
+    }
   </div>
 </ion-content>

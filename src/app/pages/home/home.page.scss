@@ -237,7 +237,14 @@
 
 .seller-cta-image {
   min-height: 260px;
-  background: url('/assets/images/venta_agricola.jpg') center / cover no-repeat;
+  // La foto fuente es de baja resolución (720x406) y al estirarla a todo el
+  // ancho se nota pixelada. Mientras se reemplaza por una de mayor
+  // resolución, un desenfoque suave + un degradé disimulan el pixelado en
+  // vez de mostrarlo crudo (truco común en hero backgrounds).
+  background:
+    linear-gradient(135deg, rgba(36, 51, 31, 0.28), rgba(36, 51, 31, 0.05)),
+    url('/assets/images/venta_agricola.jpg') center / cover no-repeat;
+  filter: blur(0.4px) saturate(1.05);
 }
 
 .seller-cta-body {

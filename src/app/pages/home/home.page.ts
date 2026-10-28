@@ -49,6 +49,15 @@ export class HomePage implements AfterViewInit, ViewDidEnter {
     }
   }
 
+  /**
+   * El hero ya no enlaza a /vender: esa misma página también la ofrece la
+   * sección "¿Eres productor?" más abajo (y la pestaña "Vender" en
+   * celular), así que el hero se enfoca 100% en el comprador.
+   */
+  scrollToProducts(): void {
+    document.getElementById('recent-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   private playHeroVideo(): void {
     const video = this.heroVideoRef?.nativeElement;
 

@@ -44,6 +44,21 @@ async function main() {
     },
   });
 
+  // Cuenta de administrador para probar /admin en desarrollo. En producción
+  // el rol de un usuario real se cambia directamente en la base de datos
+  // (no hay registro público que otorgue "admin").
+  await prisma.user.upsert({
+    where: { email: 'admin@agromarket.co' },
+    update: { role: 'admin' },
+    create: {
+      nombre: 'Administrador AgroMarket',
+      email: 'admin@agromarket.co',
+      telefono: '3000000001',
+      passwordHash,
+      role: 'admin',
+    },
+  });
+
   const marketProducts = [
     {
       title: 'Abono 100% orgánico',
@@ -148,6 +163,7 @@ async function main() {
   console.log('- carlos.perez@agromarket.co');
   console.log('- maria.gomez@agromarket.co');
   console.log('- demo@agromarket.co (tiene productos propios para probar "Venta")');
+  console.log('- admin@agromarket.co (rol admin, para probar /admin)');
 }
 
 main()

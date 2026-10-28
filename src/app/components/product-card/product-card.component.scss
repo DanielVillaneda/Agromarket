@@ -80,8 +80,15 @@
   min-width: 0;
 }
 
-// Corazón para agregar a favoritos sin entrar al producto.
-.product-fav {
+// Botones sobre la tarjeta (favorito/carrito, o editar si es mío) sin
+// entrar al producto.
+.product-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+}
+
+.product-action {
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -95,19 +102,32 @@
   color: #6b7568;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
 }
 
-.product-fav:hover {
+.product-action:hover {
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+.product-action:active {
+  transform: scale(0.9);
+}
+
+// El corazón de favoritos usa rojo al activarse; el carrito y editar usan
+// el mismo verde de marca al "activarse" (confirmación de agregado).
+.product-action--active {
+  color: #2e7d32;
+  border-color: #a5d6a7;
+  background: #e8f5e9;
+}
+
+.product-action:not(.product-action--cart):not(.product-action--edit):hover {
   color: #d32f2f;
   border-color: #ef9a9a;
 }
 
-.product-fav:active {
-  transform: scale(0.9);
-}
-
-.product-fav--active {
+.product-action:not(.product-action--cart):not(.product-action--edit).product-action--active {
   color: #d32f2f;
   border-color: #ef9a9a;
   background: #ffebee;

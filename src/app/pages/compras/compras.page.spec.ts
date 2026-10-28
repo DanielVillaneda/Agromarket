@@ -21,6 +21,6 @@ describe('ComprasPage', () => {
   });
 
   it('should start with no purchased products', () => {
-    expect(component.products().length).toBe(0);
+    expect(component.purchases().length).toBe(0);
   });
 });

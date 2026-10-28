@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { ProductsService } from '../../services/products.service';
 
@@ -9,7 +8,7 @@ import { ProductsService } from '../../services/products.service';
   selector: 'app-venta',
   templateUrl: './venta.page.html',
   styleUrls: ['./venta.page.scss'],
-  imports: [IonContent, IonIcon, RouterLink, ProductCardComponent, NavbarComponent],
+  imports: [IonContent, IonIcon, RouterLink, NavbarComponent],
 })
 export class VentaPage {
 

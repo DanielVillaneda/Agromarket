@@ -295,8 +295,9 @@
   cursor: not-allowed;
 }
 
-.auth-success {
-  margin: 0;
+.auth-success,
+.auth-info {
+  margin: 0 0 4px;
   font-size: 0.82rem;
   font-weight: 600;
   color: #2e7d32;
@@ -304,6 +305,30 @@
   border-radius: 8px;
   padding: 8px 10px;
   text-align: center;
+}
+
+.auth-forgot {
+  margin: 2px 0 0;
+  text-align: right;
+}
+
+.auth-forgot .auth-switch-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.auth-input--code {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+// Panel único (recuperar cuenta): no vive dentro de .auth-track, así que
+// se le da el ancho completo en vez del 50% que usan los paneles del
+// carrusel login/registro.
+.auth-container--single .auth-form-panel--recuperar {
+  width: 100%;
 }
 
 .auth-submit {

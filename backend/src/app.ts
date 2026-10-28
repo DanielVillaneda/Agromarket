@@ -8,6 +8,8 @@ import { favoritesRouter } from './modules/favorites/favorites.routes';
 import { cartRouter } from './modules/cart/cart.routes';
 import { purchasesRouter } from './modules/purchases/purchases.routes';
 import { recentlyViewedRouter } from './modules/recently-viewed/recently-viewed.routes';
+import { profileRouter } from './modules/profile/profile.routes';
+import { adminRouter } from './modules/admin/admin.routes';
 
 const allowedOrigins = env.corsOrigin
   .split(',')
@@ -45,6 +47,8 @@ export function createApp(): Express {
   app.use('/api/cart', cartRouter);
   app.use('/api/purchases', purchasesRouter);
   app.use('/api/recently-viewed', recentlyViewedRouter);
+  app.use('/api/profile', profileRouter);
+  app.use('/api/admin', adminRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

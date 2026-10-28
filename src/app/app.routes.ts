@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   
@@ -65,5 +66,14 @@ export const routes: Routes = [
   {
     path: 'search',
     loadComponent: () => import('./pages/search/search.page').then( m => m.SearchPage)
+  },
+  {
+    path: 'ayuda',
+    loadComponent: () => import('./pages/ayuda/ayuda.page').then( m => m.AyudaPage)
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/admin.page').then( m => m.AdminPage)
   },
 ];

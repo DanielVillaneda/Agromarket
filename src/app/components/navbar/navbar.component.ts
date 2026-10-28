@@ -70,13 +70,22 @@ export class NavbarComponent {
     return this.productsService.searchProducts(query).slice(0, 6);
   });
 
-  readonly navLinks: NavLink[] = [
-    { label: 'Inicio', path: '/home', exact: true },
-    { label: 'Venta', path: '/venta' },
-    { label: 'Favoritos', path: '/favoritos' },
-    { label: 'Mis Compras', path: '/compras' },
-    { label: 'Sobre Nosotros', path: '/nosotros' },
-  ];
+  readonly navLinks = computed<NavLink[]>(() => {
+    const links: NavLink[] = [
+      { label: 'Inicio', path: '/home', exact: true },
+      { label: 'Venta', path: '/venta' },
+      { label: 'Favoritos', path: '/favoritos' },
+      { label: 'Mis Compras', path: '/compras' },
+      { label: 'Ayuda', path: '/ayuda' },
+      { label: 'Sobre Nosotros', path: '/nosotros' },
+    ];
+
+    if (this.auth.isAdmin()) {
+      links.push({ label: 'Admin', path: '/admin' });
+    }
+
+    return links;
+  });
 
   onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;

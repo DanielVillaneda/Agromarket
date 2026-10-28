@@ -20,7 +20,7 @@ describe('NavbarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should expose 5 navigation links', () => {
-    expect(component.navLinks.length).toBe(5);
+  it('should expose 6 navigation links for a logged-out visitor', () => {
+    expect(component.navLinks().length).toBe(6);
   });
 });

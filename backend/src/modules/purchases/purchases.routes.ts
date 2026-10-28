@@ -29,6 +29,8 @@ purchasesRouter.get(
         unit: purchase.unit,
         unitPrice: purchase.unitPrice,
         purchasedAt: purchase.purchasedAt,
+        paymentBank: purchase.paymentBank,
+        paymentLast4: purchase.paymentLast4,
         product: serializeProduct(purchase.product),
       })),
     );
@@ -45,10 +47,10 @@ purchasesRouter.post(
   asyncHandler(async (req, res) => {
     const userId = req.userId!;
 
-    const cartItems = await prisma.cartItem.findMany({
-      where: { userId },
-      include: { product: true },
-    });
+    const [cartItems, paymentMethod] = await Promise.all([
+      prisma.cartItem.findMany({ where: { userId }, include: { product: true } }),
+      prisma.paymentMethod.findUnique({ where: { userId } }),
+    ]);
 
     if (cartItems.length === 0) {
       throw badRequest('Tu carrito está vacío.');
@@ -117,6 +119,10 @@ purchasesRouter.post(
               quantity: item.quantity,
               unit: item.unit,
               unitPrice: pricePerItemUnit,
+              // Copia del método de pago del comprador al momento de la compra
+              // (simulado: no se cobra de verdad), para mostrarlo en "Mis compras".
+              paymentBank: paymentMethod?.bankName ?? null,
+              paymentLast4: paymentMethod?.last4 ?? null,
             },
           }),
         );
