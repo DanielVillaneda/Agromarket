@@ -135,6 +135,164 @@
   color: #a3ab98;
 }
 
+.perfil-payment-card {
+  padding: 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #eef1ea;
+}
+
+.perfil-payment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.perfil-payment-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1f2d1f;
+}
+
+.perfil-payment-title ion-icon {
+  color: #2e7d32;
+  font-size: 1.2rem;
+}
+
+.perfil-payment-link {
+  border: none;
+  background: none;
+  padding: 0;
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.perfil-payment-hint {
+  margin: 8px 0 14px;
+  font-size: 0.78rem;
+  color: #8a938a;
+  line-height: 1.4;
+}
+
+.perfil-payment-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f4f6ec;
+  margin-bottom: 12px;
+}
+
+.perfil-payment-display ion-icon {
+  font-size: 1.6rem;
+  color: #2e7d32;
+}
+
+.perfil-payment-bank {
+  margin: 0;
+  font-weight: 700;
+  color: #1f2d1f;
+  font-size: 0.92rem;
+}
+
+.perfil-payment-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7568;
+}
+
+.perfil-payment-remove {
+  width: 100%;
+  border: 1px solid #f3d6d6;
+  background: #ffffff;
+  color: #c62828;
+  border-radius: 10px;
+  padding: 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.perfil-payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-payment-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #33402f;
+}
+
+.perfil-payment-field input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #e0e4d6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: #24331f;
+  background: #fbfcf8;
+  outline: none;
+  font-family: inherit;
+}
+
+.perfil-payment-field input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.perfil-payment-error {
+  font-size: 0.75rem;
+  color: #d32f2f;
+}
+
+.perfil-payment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.perfil-payment-cancel {
+  border: 1px solid #e0e4d6;
+  background: #ffffff;
+  color: #33402f;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.perfil-payment-save {
+  border: none;
+  background: #22281f;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 9px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.perfil-payment-save:disabled {
+  opacity: 0.6;
+}
+
 .perfil-logout {
   display: flex;
   align-items: center;

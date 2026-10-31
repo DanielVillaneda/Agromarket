@@ -1,0 +1,129 @@
+<app-navbar></app-navbar>
+<ion-content class="admin-content">
+  <section class="admin-section">
+    <h1 class="admin-title">Panel de administración</h1>
+
+    <div class="admin-tabs" role="tablist">
+      <button type="button" class="admin-tab" [class.admin-tab--active]="tab() === 'resumen'" (click)="setTab('resumen')">
+        Resumen
+      </button>
+      <button type="button" class="admin-tab" [class.admin-tab--active]="tab() === 'usuarios'" (click)="setTab('usuarios')">
+        Usuarios ({{ users().length }})
+      </button>
+      <button type="button" class="admin-tab" [class.admin-tab--active]="tab() === 'productos'" (click)="setTab('productos')">
+        Productos ({{ products().length }})
+      </button>
+    </div>
+
+    @if (actionError()) {
+      <p class="admin-error">{{ actionError() }}</p>
+    }
+
+    @if (tab() === 'resumen') {
+      @if (stats(); as s) {
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+            <span class="admin-stat-value">{{ s.usersCount }}</span>
+            <span class="admin-stat-label">Usuarios registrados</span>
+          </div>
+          <div class="admin-stat-card">
+            <ion-icon name="leaf-outline" aria-hidden="true"></ion-icon>
+            <span class="admin-stat-value">{{ s.productsCount }}</span>
+            <span class="admin-stat-label">Productos publicados</span>
+          </div>
+          <div class="admin-stat-card">
+            <ion-icon name="bag-check-outline" aria-hidden="true"></ion-icon>
+            <span class="admin-stat-value">{{ s.purchasesCount }}</span>
+            <span class="admin-stat-label">Compras realizadas</span>
+          </div>
+          <div class="admin-stat-card">
+            <ion-icon name="cash-outline" aria-hidden="true"></ion-icon>
+            <span class="admin-stat-value">{{ formatPrice(s.totalSales) }}</span>
+            <span class="admin-stat-label">Ventas totales</span>
+          </div>
+        </div>
+      }
+    }
+
+    @if (tab() === 'usuarios') {
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th class="admin-col-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr [class.admin-row--blocked]="user.isBlocked">
+                <td>{{ user.nombre }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.telefono }}</td>
+                <td>
+                  @if (user.role === 'admin') {
+                    <span class="admin-badge admin-badge--role">Admin</span>
+                  } @else {
+                    Usuario
+                  }
+                </td>
+                <td>
+                  @if (user.isBlocked) {
+                    <span class="admin-badge admin-badge--blocked">Bloqueado</span>
+                  } @else {
+                    <span class="admin-badge admin-badge--active">Activo</span>
+                  }
+                </td>
+                <td class="admin-col-actions">
+                  @if (user.id !== currentUserId) {
+                    <button type="button" class="admin-action" (click)="toggleBlock(user)">
+                      {{ user.isBlocked ? 'Desbloquear' : 'Bloquear' }}
+                    </button>
+                  } @else {
+                    <span class="admin-self-hint">Tu cuenta</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (tab() === 'productos') {
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Vendedor</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th class="admin-col-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of products(); track product.id) {
+              <tr>
+                <td>{{ product.title }}</td>
+                <td>{{ product.sellerName }}</td>
+                <td class="admin-nowrap">{{ formatPrice(product.price) }} / {{ product.unit }}</td>
+                <td class="admin-nowrap">{{ product.quantity }} {{ product.unit }}</td>
+                <td class="admin-col-actions">
+                  <button type="button" class="admin-action admin-action--danger" (click)="deleteProduct(product)">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</ion-content>

@@ -45,35 +45,157 @@
   font-size: 1.05rem;
 }
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+// Envoltorio con scroll horizontal: en vez de que las columnas se encojan
+// y los textos se corten/distorsionen en pantallas angostas (el mismo tipo
+// de problema que el bug de Android en el formulario de vender), la tabla
+// completa se puede deslizar de lado a lado.
+.venta-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #eef1ea;
+  border-radius: 14px;
 }
 
-.product-link {
+.venta-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.venta-table th,
+.venta-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #eef1ea;
+  font-size: 0.88rem;
+  color: #33402f;
+}
+
+.venta-table th {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6b7568;
+  background: #fafbf7;
+}
+
+.venta-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.venta-table tbody tr:hover {
+  background: #fbfcf8;
+}
+
+.venta-col-photo {
+  width: 64px;
+}
+
+.venta-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.venta-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.venta-thumb ion-icon {
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.venta-col-name {
+  min-width: 180px;
+}
+
+.venta-name-link {
   display: block;
-  color: inherit;
+  font-weight: 600;
+  color: #1f2d1f;
   text-decoration: none;
 }
 
-@media (max-width: 720px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.venta-name-link:hover {
+  color: #2e7d32;
+}
+
+.venta-location {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  font-size: 0.76rem;
+  color: #8a938a;
+}
+
+.venta-nowrap {
+  white-space: nowrap;
+}
+
+.venta-unit-hint {
+  color: #8a938a;
+  font-size: 0.8rem;
+}
+
+.venta-col-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.venta-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.venta-action:hover {
+  background: #c8e6c9;
+}
+
+.venta-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 20px;
+  color: #8a938a;
+  text-align: center;
+}
+
+.venta-empty ion-icon {
+  font-size: 2.4rem;
+}
+
+.venta-empty a {
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 @media (max-width: 480px) {
-  .product-grid {
-    // 2 columnas también en celular: con una sola, cada producto ocupaba
-    // la pantalla completa.
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
   .venta-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .venta-action-label {
+    display: none;
   }
 }
 

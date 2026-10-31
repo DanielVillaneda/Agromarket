@@ -141,6 +141,10 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  // Sin esto, un hijo de grid/flex no se encoge por debajo de su ancho de
+  // contenido mínimo. El <select> nativo de Android es más ancho que el de
+  // iOS, así que sin min-width: 0 empujaba toda la fila fuera de la tarjeta.
+  min-width: 0;
 }
 
 .pv-label {
@@ -152,6 +156,9 @@
 .pv-input,
 .pv-textarea,
 .pv-select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
   border: 1px solid #e0e4d6;
   border-radius: 10px;
   padding: 11px 14px;
@@ -167,10 +174,25 @@
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: 8px;
+  min-width: 0;
 }
 
 .pv-select {
   cursor: pointer;
+  // El <select> nativo dibuja flecha y relleno distinto en cada sistema
+  // (más ancho en Android que en iOS); se reemplaza por una flecha propia
+  // para que el tamaño sea igual en cualquier dispositivo.
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 32px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
 }
 
 .pv-textarea {

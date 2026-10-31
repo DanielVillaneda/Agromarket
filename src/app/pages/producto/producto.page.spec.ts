@@ -27,7 +27,7 @@ describe('ProductoPage', () => {
   });
 
   it('should load the matching product', () => {
-    expect(component.product?.id).toBe(1);
+    expect(component.product()?.id).toBe(1);
   });
 
   it('should toggle favorite state', () => {

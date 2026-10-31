@@ -8,6 +8,7 @@ export interface AuthUser {
   nombre: string;
   email: string;
   telefono: string | null;
+  role: 'user' | 'admin';
 }
 
 export interface RegisterPayload {
@@ -32,6 +33,7 @@ export class AuthService {
 
   readonly currentUser = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
+  readonly isAdmin = computed(() => this._user()?.role === 'admin');
 
   constructor(private readonly http: HttpClient) {}
 
@@ -45,6 +47,25 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${environment.apiUrl}/auth/registro`, payload)
       .pipe(tap((response) => this.setSession(response)));
+  }
+
+  /** Paso 1 de "recuperar cuenta": pide que se envíe un código de 6 dígitos al correo. */
+  solicitarRecuperacion(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/recuperar`, { email });
+  }
+
+  /** Paso 2: valida el código antes de mostrar el formulario de nueva contraseña. */
+  verificarCodigoRecuperacion(email: string, code: string): Observable<{ valid: boolean }> {
+    return this.http.post<{ valid: boolean }>(`${environment.apiUrl}/auth/recuperar/verificar`, { email, code });
+  }
+
+  /** Paso 3: define la nueva contraseña (el backend vuelve a validar el código). */
+  restablecerPassword(email: string, code: string, password: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/recuperar/restablecer`, {
+      email,
+      code,
+      password,
+    });
   }
 
   logout(): void {

@@ -7,7 +7,7 @@
       </a>
 
       <nav class="navbar-links" aria-label="Navegación principal">
-        @for (link of navLinks; track link.path) {
+        @for (link of navLinks(); track link.path) {
           <a
             class="navbar-link"
             [routerLink]="link.path"

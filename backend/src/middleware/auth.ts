@@ -1,21 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
 import { verifyToken } from '../lib/jwt';
-import { unauthorized } from '../lib/httpError';
+import { prisma } from '../lib/prisma';
+import { forbidden, unauthorized } from '../lib/httpError';
 
 declare global {
   namespace Express {
     interface Request {
       userId?: number;
+      userRole?: string;
     }
   }
 }
 
 /**
  * Exige un token JWT válido en el header "Authorization: Bearer <token>".
- * Si es válido, deja el id del usuario en req.userId para que las rutas
- * protegidas lo usen.
+ * Si es válido, deja el id y el rol del usuario en req.userId/req.userRole
+ * para que las rutas protegidas los usen. También revisa que la cuenta no
+ * esté bloqueada por un administrador.
  */
-export function requireAuth(req: Request, _res: Response, next: NextFunction): void {
+export async function requireAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
   const header = req.headers.authorization;
   const token = header?.startsWith('Bearer ') ? header.slice('Bearer '.length) : undefined;
 
@@ -26,7 +29,23 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
 
   try {
     const payload = verifyToken(token);
-    req.userId = payload.userId;
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { id: true, role: true, isBlocked: true },
+    });
+
+    if (!user) {
+      next(unauthorized('Tu sesión expiró o el token no es válido. Inicia sesión de nuevo.'));
+      return;
+    }
+
+    if (user.isBlocked) {
+      next(forbidden('Tu cuenta fue bloqueada. Contacta a soporte si crees que es un error.'));
+      return;
+    }
+
+    req.userId = user.id;
+    req.userRole = user.role;
     next();
   } catch {
     next(unauthorized('Tu sesión expiró o el token no es válido. Inicia sesión de nuevo.'));
@@ -55,5 +74,14 @@ export function attachUserIfPresent(req: Request, _res: Response, next: NextFunc
     // Token inválido en una ruta opcional: se ignora y sigue como anónimo.
   }
 
+  next();
+}
+
+/** Exige que requireAuth ya haya corrido antes y que el usuario sea admin. */
+export function requireAdmin(req: Request, _res: Response, next: NextFunction): void {
+  if (req.userRole !== 'admin') {
+    next(forbidden('No tienes permisos de administrador.'));
+    return;
+  }
   next();
 }

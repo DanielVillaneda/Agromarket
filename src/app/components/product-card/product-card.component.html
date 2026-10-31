@@ -19,18 +19,39 @@
         {{ product.price }}
         <span class="product-unit">/ {{ unitLabel }}</span>
       </p>
-      @if (!isMine()) {
-        <button
-          type="button"
-          class="product-fav"
-          [class.product-fav--active]="isFavorite()"
-          (click)="onFavoriteClick($event)"
-          [attr.aria-label]="isFavorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'"
-          [attr.aria-pressed]="isFavorite()"
-        >
-          <ion-icon [name]="isFavorite() ? 'heart' : 'heart-outline'" aria-hidden="true"></ion-icon>
-        </button>
-      }
+      <div class="product-actions">
+        @if (isMine()) {
+          <button
+            type="button"
+            class="product-action product-action--edit"
+            (click)="onEditClick($event)"
+            aria-label="Editar producto"
+          >
+            <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="product-action"
+            [class.product-action--active]="isFavorite()"
+            (click)="onFavoriteClick($event)"
+            [attr.aria-label]="isFavorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+            [attr.aria-pressed]="isFavorite()"
+          >
+            <ion-icon [name]="isFavorite() ? 'heart' : 'heart-outline'" aria-hidden="true"></ion-icon>
+          </button>
+
+          <button
+            type="button"
+            class="product-action product-action--cart"
+            [class.product-action--active]="addedToCart()"
+            (click)="onAddToCartClick($event)"
+            aria-label="Agregar al carrito"
+          >
+            <ion-icon [name]="addedToCart() ? 'checkmark-outline' : 'cart-outline'" aria-hidden="true"></ion-icon>
+          </button>
+        }
+      </div>
     </div>
     <p class="product-location">
       <ion-icon name="location-outline" aria-hidden="true"></ion-icon>

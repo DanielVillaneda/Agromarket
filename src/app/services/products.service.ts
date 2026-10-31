@@ -84,7 +84,29 @@ interface PurchaseResponse {
   unit: ProductUnit;
   unitPrice: number;
   purchasedAt: string;
+  paymentBank: string | null;
+  paymentLast4: string | null;
   product: ApiProduct;
+}
+
+export interface PurchaseRecord {
+  id: number;
+  product: Product;
+  quantity: number;
+  unit: ProductUnit;
+  unitLabel: string;
+  unitPriceFormatted: string;
+  totalFormatted: string;
+  purchasedAt: Date;
+  purchasedAtFormatted: string;
+  paymentBank: string | null;
+  paymentLast4: string | null;
+}
+
+export interface PaymentMethod {
+  bankName: string;
+  holderName: string;
+  last4: string;
 }
 
 export interface ProductInput {
@@ -118,6 +140,7 @@ export class ProductsService {
   private readonly _myProducts = signal<Product[]>([]);
   private readonly _favoriteProducts = signal<Product[]>([]);
   private readonly _purchasedProducts = signal<Product[]>([]);
+  private readonly _purchaseHistory = signal<PurchaseRecord[]>([]);
   private readonly _recentlyViewedProducts = signal<Product[]>([]);
   private readonly _cartItems = signal<{ product: Product; quantity: number; unit: ProductUnit }[]>([]);
   private readonly _cartTotal = signal(0);
@@ -131,6 +154,7 @@ export class ProductsService {
   readonly myProducts = this._myProducts.asReadonly();
   readonly favoriteProducts = this._favoriteProducts.asReadonly();
   readonly purchasedProducts = this._purchasedProducts.asReadonly();
+  readonly purchaseHistory = this._purchaseHistory.asReadonly();
   readonly recentlyViewedProducts = this._recentlyViewedProducts.asReadonly();
 
   readonly cartItems = computed(() => this._cartItems());
@@ -160,6 +184,7 @@ export class ProductsService {
         this._cartTotal.set(0);
         this._cartCount.set(0);
         this._purchasedProducts.set([]);
+        this._purchaseHistory.set([]);
         this._recentlyViewedProducts.set([]);
       }
     });
@@ -334,8 +359,24 @@ export class ProductsService {
 
   private loadPurchases(): void {
     this.http.get<PurchaseResponse[]>(`${this.apiUrl}/purchases`).subscribe({
-      next: (purchases) => this._purchasedProducts.set(purchases.map((purchase) => this.mapProduct(purchase.product))),
+      next: (purchases) => {
+        this._purchasedProducts.set(purchases.map((purchase) => this.mapProduct(purchase.product)));
+        this._purchaseHistory.set(purchases.map((purchase) => this.mapPurchaseRecord(purchase)));
+      },
     });
+  }
+
+  /** Método de pago simulado del usuario (solo para mostrar en "Mis compras"; no procesa cobros reales). */
+  getPaymentMethod(): Observable<PaymentMethod | null> {
+    return this.http.get<PaymentMethod | null>(`${this.apiUrl}/profile/payment-method`);
+  }
+
+  savePaymentMethod(input: PaymentMethod): Observable<PaymentMethod> {
+    return this.http.put<PaymentMethod>(`${this.apiUrl}/profile/payment-method`, input);
+  }
+
+  deletePaymentMethod(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/profile/payment-method`);
   }
 
   private loadRecentlyViewed(): void {
@@ -362,6 +403,29 @@ export class ProductsService {
       sellerName: p.sellerName,
       sellerPhone: p.sellerPhone,
       sellerEmail: p.sellerEmail,
+    };
+  }
+
+  private mapPurchaseRecord(purchase: PurchaseResponse): PurchaseRecord {
+    const purchasedAt = new Date(purchase.purchasedAt);
+    const total = purchase.quantity * purchase.unitPrice;
+
+    return {
+      id: purchase.id,
+      product: this.mapProduct(purchase.product),
+      quantity: purchase.quantity,
+      unit: purchase.unit,
+      unitLabel: PRODUCT_UNIT_LABELS[purchase.unit] ?? PRODUCT_UNIT_LABELS.unidad,
+      unitPriceFormatted: this.formatPrice(purchase.unitPrice),
+      totalFormatted: this.formatPrice(total),
+      purchasedAt,
+      purchasedAtFormatted: purchasedAt.toLocaleDateString('es-CO', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      }),
+      paymentBank: purchase.paymentBank,
+      paymentLast4: purchase.paymentLast4,
     };
   }
 

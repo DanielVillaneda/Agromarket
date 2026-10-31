@@ -18,15 +18,36 @@ model User {
   email        String   @unique
   telefono     String
   passwordHash String
+  role         String   @default("user") // user | admin
+  isBlocked    Boolean  @default(false)
   createdAt    DateTime @default(now())
+
+  // Código de recuperación de cuenta (6 dígitos) y su expiración; null cuando no hay una solicitud activa.
+  passwordResetCode      String?
+  passwordResetExpiresAt DateTime?
 
   products        Product[]
   favorites       Favorite[]
   cartItems       CartItem[]
   purchases       Purchase[]
   recentlyViewed  RecentlyViewed[]
+  paymentMethod   PaymentMethod?
 
   @@map("users")
+}
+
+model PaymentMethod {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  bankName   String
+  holderName String
+  last4      String // solo los últimos 4 dígitos; nunca se guarda el número completo
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment_methods")
 }
 
 model Product {
@@ -99,6 +120,11 @@ model Purchase {
   unit        String   @default("unidad") // unidad en la que se compró (puede diferir de la del producto)
   unitPrice   Int // precio por unidad comprada, al momento de comprar
   purchasedAt DateTime @default(now())
+
+  // Copia del método de pago del comprador al momento de la compra (simulado,
+  // no es un cobro real). Null si el comprador no tenía uno registrado.
+  paymentBank  String?
+  paymentLast4 String?
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)

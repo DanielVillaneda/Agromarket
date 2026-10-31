@@ -5,11 +5,46 @@
       <h2 class="compras-title">Mis Compras</h2>
     </div>
 
-    @if (products().length) {
-      <div class="product-grid">
-        @for (product of products(); track product.id) {
-          <a class="product-link" [routerLink]="['/producto', product.id]">
-            <app-product-card [product]="product"></app-product-card>
+    @if (purchases().length) {
+      <div class="compras-list">
+        @for (purchase of purchases(); track purchase.id) {
+          <a class="compra-card" [routerLink]="['/producto', purchase.product.id]">
+            <div class="compra-thumb" [style.background]="purchase.product.accent">
+              @if (purchase.product.photos && purchase.product.photos.length) {
+                <img [src]="purchase.product.photos[0]" alt="" />
+              } @else {
+                <ion-icon [name]="purchase.product.icon" aria-hidden="true"></ion-icon>
+              }
+            </div>
+
+            <div class="compra-info">
+              <p class="compra-title">{{ purchase.product.title }}</p>
+              <p class="compra-meta">{{ purchase.quantity }} {{ purchase.unitLabel }} · {{ purchase.unitPriceFormatted }} c/u</p>
+
+              <div class="compra-tags">
+                <span class="compra-tag">
+                  <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+                  {{ purchase.purchasedAtFormatted }}
+                </span>
+
+                @if (purchase.paymentBank) {
+                  <span class="compra-tag">
+                    <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
+                    {{ purchase.paymentBank }} · {{ purchase.paymentLast4 }}
+                  </span>
+                } @else {
+                  <span class="compra-tag compra-tag--muted">
+                    <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
+                    Sin método de pago registrado
+                  </span>
+                }
+              </div>
+            </div>
+
+            <div class="compra-total">
+              <span class="compra-total-label">Total</span>
+              <span class="compra-total-value">{{ purchase.totalFormatted }}</span>
+            </div>
           </a>
         }
       </div>
