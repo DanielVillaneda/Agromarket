@@ -66,6 +66,9 @@ Todas las rutas protegidas esperan el header `Authorization: Bearer <token>` que
 | POST | `/api/auth/registro` | No | `registroForm` en `login.page.ts` |
 | POST | `/api/auth/login` | No | `loginForm` en `login.page.ts` |
 | GET | `/api/auth/me` | Sí | mantener sesión iniciada |
+| POST | `/api/auth/recuperar` | No | `solicitarRecuperacion()` en `login.page.ts` |
+| POST | `/api/auth/recuperar/verificar` | No | `verificarCodigoRecuperacion()` en `login.page.ts` |
+| POST | `/api/auth/recuperar/restablecer` | No | `restablecerPassword()` en `login.page.ts` |
 | GET | `/api/products?q=texto` | Opcional | `marketProducts` / `searchProducts()` |
 | GET | `/api/products/mine` | Sí | `myProducts` (página Venta) |
 | GET | `/api/products/:id` | Opcional | `getMarketProduct()` / `getMyProduct()` |
@@ -82,6 +85,14 @@ Todas las rutas protegidas esperan el header `Authorization: Bearer <token>` que
 | GET | `/api/purchases` | Sí | `purchasedProducts` |
 | POST | `/api/purchases/checkout` | Sí | `checkout()` en `carritocompras.page.ts` |
 | GET | `/api/recently-viewed` | Sí | `recentlyViewedProducts` |
+| GET | `/api/profile/payment-method` | Sí | `getPaymentMethod()` en `perfil.page.ts` |
+| PUT | `/api/profile/payment-method` | Sí | `savePaymentMethod()` en `perfil.page.ts` |
+| DELETE | `/api/profile/payment-method` | Sí | `deletePaymentMethod()` en `perfil.page.ts` |
+| GET | `/api/admin/stats` | Sí (admin) | `getStats()` en `admin.page.ts` |
+| GET | `/api/admin/users` | Sí (admin) | `getUsers()` en `admin.page.ts` |
+| PATCH | `/api/admin/users/:id/bloqueo` | Sí (admin) | `setUserBlocked()` en `admin.page.ts` |
+| GET | `/api/admin/products` | Sí (admin) | `getProducts()` en `admin.page.ts` |
+| DELETE | `/api/admin/products/:id` | Sí (admin) | `deleteProduct()` en `admin.page.ts` |
 
 Nota: `price` y `quantity` viajan como números (no como el string `"$30.000"` que usa hoy el mock del frontend), y los datos del vendedor (`sellerName`, `sellerPhone`, `sellerEmail`) ahora vienen de una tabla `User` real en vez de estar copiados en cada producto. Cuando conectemos el frontend a esta API vamos a necesitar un pequeño adaptador para formatear esos valores y guardar el token JWT (por ejemplo en un nuevo `AuthService` con `localStorage`).
 
