@@ -36,6 +36,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/producto/producto.page').then( m => m.ProductoPage)
   },
   {
+    path: 'vendedor/:id',
+    loadComponent: () => import('./pages/vendedor/vendedor.page').then( m => m.VendedorPage)
+  },
+  {
     path: 'producto-vender/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/producto-vender/producto-vender.page').then( m => m.ProductoVenderPage)

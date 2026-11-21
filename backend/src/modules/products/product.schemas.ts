@@ -56,6 +56,12 @@ export const updateProductSchema = createProductSchema.partial();
 export const listProductsQuerySchema = z.object({
   q: z.string().trim().optional(),
   includeMine: z.coerce.boolean().optional(),
+  sellerId: z.coerce
+    .number({ invalid_type_error: 'El vendedor no es válido.' })
+    .int('El vendedor no es válido.')
+    .positive('El vendedor no es válido.')
+    .max(2147483647, 'El vendedor no es válido.')
+    .optional(),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;

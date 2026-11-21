@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { badRequest } from './httpError';
 
-const idSchema = z.coerce.number().int().positive();
+const idSchema = z.coerce.number().int().positive().max(2147483647);
 
 /**
  * Convierte un parámetro de ruta (ej. `:id`, `:productId`) en un id numérico

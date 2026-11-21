@@ -1,0 +1,85 @@
+.vendedor-content {
+  --background: #ffffff;
+}
+
+.vendedor {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+}
+
+.vendedor-nombre {
+  margin: 0 0 4px;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1f2d1f;
+  overflow-wrap: anywhere;
+}
+
+.vendedor-conteo {
+  margin: 0 0 20px;
+  color: #4b5646;
+}
+
+.vendedor-cargando,
+.vendedor-vacio {
+  margin: 24px 0;
+  color: #4b5646;
+}
+
+.vendedor-error {
+  margin: 24px 0 12px;
+  font-weight: 700;
+  color: #9a2b1f;
+}
+
+.vendedor-volver {
+  display: inline-block;
+  color: #2e7d32;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.vendedor-volver:focus-visible,
+.product-link:focus-visible {
+  outline: 2px solid #2e7d32;
+  outline-offset: 2px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.product-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .vendedor {
+    padding: 20px 14px 32px;
+  }
+
+  .vendedor-nombre {
+    font-size: 1.5rem;
+  }
+
+  .vendedor-volver {
+    padding: 12px 0;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}

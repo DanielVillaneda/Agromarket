@@ -69,8 +69,9 @@ Todas las rutas protegidas esperan el header `Authorization: Bearer <token>` que
 | POST | `/api/auth/recuperar` | No | `solicitarRecuperacion()` en `login.page.ts` |
 | POST | `/api/auth/recuperar/verificar` | No | `verificarCodigoRecuperacion()` en `login.page.ts` |
 | POST | `/api/auth/recuperar/restablecer` | No | `restablecerPassword()` en `login.page.ts` |
-| GET | `/api/products?q=texto` | Opcional | `marketProducts` / `searchProducts()` |
+| GET | `/api/products?q=texto&sellerId=N` | Opcional | `marketProducts` / `searchProducts()`; con `sellerId`, `getSellerProducts()` |
 | GET | `/api/products/mine` | Sí | `myProducts` (página Venta) |
+| GET | `/api/products/seller/:id` | No | `getSellerProfile()` |
 | GET | `/api/products/:id` | Opcional | `getMarketProduct()` / `getMyProduct()` |
 | POST | `/api/products` | Sí | formulario de `vender.page.ts` |
 | PUT | `/api/products/:id` | Sí (dueño) | `updateMyProduct()` |

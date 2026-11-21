@@ -88,6 +88,11 @@ export interface RangoPrecio {
   maximo: number | null;
 }
 
+export interface SellerProfile {
+  id: number;
+  nombre: string;
+}
+
 export interface RatingSummary {
   ratingAverage: number | null;
   ratingCount: number;
@@ -224,6 +229,17 @@ export class ProductsService {
 
   rateProduct(productId: number, rating: number): Observable<RatingSummary> {
     return this.http.post<RatingSummary>(`${this.apiUrl}/reviews/${productId}`, { rating });
+  }
+
+  /** Todos los productos de un vendedor (también si quien llama es el propio vendedor). */
+  getSellerProducts(sellerId: number): Observable<Product[]> {
+    return this.http
+      .get<ApiProduct[]>(`${this.apiUrl}/products`, { params: { sellerId } })
+      .pipe(map((products) => products.map((p) => this.mapProduct(p))));
+  }
+
+  getSellerProfile(sellerId: number): Observable<SellerProfile> {
+    return this.http.get<SellerProfile>(`${this.apiUrl}/products/seller/${sellerId}`);
   }
 
   createProduct(input: ProductInput): Observable<Product> {
