@@ -9,6 +9,63 @@
         }
       </h2>
 
+      <div class="sr-only" aria-live="polite">
+        @if (results().length === 1) {
+          1 resultado
+        } @else if (results().length) {
+          {{ results().length }} resultados
+        } @else {
+          Sin resultados
+        }
+      </div>
+
+      <fieldset class="search-precio">
+        <legend>Filtrar por precio</legend>
+        <div class="search-precio-campos">
+          <div class="search-precio-campo">
+            <label for="search-precio-minimo">Precio mínimo (COP)</label>
+            <input
+              #precioMinimoInput
+              id="search-precio-minimo"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              placeholder="Sin mínimo"
+              [value]="precioMinimo() ?? ''"
+              [attr.aria-invalid]="rangoInvalido() ? 'true' : null"
+              [attr.aria-describedby]="rangoInvalido() ? 'search-precio-error' : null"
+              (input)="actualizarPrecioMinimo($any($event.target).value)"
+            />
+          </div>
+          <div class="search-precio-campo">
+            <label for="search-precio-maximo">Precio máximo (COP)</label>
+            <input
+              id="search-precio-maximo"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              placeholder="Sin máximo"
+              [value]="precioMaximo() ?? ''"
+              [attr.aria-invalid]="rangoInvalido() ? 'true' : null"
+              [attr.aria-describedby]="rangoInvalido() ? 'search-precio-error' : null"
+              (input)="actualizarPrecioMaximo($any($event.target).value)"
+            />
+          </div>
+          @if (hayFiltroPrecio()) {
+            <button type="button" class="search-precio-limpiar" (click)="quitarFiltroPrecio()">
+              Quitar filtro de precio
+            </button>
+          }
+        </div>
+        <div id="search-precio-error" class="search-precio-error" role="alert">
+          @if (rangoInvalido()) {
+            El precio mínimo no puede ser mayor que el máximo.
+          }
+        </div>
+      </fieldset>
+
       @if (results().length) {
         <div class="product-grid">
           @for (product of results(); track product.id) {
@@ -20,7 +77,11 @@
       } @else {
         <div class="search-empty">
           <ion-icon [icon]="searchOutline" aria-hidden="true"></ion-icon>
-          <p>No encontramos productos para "{{ query() }}".</p>
+          @if (resultadosPorTexto().length) {
+            <p>No hay productos para "{{ query() }}" en ese rango de precio.</p>
+          } @else {
+            <p>No encontramos productos para "{{ query() }}".</p>
+          }
         </div>
       }
     } @else {

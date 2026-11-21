@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -32,7 +32,57 @@ export class SearchPage {
 
   readonly query = computed(() => this.queryParamMap().get('q')?.trim() ?? '');
 
-  readonly results = computed(() => this.productsService.searchProducts(this.query()));
+  readonly precioMinimo = signal<number | null>(null);
+  readonly precioMaximo = signal<number | null>(null);
+
+  readonly rangoInvalido = computed(() => {
+    const minimo = this.precioMinimo();
+    const maximo = this.precioMaximo();
+    return minimo !== null && maximo !== null && minimo > maximo;
+  });
+
+  readonly hayFiltroPrecio = computed(
+    () => this.precioMinimo() !== null || this.precioMaximo() !== null,
+  );
+
+  /** Resultados solo por texto, sin rango de precio. */
+  readonly resultadosPorTexto = computed(() => this.productsService.searchProducts(this.query()));
+
+  /** Con el rango inválido se ignora el filtro y se ven todos los del texto. */
+  readonly results = computed(() =>
+    this.productsService.searchProducts(
+      this.query(),
+      this.rangoInvalido()
+        ? undefined
+        : { minimo: this.precioMinimo(), maximo: this.precioMaximo() },
+    ),
+  );
+
+  private convertirPrecio(valor: string): number | null {
+    if (valor.trim() === '') {
+      return null;
+    }
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero : null;
+  }
+
+  actualizarPrecioMinimo(valor: string): void {
+    this.precioMinimo.set(this.convertirPrecio(valor));
+  }
+
+  actualizarPrecioMaximo(valor: string): void {
+    this.precioMaximo.set(this.convertirPrecio(valor));
+  }
+
+  private readonly precioMinimoInput = viewChild<ElementRef<HTMLInputElement>>('precioMinimoInput');
+
+  quitarFiltroPrecio(): void {
+    // El botón sale del DOM al limpiar: se mueve el foco al primer campo antes,
+    // para que el usuario de teclado no pierda su posición (WCAG 2.4.3).
+    this.precioMinimoInput()?.nativeElement.focus();
+    this.precioMinimo.set(null);
+    this.precioMaximo.set(null);
+  }
 
   readonly topSearches = this.productsService.topSearches;
 

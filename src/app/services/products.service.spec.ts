@@ -239,3 +239,89 @@ describe('ProductsService: calificaciones del producto (spec 003)', () => {
     expect(mensaje).toBe('No puedes calificar tu propio producto.');
   });
 });
+
+describe('ProductsService: searchProducts con rango de precio (spec 004)', () => {
+  let service: ProductsService;
+  let http: HttpTestingController;
+
+  /** Producto con la forma real del backend, con título y precio propios. */
+  function apiProductConPrecio(id: number, title: string, price: number) {
+    return { ...apiProduct(id, null), title, price };
+  }
+
+  const MERCADO = [
+    apiProductConPrecio(1, 'Café de Huila', 8000),
+    apiProductConPrecio(2, 'Café orgánico', 15000),
+    apiProductConPrecio(3, 'Café tostado', 30000),
+    // No coincide por texto con "café", aunque su precio cae en todos los rangos probados
+    apiProductConPrecio(4, 'Panela', 15000),
+  ];
+
+  beforeEach(() => {
+    // Given: visitante sin sesión; el mercado y el buscador (includeMine=true) traen los mismos productos
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    service = TestBed.inject(ProductsService);
+    http = TestBed.inject(HttpTestingController);
+    TestBed.tick();
+
+    expect(service.searchProducts('café')).toEqual([]); // antes de la carga no hay nada
+    http
+      .match((req) => req.method === 'GET' && req.url === `${api}/products`)
+      .forEach((req) => req.flush(MERCADO));
+    http.match(() => true).forEach((req) => req.flush([]));
+    expect(service.marketProducts().length).toBe(4);
+  });
+
+  afterEach(() => {
+    http.verify();
+  });
+
+  function ids(rango?: { minimo: number | null; maximo: number | null }): number[] {
+    return service.searchProducts('café', rango).map((p) => p.id);
+  }
+
+  it('Given productos "Café" de 8000, 15000 y 30000, When busca "café" sin rango, Then devuelve los 3', () => {
+    expect(ids()).toEqual([1, 2, 3]);
+  });
+
+  it('Given la misma búsqueda, When el rango es {minimo: 15000, maximo: null}, Then devuelve 15000 y 30000 (mínimo inclusivo)', () => {
+    expect(ids({ minimo: 15000, maximo: null })).toEqual([2, 3]);
+  });
+
+  it('Given la misma búsqueda, When el rango es {minimo: null, maximo: 15000}, Then devuelve 8000 y 15000 (máximo inclusivo)', () => {
+    expect(ids({ minimo: null, maximo: 15000 })).toEqual([1, 2]);
+  });
+
+  it('Given la misma búsqueda, When el rango es {minimo: 10000, maximo: 15000}, Then devuelve solo el de 15000', () => {
+    expect(ids({ minimo: 10000, maximo: 15000 })).toEqual([2]);
+  });
+
+  it('Given la misma búsqueda, When el rango es {minimo: 15000, maximo: 15000}, Then devuelve solo el de 15000 (ambos límites inclusivos)', () => {
+    expect(ids({ minimo: 15000, maximo: 15000 })).toEqual([2]);
+  });
+
+  it('Given la misma búsqueda, When el rango es {minimo: null, maximo: null}, Then el resultado es igual al de sin rango', () => {
+    expect(ids({ minimo: null, maximo: null })).toEqual(ids());
+    expect(ids({ minimo: null, maximo: null })).toEqual([1, 2, 3]);
+  });
+
+  it('Given la misma búsqueda, When el máximo es 0, Then se aplica como límite real (no como "sin límite") y no devuelve nada', () => {
+    // Caso límite: 0 es falsy; un "if (!maximo)" lo confundiría con null
+    expect(ids({ minimo: null, maximo: 0 })).toEqual([]);
+  });
+
+  it('Given "Panela" a 15000, When se busca "café" con cualquier rango, Then nunca aparece', () => {
+    const rangos = [
+      undefined,
+      { minimo: 15000, maximo: null },
+      { minimo: null, maximo: 15000 },
+      { minimo: 10000, maximo: 15000 },
+      { minimo: null, maximo: null },
+    ];
+    for (const rango of rangos) {
+      expect(ids(rango)).not.toContain(4);
+    }
+    // Control: "Panela" sí se encuentra cuando se busca por su nombre
+    expect(service.searchProducts('panela', { minimo: 15000, maximo: 15000 }).map((p) => p.id)).toEqual([4]);
+  });
+});

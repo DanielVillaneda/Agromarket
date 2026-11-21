@@ -83,6 +83,11 @@ interface ApiProduct {
   updatedAt: string;
 }
 
+export interface RangoPrecio {
+  minimo: number | null;
+  maximo: number | null;
+}
+
 export interface RatingSummary {
   ratingAverage: number | null;
   ratingCount: number;
@@ -324,16 +329,38 @@ export class ProductsService {
     );
   }
 
-  searchProducts(query: string): Product[] {
+  /**
+   * Busca por título y, opcionalmente, restringe por rango de precio (COP).
+   * Los límites son inclusivos y un límite en null no se aplica. No valida el rango.
+   */
+  searchProducts(query: string, rango?: RangoPrecio): Product[] {
     const normalized = this.normalize(query);
 
     if (!normalized) {
       return [];
     }
 
-    return this._searchableProducts().filter((product) =>
+    const porTexto = this._searchableProducts().filter((product) =>
       this.normalize(product.title).includes(normalized),
     );
+
+    if (!rango) {
+      return porTexto;
+    }
+
+    const { minimo, maximo } = rango;
+    if (minimo === null && maximo === null) {
+      return porTexto;
+    }
+
+    // Un producto sin precio numérico no puede cumplir un rango.
+    return porTexto.filter((product) => {
+      const precio = product.rawPrice;
+      if (precio === undefined) {
+        return false;
+      }
+      return (minimo === null || precio >= minimo) && (maximo === null || precio <= maximo);
+    });
   }
 
   private loadMarketProducts(): void {
