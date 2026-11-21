@@ -33,7 +33,55 @@ Claude Code también admite reglas con alcance por ruta: archivos `.md` en `.cla
 
 ### Sistema de agentes
 
-Pendiente — se completa en la Parte 2
+El sistema tiene 6 subagentes de Claude Code y un orquestador. Cada subagente es un archivo Markdown con frontmatter YAML en `.claude/agents/`.
+
+| Subagente | Archivo | Herramientas | Modelo |
+|---|---|---|---|
+| `agente-schema-db` | [`.claude/agents/agente-schema-db.md`](.claude/agents/agente-schema-db.md) | Read, Grep, Glob, Edit, Write, Bash (con hook) | opus |
+| `agente-api-backend` | [`.claude/agents/agente-api-backend.md`](.claude/agents/agente-api-backend.md) | Read, Grep, Glob, Edit, Bash | sonnet |
+| `agente-ui-frontend` | [`.claude/agents/agente-ui-frontend.md`](.claude/agents/agente-ui-frontend.md) | Read, Grep, Glob, Edit, Bash | sonnet |
+| `agente-accesibilidad` | [`.claude/agents/agente-accesibilidad.md`](.claude/agents/agente-accesibilidad.md) | Read, Grep, Edit, WebFetch | haiku |
+| `agente-pruebas` | [`.claude/agents/agente-pruebas.md`](.claude/agents/agente-pruebas.md) | Read, Grep, Glob, Edit, Bash | opus |
+| `agente-e2e` | [`.claude/agents/agente-e2e.md`](.claude/agents/agente-e2e.md) | Read, Bash (`disallowedTools: Edit, Write`) | haiku |
+
+#### El orquestador vive en `CLAUDE.md`
+
+Este es un cambio respecto al diseño del taller, que lo planteaba como un agente más con `tools: [Task]`. El orquestador no es un archivo de subagente. Es la sección "Sistema de agentes" de [`CLAUDE.md`](CLAUDE.md), que el agente principal sigue cuando una tarea requiere delegar. Esa sección define el orden de delegación y obliga a pedirle `npx tsc --noEmit` a `agente-api-backend` después de cada cambio de schema. También aclara que los subagentes no se comunican entre sí.
+
+El motivo es que Claude Code no ofrece un mecanismo para que un subagente se limite a coordinar. Los subagentes no hablan entre sí y solo devuelven su resultado al agente principal, así que la coordinación tiene que ocurrir en la conversación principal.
+
+#### Restricciones: un hook real y cinco por instrucciones
+
+- **Solo `agente-schema-db` tiene un refuerzo técnico.** Tiene un hook `PreToolUse` en su frontmatter que ejecuta [`.claude/hooks/solo-prisma.js`](.claude/hooks/solo-prisma.js). Ese hook solo permite Edit y Write dentro de `backend/prisma/**` y comandos Bash que empiecen con `prisma` o `npx prisma`, opcionalmente precedidos de `cd backend &&`. Bloquea con código 2 cualquier otra ruta y también el encadenamiento, la sustitución y la redirección de shell. Lo tiene porque es el agente de mayor riesgo: un cambio de base de datos aplicado es difícil de revertir.
+- **Los otros 5 subagentes no tienen refuerzo técnico.** Sus límites de carpeta y de comandos están escritos solo en su system prompt (el cuerpo del archivo), así que dependen de que el modelo los respete. Es una limitación conocida, no un error. En los campos `tools` y `disallowedTools`, Claude Code no permite restringir Edit o Write por ruta, ni Bash por patrón: `disallowedTools: Bash(git push *)` quita Bash entero. Para un refuerzo real habría que darles un hook propio a cada uno.
+
+#### Pruebas que hicimos
+
+- **Hook en aislamiento:** 26 casos simulados, todos correctos. Se le pasaron entradas JSON de Edit, Write y Bash, con rutas de Windows, rutas con `/`, rutas estilo Git Bash, mayúsculas distintas, intentos de salir con `..`, una carpeta con un nombre parecido (`prisma-malo`) y comandos encadenados con `&&`, `;` y `$()`.
+- **Dos invocaciones reales de `agente-schema-db`:**
+  - En la primera se le pidió agregar el campo opcional `notas` a `Product`. Editó solo `schema.prisma`, generó la migración con `npx prisma migrate dev` y dejó anotado que faltaba `tsc` para `agente-api-backend`.
+  - En la segunda se le pidió, además, editar `backend/src/modules/products/product.schemas.ts`. Leyó el archivo, se negó a editarlo y explicó que está fuera de su alcance. También dejó las instrucciones para `agente-api-backend`.
+  - En las dos, sus instrucciones bastaron como primera barrera. El hook no llegó a bloquear nada porque el agente nunca intentó salirse de sus límites. Por eso el bloqueo solo está comprobado con los casos simulados, no en una ejecución real. Los cambios de las dos pruebas se revirtieron: schema, migración, base de datos y cliente de Prisma.
+
+#### Prueba de extremo a extremo
+
+[`e2e/e2e-check.js`](e2e/e2e-check.js) es el script que ejecuta `agente-e2e`. Usa Playwright y recorre registro, carrito, checkout, compras, perfil con método de pago, recuperación de cuenta, panel de admin, bloqueo de usuario y eliminación de un producto.
+
+`agente-e2e` corrió el flujo completo contra el proyecto real, con el backend en `:3000` y PostgreSQL local, el frontend con `ng serve` en `:4200` y la base con el seed aplicado. Las 16 secciones pasaron y el script terminó con código de salida 0. El único error de consola capturado fue un 403, que es el esperado cuando el usuario bloqueado intenta iniciar sesión.
+
+El agente se mantuvo dentro de sus límites. En su transcripción solo aparecen tres llamadas: el curl de comprobación de los dos servidores, la lectura del script y `npm run e2e`. No usó Edit ni Write, que además tiene quitados con `disallowedTools`.
+
+En su reporte también señaló una debilidad del script: el paso de checkout solo comprueba que se hizo clic, no que la compra se haya creado.
+
+Cómo correrlo:
+
+```bash
+cd backend && npm run dev 2>&1 | tee ../e2e/backend.log   # terminal 1
+npm start                                                  # terminal 2
+E2E_BACKEND_LOG=e2e/backend.log npm run e2e                # terminal 3
+```
+
+`E2E_BACKEND_LOG` es opcional. Sin ella se omite la recuperación de cuenta, porque sin SMTP el código solo aparece en la salida del backend.
 
 ### Mecanismos de calidad
 
