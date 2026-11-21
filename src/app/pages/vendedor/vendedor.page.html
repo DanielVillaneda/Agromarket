@@ -1,0 +1,30 @@
+<app-navbar></app-navbar>
+<ion-content class="vendedor-content">
+  <main class="vendedor">
+    @if (cargando()) {
+      <p class="vendedor-cargando" role="status">Cargando perfil del vendedor…</p>
+    } @else if (error()) {
+      <p class="vendedor-error" role="alert">{{ error() }}</p>
+      <a class="vendedor-volver" routerLink="/home">Volver al inicio</a>
+    } @else if (vendedor(); as v) {
+      <h1 class="vendedor-nombre">{{ v.nombre }}</h1>
+      <p class="vendedor-conteo">
+        {{ productos().length }} {{ productos().length === 1 ? 'producto' : 'productos' }} en venta
+      </p>
+
+      @if (productos().length) {
+        <div class="product-grid">
+          @for (product of productos(); track product.id) {
+            <a class="product-link" [routerLink]="['/producto', product.id]">
+              <app-product-card [product]="product"></app-product-card>
+            </a>
+          }
+        </div>
+      } @else {
+        <p class="vendedor-vacio">Este vendedor aún no tiene productos en venta.</p>
+      }
+    }
+  </main>
+
+  <app-footer></app-footer>
+</ion-content>

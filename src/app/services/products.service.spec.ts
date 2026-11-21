@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 
-import { ProductsService } from './products.service';
+import { ProductsService, SellerProfile } from './products.service';
+import { Product } from '../components/product-card/product-card.component';
 import { environment } from '../../environments/environment';
 
 const api = environment.apiUrl;
@@ -323,5 +325,96 @@ describe('ProductsService: searchProducts con rango de precio (spec 004)', () =>
     }
     // Control: "Panela" sí se encuentra cuando se busca por su nombre
     expect(service.searchProducts('panela', { minimo: 15000, maximo: 15000 }).map((p) => p.id)).toEqual([4]);
+  });
+});
+
+describe('ProductsService: perfil público del vendedor (spec 005)', () => {
+  let service: ProductsService;
+  let http: HttpTestingController;
+
+  /** Producto de un vendedor con la forma real de GET /api/products (serializeProduct). */
+  function apiProductDeVendedor(id: number, title: string, sellerId: number, sellerName: string) {
+    return {
+      ...apiProduct(id, null, 'Frutas'),
+      title,
+      price: 8500,
+      quantity: 1500.5,
+      sellerId,
+      sellerName,
+      ratingAverage: 4.5,
+      ratingCount: 2,
+    };
+  }
+
+  beforeEach(() => {
+    // Given: visitante sin sesión (la página del perfil es pública)
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    service = TestBed.inject(ProductsService);
+    http = TestBed.inject(HttpTestingController);
+    TestBed.tick();
+    // Cargas iniciales del effect (mercado y buscador): no son objeto de la prueba
+    http.match(() => true).forEach((req) => req.flush([]));
+  });
+
+  afterEach(() => {
+    http.verify();
+  });
+
+  it('Given el vendedor 36 con dos productos, When se llama getSellerProducts(36), Then hace GET /products?sellerId=36 y devuelve los productos mapeados', () => {
+    let productos: Product[] | null = null;
+
+    service.getSellerProducts(36).subscribe((p) => (productos = p));
+    expect(productos).toBeNull(); // todavía no llegó la respuesta
+
+    const req = http.expectOne((r) => r.method === 'GET' && r.url === `${api}/products`);
+    // Solo el parámetro sellerId: ni includeMine ni q, que cambiarían el filtro del backend
+    expect(req.request.params.keys()).toEqual(['sellerId']);
+    expect(req.request.params.get('sellerId')).toBe('36');
+    expect(req.request.urlWithParams).toBe(`${api}/products?sellerId=36`);
+    req.flush([
+      apiProductDeVendedor(25, 'Aguacate Hass', 36, 'Usuario Demo'),
+      apiProductDeVendedor(24, 'Café Orgánico de Altura', 36, 'Usuario Demo'),
+    ]);
+
+    const lista = productos as unknown as Product[];
+    expect(lista.map((p) => p.id)).toEqual([25, 24]); // conserva el orden del backend
+    expect(lista.map((p) => p.sellerId)).toEqual([36, 36]);
+    // Pasó por mapProduct: precio y cantidad formateados, nulos convertidos a undefined
+    expect(lista[0].rawPrice).toBe(8500);
+    expect(lista[0].price).toMatch(/^\$8[.\s]?500$/);
+    expect(lista[0].quantity).toContain('disponibles');
+    expect(lista[0].rawQuantity).toBe(1500.5);
+    expect(lista[0].notas).toBeUndefined();
+    expect(lista[0].categoria).toBe('Frutas');
+    expect(lista[0].ratingAverage).toBe(4.5);
+  });
+
+  it('Given un vendedor sin productos, When se llama getSellerProducts(37), Then devuelve un arreglo vacío', () => {
+    let productos: Product[] | null = null;
+    service.getSellerProducts(37).subscribe((p) => (productos = p));
+    http.expectOne(`${api}/products?sellerId=37`).flush([]);
+    expect(productos).toEqual([]);
+  });
+
+  it('Given el vendedor 36 existe, When se llama getSellerProfile(36), Then hace GET /products/seller/36 y entrega {id, nombre}', () => {
+    let perfil: SellerProfile | null = null;
+
+    service.getSellerProfile(36).subscribe((p) => (perfil = p));
+    expect(perfil).toBeNull();
+
+    const req = http.expectOne({ method: 'GET', url: `${api}/products/seller/36` });
+    expect(req.request.params.keys()).toEqual([]);
+    req.flush({ id: 36, nombre: 'Usuario Demo' });
+
+    expect(perfil).toEqual({ id: 36, nombre: 'Usuario Demo' });
+  });
+
+  it('Given el vendedor no existe, When se llama getSellerProfile(999999), Then el error 404 llega al suscriptor', () => {
+    let estado: number | null = null;
+    service.getSellerProfile(999999).subscribe({ error: (e: HttpErrorResponse) => (estado = e.status) });
+    http
+      .expectOne(`${api}/products/seller/999999`)
+      .flush({ message: 'No encontramos este vendedor.' }, { status: 404, statusText: 'Not Found' });
+    expect(estado).toBe(404);
   });
 });

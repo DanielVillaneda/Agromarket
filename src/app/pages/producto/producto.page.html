@@ -194,7 +194,7 @@
 
           <h2 class="producto-subtitle">Información del vendedor</h2>
           <div class="producto-seller">
-            <p class="producto-seller-name">{{ product.sellerName }}</p>
+            <p class="producto-seller-name"><a class="producto-seller-link" [routerLink]="['/vendedor', product.sellerId]">{{ product.sellerName }}</a></p>
 
             <div class="producto-seller-actions">
               @if (product.sellerPhone) {

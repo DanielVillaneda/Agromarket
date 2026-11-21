@@ -14,15 +14,29 @@ export const productsRouter = Router();
 // propios (así el usuario no se ve a sí mismo como comprador en "Lo más
 // reciente"). Con ?includeMine=true sí se incluyen, para que el vendedor
 // pueda encontrar su propia publicación desde la barra de búsqueda.
+// Con ?sellerId=N devuelve solo los productos de ese vendedor (perfil público),
+// incluso si es el propio usuario; no aplica la exclusión de productos propios y
+// responde 404 si el vendedor no existe. Se puede combinar con ?q=.
 productsRouter.get(
   '/',
   attachUserIfPresent,
   asyncHandler(async (req, res) => {
-    const { q, includeMine } = listProductsQuerySchema.parse(req.query);
+    const { q, includeMine, sellerId } = listProductsQuerySchema.parse(req.query);
+
+    if (sellerId !== undefined) {
+      const seller = await prisma.user.findUnique({ where: { id: sellerId }, select: { id: true } });
+      if (!seller) {
+        throw notFound('No encontramos este vendedor.');
+      }
+    }
 
     const products = await prisma.product.findMany({
       where: {
-        ...(req.userId && !includeMine ? { sellerId: { not: req.userId } } : {}),
+        ...(sellerId !== undefined
+          ? { sellerId }
+          : req.userId && !includeMine
+            ? { sellerId: { not: req.userId } }
+            : {}),
         ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
       },
       include: productInclude,
@@ -45,6 +59,21 @@ productsRouter.get(
     });
 
     res.json(products.map(serializeProduct));
+  }),
+);
+
+// GET /api/products/seller/:id — datos públicos del vendedor (solo id y nombre).
+productsRouter.get(
+  '/seller/:id',
+  asyncHandler(async (req, res) => {
+    const id = parseId(req.params.id);
+
+    const seller = await prisma.user.findUnique({ where: { id }, select: { id: true, nombre: true } });
+    if (!seller) {
+      throw notFound('No encontramos este vendedor.');
+    }
+
+    res.json({ id: seller.id, nombre: seller.nombre });
   }),
 );
 
