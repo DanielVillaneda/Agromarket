@@ -154,3 +154,88 @@ describe('ProductsService: mapeo de la categoría del producto (spec 002)', () =
     expect(service.marketProducts().map((p) => p.categoria)).toEqual(['Lácteos', 'Verduras', undefined]);
   });
 });
+
+describe('ProductsService: calificaciones del producto (spec 003)', () => {
+  let service: ProductsService;
+  let http: HttpTestingController;
+
+  /** Producto con la forma real del backend, incluidos los campos de calificación. */
+  function apiProductConRating(id: number, ratingAverage: number | null, ratingCount: number) {
+    return { ...apiProduct(id, null), ratingAverage, ratingCount };
+  }
+
+  beforeEach(() => {
+    // Given: visitante sin sesión; se responden las cargas iniciales del effect
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    service = TestBed.inject(ProductsService);
+    http = TestBed.inject(HttpTestingController);
+    TestBed.tick();
+    http.match(() => true).forEach((req) => req.flush([]));
+  });
+
+  afterEach(() => {
+    http.verify();
+  });
+
+  it('Given la API devuelve ratingAverage 4.3 y ratingCount 12, When se pide el producto, Then Product los conserva', () => {
+    let rating: { average?: number; count?: number } | null = null;
+
+    service.getProduct(7).subscribe((p) => (rating = { average: p.ratingAverage, count: p.ratingCount }));
+    expect(rating).toBeNull(); // todavía no llegó la respuesta
+
+    http.expectOne({ method: 'GET', url: `${api}/products/7` }).flush(apiProductConRating(7, 4.3, 12));
+
+    expect(rating).toEqual({ average: 4.3, count: 12 });
+  });
+
+  it('Given la API devuelve ratingAverage null y ratingCount 0, When se pide el producto, Then ratingAverage es undefined y ratingCount es 0', () => {
+    let recibido = false;
+    let average: number | undefined | null = -1;
+    let count: number | undefined = -1;
+
+    service.getProduct(8).subscribe((p) => {
+      recibido = true;
+      average = p.ratingAverage;
+      count = p.ratingCount;
+    });
+    http.expectOne({ method: 'GET', url: `${api}/products/8` }).flush(apiProductConRating(8, null, 0));
+
+    expect(recibido).toBe(true);
+    expect(average).toBeUndefined();
+    expect(count).toBe(0);
+  });
+
+  it('Given un producto de otro vendedor, When rateProduct(7, 4), Then hace POST /reviews/7 con {rating: 4} y devuelve el resumen de la API', () => {
+    let resumen: unknown = null;
+
+    service.rateProduct(7, 4).subscribe((r) => (resumen = r));
+    const req = http.expectOne({ method: 'POST', url: `${api}/reviews/7` });
+    expect(req.request.body).toEqual({ rating: 4 });
+    expect(resumen).toBeNull();
+
+    req.flush({ ratingAverage: 4, ratingCount: 1, myRating: 4 }, { status: 201, statusText: 'Created' });
+
+    expect(resumen).toEqual({ ratingAverage: 4, ratingCount: 1, myRating: 4 });
+  });
+
+  it('Given el producto 9 tiene calificaciones, When getRatingSummary(9), Then hace GET /reviews/9 y devuelve el resumen con myRating', () => {
+    let resumen: unknown = null;
+
+    service.getRatingSummary(9).subscribe((r) => (resumen = r));
+    const req = http.expectOne({ method: 'GET', url: `${api}/reviews/9` });
+    req.flush({ ratingAverage: 4.5, ratingCount: 2, myRating: 5 });
+
+    expect(resumen).toEqual({ ratingAverage: 4.5, ratingCount: 2, myRating: 5 });
+  });
+
+  it('Given la API responde 403 al calificar, When rateProduct(7, 5), Then el error llega con el mensaje de la API', () => {
+    let mensaje: string | null = null;
+
+    service.rateProduct(7, 5).subscribe({ error: (err) => (mensaje = err.error?.message ?? null) });
+    http
+      .expectOne({ method: 'POST', url: `${api}/reviews/7` })
+      .flush({ message: 'No puedes calificar tu propio producto.' }, { status: 403, statusText: 'Forbidden' });
+
+    expect(mensaje).toBe('No puedes calificar tu propio producto.');
+  });
+});

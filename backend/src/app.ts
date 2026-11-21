@@ -10,6 +10,7 @@ import { purchasesRouter } from './modules/purchases/purchases.routes';
 import { recentlyViewedRouter } from './modules/recently-viewed/recently-viewed.routes';
 import { profileRouter } from './modules/profile/profile.routes';
 import { adminRouter } from './modules/admin/admin.routes';
+import { reviewsRouter } from './modules/reviews/reviews.routes';
 
 const allowedOrigins = env.corsOrigin
   .split(',')
@@ -49,6 +50,7 @@ export function createApp(): Express {
   app.use('/api/recently-viewed', recentlyViewedRouter);
   app.use('/api/profile', profileRouter);
   app.use('/api/admin', adminRouter);
+  app.use('/api/reviews', reviewsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -45,6 +45,8 @@ import {
   schoolOutline,
   searchOutline,
   shirtOutline,
+  star,
+  starOutline,
   storefrontOutline,
   trashOutline,
 } from 'ionicons/icons';
@@ -104,6 +106,8 @@ addIcons({
   schoolOutline,
   searchOutline,
   shirtOutline,
+  star,
+  starOutline,
   storefrontOutline,
   trashOutline,
 });

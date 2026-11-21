@@ -20,6 +20,8 @@ export interface Product {
   unit?: string;
   photos?: string[];
   sellerId?: number;
+  ratingAverage?: number;
+  ratingCount?: number;
   sellerName?: string;
   sellerPhone?: string;
   sellerEmail?: string;

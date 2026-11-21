@@ -84,6 +84,8 @@ Todas las rutas protegidas esperan el header `Authorization: Bearer <token>` que
 | DELETE | `/api/cart` | Sí | `clearCart()` |
 | GET | `/api/purchases` | Sí | `purchasedProducts` |
 | POST | `/api/purchases/checkout` | Sí | `checkout()` en `carritocompras.page.ts` |
+| GET | `/api/reviews/:productId` | Opcional | `getRatingSummary()` |
+| POST | `/api/reviews/:productId` | Sí | `rateProduct()` |
 | GET | `/api/recently-viewed` | Sí | `recentlyViewedProducts` |
 | GET | `/api/profile/payment-method` | Sí | `getPaymentMethod()` en `perfil.page.ts` |
 | PUT | `/api/profile/payment-method` | Sí | `savePaymentMethod()` en `perfil.page.ts` |

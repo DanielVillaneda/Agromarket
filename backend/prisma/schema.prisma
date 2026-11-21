@@ -32,6 +32,7 @@ model User {
   purchases       Purchase[]
   recentlyViewed  RecentlyViewed[]
   paymentMethod   PaymentMethod?
+  reviews         Review[]
 
   @@map("users")
 }
@@ -73,6 +74,7 @@ model Product {
   cartItems      CartItem[]
   purchases      Purchase[]
   recentlyViewed RecentlyViewed[]
+  reviews        Review[]
 
   @@map("products")
 }
@@ -97,6 +99,20 @@ model Favorite {
 
   @@unique([userId, productId])
   @@map("favorites")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  userId    Int
+  rating    Int // entero de 1 a 5 (validado en la API)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId])
+  @@map("reviews")
 }
 
 model CartItem {
