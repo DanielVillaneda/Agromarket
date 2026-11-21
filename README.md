@@ -85,4 +85,21 @@ E2E_BACKEND_LOG=e2e/backend.log npm run e2e                # terminal 3
 
 ### Mecanismos de calidad
 
-Pendiente — se completa en la Parte 4
+No se alcanzó a completar esta parte de forma formal, por el tiempo que tomaron las 5 specs de
+la Parte 3 y porque se agotaron los créditos de Claude Code hacia el final del proyecto. Aun así,
+ya existe evidencia real de dos de los mecanismos propuestos en el taller, usada de forma orgánica
+durante las 5 specs, aunque sin documentarse aquí formalmente:
+
+1. **Pruebas desde criterios de aceptación.** Cada spec (`specs/001-notas-producto` a
+   `specs/005-perfil-vendedor`) tiene su `spec.md` con criterios de aceptación verificables y su
+   `tasks.md` con las pruebas reales que los comprobaron (curl contra la API y specs de Angular).
+   Este mecanismo encontró y corrigió 2 bugs reales: una validación que aceptaba tipos inválidos
+   en la calificación de productos (ver "Ajustes durante la implementación" en
+   `specs/003-calificacion-productos/spec.md`) y un id fuera de rango que devolvía un error 500 en
+   vez de 400 (ver `specs/005-perfil-vendedor/spec.md`).
+2. **Prueba end-to-end con Playwright** (`e2e/e2e-check.js`, ejecutada por `agente-e2e`). Se corrió
+   completa y con éxito una vez, documentada en la sección "Sistema de agentes" de este README,
+   pero no se volvió a correr después de fusionar las 5 specs, por falta de tiempo.
+
+Queda pendiente formalizar esto como entregable completo: enlazar la evidencia de cada spec desde
+aquí, y una corrida de cierre de `agente-e2e` sobre las 5 specs ya fusionadas.
