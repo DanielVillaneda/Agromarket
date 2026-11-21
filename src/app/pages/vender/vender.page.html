@@ -104,6 +104,16 @@
         </label>
 
         <div class="vender-field">
+          <label class="vender-label" for="vender-categoria">Categoría (opcional)</label>
+          <select id="vender-categoria" class="vender-select" formControlName="categoria">
+            <option value="">Sin categoría</option>
+            @for (categoria of categoryOptions; track categoria) {
+              <option [value]="categoria">{{ categoria }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="vender-field">
           <label class="vender-label" for="vender-notas">Notas para el comprador (opcional)</label>
           <textarea
             id="vender-notas"

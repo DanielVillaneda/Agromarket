@@ -60,6 +60,16 @@
   vertical-align: middle;
 }
 
+.product-category {
+  margin: 0 0 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #4a5648;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .product-price {
   margin: 0 0 4px;
   font-size: 0.98rem;

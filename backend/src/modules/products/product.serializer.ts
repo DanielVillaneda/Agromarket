@@ -30,6 +30,7 @@ export function serializeProduct(product: ProductWithRelations) {
     accent: product.accent,
     description: product.description,
     notas: product.notas,
+    categoria: product.categoria,
     quantity: product.quantity,
     unit: product.unit,
     photos: product.photos.map((photo) => photo.url),

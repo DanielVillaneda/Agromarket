@@ -34,6 +34,8 @@ describe('VenderPage', () => {
       descripcion: 'Café cultivado en las montañas del Huila, tueste medio.',
       // Campo opcional agregado en la spec 001 (setValue exige todos los controles)
       notas: '',
+      // Campo opcional agregado en la spec 002
+      categoria: '',
     });
     expect(component.form.valid).toBeTruthy();
   });

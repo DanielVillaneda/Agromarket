@@ -17,6 +17,13 @@ export const PRODUCT_UNIT_LABELS: Record<ProductUnit, string> = {
   unidad: 'Unidades',
 };
 
+/**
+ * Categorías de producto. Copia de `productCategories` en
+ * backend/src/modules/products/product.schemas.ts: hay que mantener las dos sincronizadas.
+ */
+export const PRODUCT_CATEGORIES = ['Frutas', 'Verduras', 'Granos', 'Lácteos', 'Otros'] as const;
+export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
+
 export const WEIGHT_UNITS = ['kilo', 'tonelada', 'libra'] as const;
 export type WeightUnit = (typeof WEIGHT_UNITS)[number];
 
@@ -62,6 +69,7 @@ interface ApiProduct {
   accent: string;
   description: string | null;
   notas: string | null;
+  categoria: ProductCategory | null;
   quantity: number;
   unit: ProductUnit;
   photos: string[];
@@ -116,6 +124,7 @@ export interface ProductInput {
   location: string;
   description: string;
   notas?: string | null;
+  categoria?: ProductCategory | null;
   quantity: number;
   unit: ProductUnit;
   photos?: string[];
@@ -398,6 +407,7 @@ export class ProductsService {
       accent: p.accent,
       description: p.description ?? undefined,
       notas: p.notas ?? undefined,
+      categoria: p.categoria ?? undefined,
       quantity: `${p.quantity.toLocaleString('es-CO', { maximumFractionDigits: 2 })} ${PRODUCT_UNIT_LABELS[p.unit] ?? PRODUCT_UNIT_LABELS.unidad} disponibles`,
       rawQuantity: p.quantity,
       unit: p.unit,

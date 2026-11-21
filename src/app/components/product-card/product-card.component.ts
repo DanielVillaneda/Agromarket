@@ -14,6 +14,7 @@ export interface Product {
   accent: string;
   description?: string;
   notas?: string;
+  categoria?: string;
   quantity?: string;
   rawQuantity?: number;
   unit?: string;

@@ -11,6 +11,9 @@ export const productUnitLabels: Record<ProductUnit, string> = {
   unidad: 'unidades',
 };
 
+export const productCategories = ['Frutas', 'Verduras', 'Granos', 'Lácteos', 'Otros'] as const;
+export type ProductCategory = (typeof productCategories)[number];
+
 // Corresponde a los campos del formulario de vender.page.ts / producto-vender.page.ts
 export const createProductSchema = z.object({
   title: z.string().trim().min(3, 'El nombre debe tener al menos 3 caracteres.'),
@@ -28,6 +31,17 @@ export const createProductSchema = z.object({
     .max(500, 'Las notas pueden tener máximo 500 caracteres.')
     .transform((valor) => (valor === '' ? null : valor))
     .nullable()
+    .optional(),
+  // Categoría opcional: "" y null se guardan como null; si no se envía, queda
+  // undefined y no se toca la columna. Cualquier otro valor debe estar en la lista.
+  categoria: z
+    .string()
+    .trim()
+    .transform((valor) => (valor === '' ? null : valor))
+    .nullable()
+    .refine((valor) => valor === null || (productCategories as readonly string[]).includes(valor), {
+      message: 'Elige una categoría válida.',
+    })
     .optional(),
   unit: z.enum(productUnits).optional(),
   icon: z.string().trim().optional(),
