@@ -77,8 +77,16 @@ interface ApiProduct {
   sellerName: string;
   sellerPhone: string;
   sellerEmail: string;
+  ratingAverage: number | null;
+  ratingCount: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface RatingSummary {
+  ratingAverage: number | null;
+  ratingCount: number;
+  myRating: number | null;
 }
 
 interface CartResponse {
@@ -203,6 +211,14 @@ export class ProductsService {
 
   getProduct(id: number): Observable<Product> {
     return this.http.get<ApiProduct>(`${this.apiUrl}/products/${id}`).pipe(map((p) => this.mapProduct(p)));
+  }
+
+  getRatingSummary(productId: number): Observable<RatingSummary> {
+    return this.http.get<RatingSummary>(`${this.apiUrl}/reviews/${productId}`);
+  }
+
+  rateProduct(productId: number, rating: number): Observable<RatingSummary> {
+    return this.http.post<RatingSummary>(`${this.apiUrl}/reviews/${productId}`, { rating });
   }
 
   createProduct(input: ProductInput): Observable<Product> {
@@ -416,6 +432,8 @@ export class ProductsService {
       sellerName: p.sellerName,
       sellerPhone: p.sellerPhone,
       sellerEmail: p.sellerEmail,
+      ratingAverage: p.ratingAverage ?? undefined,
+      ratingCount: p.ratingCount,
     };
   }
 

@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { roundRatingAverage } from '../reviews/reviews.summary';
 
 /**
  * Producto con las relaciones que necesitamos para construir la respuesta
@@ -8,6 +9,7 @@ const productWithRelations = Prisma.validator<Prisma.ProductDefaultArgs>()({
   include: {
     photos: true,
     seller: { select: { id: true, nombre: true, email: true, telefono: true } },
+    reviews: { select: { rating: true } },
   },
 });
 
@@ -21,6 +23,9 @@ export const productInclude = productWithRelations.include;
  * respuesta casi 1 a 1 al conectar el HttpClient más adelante.
  */
 export function serializeProduct(product: ProductWithRelations) {
+  const ratingCount = product.reviews.length;
+  const ratingSum = product.reviews.reduce((sum, review) => sum + review.rating, 0);
+
   return {
     id: product.id,
     title: product.title,
@@ -38,6 +43,8 @@ export function serializeProduct(product: ProductWithRelations) {
     sellerName: product.seller.nombre,
     sellerPhone: product.seller.telefono,
     sellerEmail: product.seller.email,
+    ratingAverage: roundRatingAverage(ratingCount > 0 ? ratingSum / ratingCount : null, ratingCount),
+    ratingCount,
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
   };

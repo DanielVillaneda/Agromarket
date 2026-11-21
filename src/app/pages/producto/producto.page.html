@@ -36,6 +36,14 @@
                 <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
                 {{ product.location }}
               </p>
+              <p class="producto-rating-resumen">
+                <span class="producto-rating-estrellas" aria-hidden="true">
+                  @for (n of estrellas; track n) {
+                    <ion-icon [name]="n <= estrellasResumen() ? 'star' : 'star-outline'"></ion-icon>
+                  }
+                </span>
+                <span class="producto-rating-texto">{{ resumenCalificacion() }}</span>
+              </p>
             </div>
 
             <button
@@ -142,6 +150,45 @@
             <section class="producto-notas" aria-labelledby="producto-notas-titulo">
               <h2 class="producto-subtitle" id="producto-notas-titulo">Notas del vendedor</h2>
               <p class="producto-description producto-notas-texto">{{ product.notas }}</p>
+            </section>
+          }
+
+          @if (!esVendedor()) {
+            <section class="producto-calificar" aria-labelledby="producto-calificar-titulo">
+              <h2 class="producto-subtitle" id="producto-calificar-titulo">Califica este producto</h2>
+              @if (haySesion()) {
+                <div class="producto-estrellas" role="group" aria-label="Calificación">
+                  @for (n of estrellas; track n) {
+                    <button
+                      type="button"
+                      class="producto-estrella"
+                      [class.producto-estrella--activa]="n <= (miCalificacion() ?? 0)"
+                      [attr.aria-disabled]="enviandoCalificacion()"
+                      [attr.aria-label]="'Calificar con ' + n + ' de 5 estrellas'"
+                      [attr.aria-pressed]="miCalificacion() === n"
+                      (click)="calificar(n)"
+                    >
+                      <ion-icon
+                        [name]="n <= (miCalificacion() ?? 0) ? 'star' : 'star-outline'"
+                        aria-hidden="true"
+                      ></ion-icon>
+                    </button>
+                  }
+                </div>
+                @if (miCalificacion(); as mia) {
+                  <p class="producto-calificar-actual">Tu calificación: {{ mia }} de 5</p>
+                }
+              } @else {
+                <a class="producto-calificar-login" routerLink="/login">Inicia sesión para calificar</a>
+              }
+              <div class="producto-calificar-estado" role="status">
+                @if (mensajeCalificacion()) {
+                  <p class="producto-calificar-ok">{{ mensajeCalificacion() }}</p>
+                }
+                @if (errorCalificacion()) {
+                  <p class="producto-cart-error">{{ errorCalificacion() }}</p>
+                }
+              </div>
             </section>
           }
 

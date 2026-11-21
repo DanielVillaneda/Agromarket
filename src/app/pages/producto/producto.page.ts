@@ -92,10 +92,47 @@ export class ProductoPage {
   readonly cartError = signal<string | null>(null);
   readonly cartUpdating = signal(false);
 
+  readonly estrellas = [1, 2, 3, 4, 5];
+  readonly haySesion = this.auth.isAuthenticated;
+  readonly miCalificacion = signal<number | null>(null);
+  readonly ratingAverage = signal<number | null>(null);
+  readonly ratingCount = signal(0);
+  readonly enviandoCalificacion = signal(false);
+  readonly mensajeCalificacion = signal<string | null>(null);
+  readonly errorCalificacion = signal<string | null>(null);
+
+  /** Se puede calificar solo con sesión y si el producto no es del usuario. */
+  readonly esVendedor = computed(() => {
+    const userId = this.auth.currentUser()?.id;
+    const sellerId = this.product()?.sellerId;
+    return userId !== undefined && userId === sellerId;
+  });
+
+  readonly resumenCalificacion = computed(() => {
+    const count = this.ratingCount();
+    const average = this.ratingAverage();
+    if (count === 0 || average === null) {
+      return 'Aún sin calificaciones';
+    }
+    const promedio = average.toLocaleString('es-CO', { maximumFractionDigits: 1 });
+    return `${promedio} de 5 · ${count} ${count === 1 ? 'calificación' : 'calificaciones'}`;
+  });
+
+  /** Estrellas decorativas del resumen: llena, vacía según el promedio redondeado. */
+  readonly estrellasResumen = computed(() => Math.round(this.ratingAverage() ?? 0));
+
   constructor() {
     this.productsService.getProduct(this.id).subscribe({
       next: (product) => {
         this.product.set(product);
+        this.ratingAverage.set(product.ratingAverage ?? null);
+        this.ratingCount.set(product.ratingCount ?? 0);
+        if (this.auth.isAuthenticated() && !this.esVendedor()) {
+          this.productsService.getRatingSummary(this.id).subscribe({
+            next: (resumen) => this.miCalificacion.set(resumen.myRating),
+            error: () => undefined,
+          });
+        }
         this.selectedUnit.set((product.unit as ProductUnit) ?? 'unidad');
         this.loading.set(false);
       },
@@ -133,6 +170,30 @@ export class ProductoPage {
       error: (err: HttpErrorResponse) => {
         this.cartUpdating.set(false);
         this.cartError.set(err.error?.message ?? 'No se pudo cambiar la unidad.');
+      },
+    });
+  }
+
+  calificar(rating: number): void {
+    if (this.enviandoCalificacion()) {
+      return;
+    }
+
+    this.mensajeCalificacion.set(null);
+    this.errorCalificacion.set(null);
+    this.enviandoCalificacion.set(true);
+
+    this.productsService.rateProduct(this.id, rating).subscribe({
+      next: (resumen) => {
+        this.miCalificacion.set(resumen.myRating);
+        this.ratingAverage.set(resumen.ratingAverage);
+        this.ratingCount.set(resumen.ratingCount);
+        this.enviandoCalificacion.set(false);
+        this.mensajeCalificacion.set('¡Gracias por tu calificación!');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.enviandoCalificacion.set(false);
+        this.errorCalificacion.set(err.error?.message ?? 'No se pudo guardar tu calificación.');
       },
     });
   }
