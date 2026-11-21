@@ -39,6 +39,7 @@ export class VenderPage {
     unidad: ['unidad' as ProductUnit, [Validators.required]],
     ubicacion: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
+    notas: ['', [Validators.maxLength(500)]],
   });
 
   constructor(private fb: FormBuilder) {}
@@ -107,6 +108,7 @@ export class VenderPage {
         price: Number(value.precio),
         location: value.ubicacion,
         description: value.descripcion,
+        notas: (value.notas ?? '').trim() || null,
         quantity: Number(value.cantidad),
         unit: value.unidad,
         photos: this.images().map((image) => image.dataUrl),

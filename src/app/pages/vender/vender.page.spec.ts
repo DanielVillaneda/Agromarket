@@ -32,6 +32,8 @@ describe('VenderPage', () => {
       unidad: 'kilo',
       ubicacion: 'Neiva · Huila',
       descripcion: 'Café cultivado en las montañas del Huila, tueste medio.',
+      // Campo opcional agregado en la spec 001 (setValue exige todos los controles)
+      notas: '',
     });
     expect(component.form.valid).toBeTruthy();
   });

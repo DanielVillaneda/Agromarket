@@ -58,6 +58,7 @@ model Product {
   icon        String   @default("leaf-outline")
   accent      String   @default("linear-gradient(135deg, #9ccc65, #558b2f)")
   description String?
+  notas       String? // notas opcionales del vendedor para el comprador; texto plano, máx. 500 caracteres (validado en la API)
   quantity    Float    @default(0) // stock en la unidad del producto; admite fracciones (ej. se vendió 1 libra de un producto por kilo)
   unit        String   @default("unidad") // kilo | tonelada | libra | litro | unidad
   createdAt   DateTime @default(now())

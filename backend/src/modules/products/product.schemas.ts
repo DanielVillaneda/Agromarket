@@ -20,6 +20,15 @@ export const createProductSchema = z.object({
   // Puede tener decimales: tras vender en otra unidad (ej. 1 libra de un producto
   // por kilo) el stock restante queda fraccionado y el vendedor debe poder editarlo.
   quantity: z.coerce.number().positive('Debe ser mayor a 0.'),
+  // Notas opcionales del vendedor: "" (o solo espacios) y null se guardan como null;
+  // si no se envía, queda undefined y no se toca la columna.
+  notas: z
+    .string()
+    .trim()
+    .max(500, 'Las notas pueden tener máximo 500 caracteres.')
+    .transform((valor) => (valor === '' ? null : valor))
+    .nullable()
+    .optional(),
   unit: z.enum(productUnits).optional(),
   icon: z.string().trim().optional(),
   accent: z.string().trim().optional(),

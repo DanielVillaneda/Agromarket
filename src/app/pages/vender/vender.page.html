@@ -104,6 +104,20 @@
         </label>
 
         <div class="vender-field">
+          <label class="vender-label" for="vender-notas">Notas para el comprador (opcional)</label>
+          <textarea
+            id="vender-notas"
+            class="vender-textarea"
+            formControlName="notas"
+            rows="3"
+            maxlength="500"
+            aria-describedby="vender-notas-ayuda"
+            placeholder="Ej. Recomendaciones de almacenamiento, horarios de entrega..."
+          ></textarea>
+          <span class="vender-hint" id="vender-notas-ayuda">Máximo 500 caracteres.</span>
+        </div>
+
+        <div class="vender-field">
           <span class="vender-label">Fotos del producto</span>
 
           <div class="vender-images">

@@ -13,6 +13,7 @@ export interface Product {
   icon: string;
   accent: string;
   description?: string;
+  notas?: string;
   quantity?: string;
   rawQuantity?: number;
   unit?: string;
