@@ -66,7 +66,9 @@ export class HomePage implements AfterViewInit, ViewDidEnter {
     }
 
     video.muted = true;
-    video.play().catch(() => {
+    // En el navegador play() siempre devuelve una promesa; en jsdom (pruebas)
+    // devuelve undefined, por eso el `?.`.
+    video.play()?.catch(() => {
       // Si el navegador bloquea el autoplay igual, se deja el video pausado
       // en el primer frame en vez de romper la página.
     });

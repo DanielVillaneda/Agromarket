@@ -29,6 +29,7 @@ describe('VenderPage', () => {
       nombre: 'Café Especial',
       precio: 20000,
       cantidad: 10,
+      unidad: 'kilo',
       ubicacion: 'Neiva · Huila',
       descripcion: 'Café cultivado en las montañas del Huila, tueste medio.',
     });
