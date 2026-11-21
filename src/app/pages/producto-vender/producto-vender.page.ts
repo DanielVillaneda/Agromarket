@@ -47,6 +47,7 @@ export class ProductoVenderPage {
     unidad: ['unidad', [Validators.required]],
     ubicacion: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
+    notas: ['', [Validators.maxLength(500)]],
   });
 
   constructor() {
@@ -67,6 +68,7 @@ export class ProductoVenderPage {
           unidad: product.unit ?? 'unidad',
           ubicacion: product.location,
           descripcion: product.description ?? '',
+          notas: product.notas ?? '',
         });
       },
       error: () => {
@@ -152,6 +154,7 @@ export class ProductoVenderPage {
         price: Number(value.precio),
         location: value.ubicacion,
         description: value.descripcion,
+        notas: (value.notas ?? '').trim() || null,
         quantity: Number(value.cantidad),
         unit: value.unidad,
         photos: this.images().map((image) => image.dataUrl).filter((url): url is string => !!url),

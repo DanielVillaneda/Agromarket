@@ -138,6 +138,13 @@
           <h2 class="producto-subtitle">Descripción</h2>
           <p class="producto-description">{{ product.description }}</p>
 
+          @if (product.notas) {
+            <section class="producto-notas" aria-labelledby="producto-notas-titulo">
+              <h2 class="producto-subtitle" id="producto-notas-titulo">Notas del vendedor</h2>
+              <p class="producto-description producto-notas-texto">{{ product.notas }}</p>
+            </section>
+          }
+
           <h2 class="producto-subtitle">Información del vendedor</h2>
           <div class="producto-seller">
             <p class="producto-seller-name">{{ product.sellerName }}</p>

@@ -114,6 +114,19 @@
             }
           </label>
 
+          <div class="pv-field">
+            <label class="pv-label" for="pv-notas">Notas para el comprador (opcional)</label>
+            <textarea
+              id="pv-notas"
+              class="pv-textarea"
+              formControlName="notas"
+              rows="3"
+              maxlength="500"
+              aria-describedby="pv-notas-ayuda"
+            ></textarea>
+            <span class="pv-hint" id="pv-notas-ayuda">Máximo 500 caracteres.</span>
+          </div>
+
           @if (saved && form.valid) {
             <p class="pv-success">¡Cambios guardados!</p>
           }

@@ -61,6 +61,7 @@ interface ApiProduct {
   icon: string;
   accent: string;
   description: string | null;
+  notas: string | null;
   quantity: number;
   unit: ProductUnit;
   photos: string[];
@@ -114,6 +115,7 @@ export interface ProductInput {
   price: number;
   location: string;
   description: string;
+  notas?: string | null;
   quantity: number;
   unit: ProductUnit;
   photos?: string[];
@@ -395,6 +397,7 @@ export class ProductsService {
       icon: p.icon,
       accent: p.accent,
       description: p.description ?? undefined,
+      notas: p.notas ?? undefined,
       quantity: `${p.quantity.toLocaleString('es-CO', { maximumFractionDigits: 2 })} ${PRODUCT_UNIT_LABELS[p.unit] ?? PRODUCT_UNIT_LABELS.unidad} disponibles`,
       rawQuantity: p.quantity,
       unit: p.unit,

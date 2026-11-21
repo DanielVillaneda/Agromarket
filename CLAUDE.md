@@ -69,6 +69,7 @@ Los subagentes del proyecto están en `.claude/agents/`. Cuando una tarea requie
 4. **agente-accesibilidad**, solo si hubo cambios de frontend, sobre la lista de archivos que cambió agente-ui-frontend.
 5. **agente-pruebas**, con la solicitud original (y sus criterios de aceptación) más la lista de archivos que cambiaron.
 6. **agente-e2e**, al final y antes de que el desarrollador apruebe el PR. Necesita el backend y el frontend levantados. Para cubrir la recuperación de cuenta, el backend tiene que correr con `npm run dev 2>&1 | tee ../e2e/backend.log` y el script con `E2E_BACKEND_LOG=e2e/backend.log npm run e2e`.
+   Corre completo solo cuando la spec toca flujos críticos (login, recuperación de cuenta, carrito, checkout, pagos, admin) o al cerrar el conjunto completo de specs del proyecto integrador. Para specs de bajo riesgo basta con agente-pruebas (curl + specs).
 
 Salta los pasos que no apliquen; no saltes el 2 cuando hubo cambio de schema.
 

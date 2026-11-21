@@ -29,6 +29,7 @@ export function serializeProduct(product: ProductWithRelations) {
     icon: product.icon,
     accent: product.accent,
     description: product.description,
+    notas: product.notas,
     quantity: product.quantity,
     unit: product.unit,
     photos: product.photos.map((photo) => photo.url),
