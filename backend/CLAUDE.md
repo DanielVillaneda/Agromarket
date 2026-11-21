@@ -82,7 +82,9 @@ router.post('/:id', requireAuth, asyncHandler(async (req, res) => {
 - El método de pago (`profile`) es simulado: solo guarda `bankName`, `holderName` y `last4`. No hay cobros reales.
 - Fotos: crear un producto exige al menos una foto. Al editar, si se envía `photos` se reemplazan todas (`deleteMany` + `create`).
 
-## Notas
+## Qué no debe hacer el agente
 
-- La tabla de endpoints de `README.md` está desactualizada. No incluye `/api/auth/recuperar*`, `/api/profile/*` ni `/api/admin/*`. La sección "Nota sobre esta entrega" describe un sandbox antiguo y no aplica.
-- Los correos no se normalizan a minúsculas al registrarse ni al iniciar sesión: la búsqueda por `email` distingue mayúsculas de minúsculas.
+- Nunca editar a mano una migración de Prisma que ya se aplicó (`prisma/migrations/*`). Los cambios de modelo se hacen en `schema.prisma` y se genera una migración nueva con `npx prisma migrate dev --name <nombre>`.
+- Nunca devolver `passwordHash` ni `passwordResetCode` en una respuesta. Los usuarios siempre salen por `publicUser(...)`.
+- Nunca modificar la lógica de conversión de unidades en un solo lado. `backend/src/lib/units.ts` y `src/app/services/products.service.ts` tienen que cambiar juntos.
+- Ningún endpoint puede otorgar el rol `admin`.
