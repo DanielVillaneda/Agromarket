@@ -4,7 +4,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { PRODUCT_UNITS, PRODUCT_UNIT_LABELS, ProductUnit, ProductsService } from '../../services/products.service';
+import { PRODUCT_CATEGORIES, PRODUCT_UNITS, PRODUCT_UNIT_LABELS, ProductUnit, ProductsService } from '../../services/products.service';
 import { readImageAsResizedDataUrl } from '../../services/image-utils';
 
 interface ProductImage {
@@ -31,6 +31,7 @@ export class VenderPage {
 
   readonly unitOptions = PRODUCT_UNITS;
   readonly unitLabels = PRODUCT_UNIT_LABELS;
+  readonly categoryOptions = PRODUCT_CATEGORIES;
 
   readonly form: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
@@ -40,6 +41,7 @@ export class VenderPage {
     ubicacion: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
     notas: ['', [Validators.maxLength(500)]],
+    categoria: [''],
   });
 
   constructor(private fb: FormBuilder) {}
@@ -109,6 +111,7 @@ export class VenderPage {
         location: value.ubicacion,
         description: value.descripcion,
         notas: (value.notas ?? '').trim() || null,
+        categoria: value.categoria || null,
         quantity: Number(value.cantidad),
         unit: value.unidad,
         photos: this.images().map((image) => image.dataUrl),

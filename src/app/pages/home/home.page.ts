@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, computed, inject, signal, ViewChild } from '@angular/core';
 import { IonContent, IonIcon, ViewDidEnter } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { ProductsService } from '../../services/products.service';
+import { PRODUCT_CATEGORIES, ProductCategory, ProductsService } from '../../services/products.service';
 import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
@@ -16,6 +16,19 @@ export class HomePage implements AfterViewInit, ViewDidEnter {
   private readonly productsService = inject(ProductsService);
   readonly products = this.productsService.marketProducts;
   readonly productsLoaded = this.productsService.marketProductsLoaded;
+
+  readonly categorias = PRODUCT_CATEGORIES;
+  /** null equivale a "Todas". */
+  readonly categoriaSeleccionada = signal<ProductCategory | null>(null);
+  readonly productosFiltrados = computed(() => {
+    const categoria = this.categoriaSeleccionada();
+    const productos = this.products();
+    return categoria ? productos.filter((producto) => producto.categoria === categoria) : productos;
+  });
+
+  seleccionarCategoria(categoria: ProductCategory | null): void {
+    this.categoriaSeleccionada.set(categoria);
+  }
 
   readonly trustItems = [
     { icon: 'leaf-outline', title: 'Productos frescos', text: 'Recién cosechados en fincas de la región.' },

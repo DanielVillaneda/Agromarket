@@ -32,8 +32,37 @@
   <section class="recent" aria-labelledby="recent-title">
     <h2 class="section-title" id="recent-title">Lo más reciente</h2>
 
+    <div class="category-filter" role="group" aria-label="Filtrar por categoría">
+      <button
+        type="button"
+        class="category-chip"
+        [class.category-chip--active]="categoriaSeleccionada() === null"
+        [attr.aria-pressed]="categoriaSeleccionada() === null"
+        (click)="seleccionarCategoria(null)"
+      >
+        Todas
+      </button>
+      @for (categoria of categorias; track categoria) {
+        <button
+          type="button"
+          class="category-chip"
+          [class.category-chip--active]="categoriaSeleccionada() === categoria"
+          [attr.aria-pressed]="categoriaSeleccionada() === categoria"
+          (click)="seleccionarCategoria(categoria)"
+        >
+          {{ categoria }}
+        </button>
+      }
+    </div>
+
+    <p class="sr-only" aria-live="polite">
+      @if (productsLoaded()) {
+        {{ productosFiltrados().length }} {{ productosFiltrados().length === 1 ? 'producto' : 'productos' }}{{ categoriaSeleccionada() ? ' en ' + categoriaSeleccionada() : '' }}
+      }
+    </p>
+
     <div class="product-grid">
-      @for (product of products(); track product.id) {
+      @for (product of productosFiltrados(); track product.id) {
         <a class="product-link" [routerLink]="['/producto', product.id]">
           <app-product-card [product]="product"></app-product-card>
         </a>
@@ -45,6 +74,11 @@
         <ion-icon name="leaf-outline" aria-hidden="true"></ion-icon>
         <p>Aún no hay productos publicados.</p>
         <a routerLink="/vender">Publica el primero</a>
+      </div>
+    } @else if (productsLoaded() && !productosFiltrados().length) {
+      <div class="recent-empty">
+        <ion-icon name="leaf-outline" aria-hidden="true"></ion-icon>
+        <p>No hay productos en esta categoría.</p>
       </div>
     }
   </section>

@@ -186,6 +186,58 @@
   padding: 36px 24px 40px;
 }
 
+// Texto solo para lectores de pantalla (anuncia el conteo al filtrar).
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// El padding deja espacio para el contorno de foco: el contenedor tiene
+// overflow-x: auto, que recorta el contorno que sale de su caja.
+.category-filter {
+  display: flex;
+  gap: 8px;
+  margin: -4px -4px 12px;
+  padding: 4px;
+  overflow-x: auto;
+}
+
+.category-chip {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border: 1px solid #c5ccbd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #2f3a2c;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.category-chip:hover {
+  border-color: #2e7d32;
+}
+
+.category-chip:focus-visible {
+  outline: 2px solid #2e7d32;
+  outline-offset: 2px;
+}
+
+.category-chip--active {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #ffffff;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -348,6 +400,11 @@
 
   .recent {
     padding: 20px 14px 32px;
+  }
+
+  // Objetivo táctil de los chips de categoría (44px recomendado).
+  .category-chip {
+    min-height: 44px;
   }
 
   .product-grid {
