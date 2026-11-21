@@ -56,3 +56,24 @@ If `SMTP_USER`/`SMTP_PASS` are empty, account recovery codes are printed to the 
 ### Deployment
 - The frontend deploys to Vercel (`vercel.json`): it builds `www/`, proxies `/api/*` to the backend on Render (`agromarket-api-5yzi.onrender.com`), and sends every other path to the SPA fallback. That proxy is why `environment.prod.ts` uses the relative `apiUrl: '/api'`. `.vercelignore` excludes `backend/` and `android/`.
 - The backend deploys separately (Render) from `backend/`.
+
+## Sistema de agentes
+
+Los subagentes del proyecto están en `.claude/agents/`. Cuando una tarea requiera delegar, el agente principal actúa como orquestador: no escribe el código él mismo, decide el orden de delegación, pasa a cada subagente lo que necesita y al final entrega al desarrollador un resumen con las preguntas pendientes.
+
+### Orden de delegación
+
+1. **agente-schema-db**, solo si hay cambio de datos (tabla, columna o tipo en `backend/prisma/schema.prisma`).
+2. **Verificación de tipos.** Después de que agente-schema-db termine un cambio de schema, pídele a **agente-api-backend** que corra `npx tsc --noEmit` dentro de `backend/`. agente-schema-db no puede hacerlo porque su hook solo le permite comandos de Prisma. Este paso es obligatorio aunque la tarea no requiera otros cambios de backend.
+3. **agente-api-backend** y/o **agente-ui-frontend**, según lo que toque la tarea. Si hay ambos, primero el backend, para pasarle a agente-ui-frontend el contrato del endpoint (método, ruta, cuerpo, respuesta y errores).
+4. **agente-accesibilidad**, solo si hubo cambios de frontend, sobre la lista de archivos que cambió agente-ui-frontend.
+5. **agente-pruebas**, con la solicitud original (y sus criterios de aceptación) más la lista de archivos que cambiaron.
+6. **agente-e2e**, al final y antes de que el desarrollador apruebe el PR. Necesita el backend y el frontend levantados. Para cubrir la recuperación de cuenta, el backend tiene que correr con `npm run dev 2>&1 | tee ../e2e/backend.log` y el script con `E2E_BACKEND_LOG=e2e/backend.log npm run e2e`.
+
+Salta los pasos que no apliquen; no saltes el 2 cuando hubo cambio de schema.
+
+### Comunicación entre agentes
+
+- Los subagentes no se comunican entre sí, solo con el agente principal. Cada uno recibe únicamente lo que le pasa el orquestador en su prompt.
+- El orquestador debe reenviar explícitamente lo que un subagente deja para otro: los cambios de `backend/src` que propone agente-schema-db, el contrato del endpoint para agente-ui-frontend, las listas de archivos cambiados para agente-accesibilidad y agente-pruebas.
+- Si un subagente reporta un fallo (pruebas, e2e o `tsc`) o algo que no pudo hacer por estar fuera de su alcance, el orquestador lo devuelve al agente que corresponde. Si nadie tiene ese alcance, se detiene y pregunta al desarrollador.
